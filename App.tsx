@@ -12,9 +12,8 @@ import {
 } from '@react-navigation/native'
 import Toast from 'react-native-toast-message'
 import colors from './constants/colors'
-import MainNavigation from './navigation/MainNavigation'
 import rules from './constants/rules'
-import 'expo-dev-client'
+import MainNavigation from './navigation/MainNavigation'
 
 export default function App() {
   const toastConfig = {
@@ -42,7 +41,6 @@ export default function App() {
       </View>
     ),
   }
-
   return (
     <Provider store={store}>
       <GestureHandlerRootView style={{ flex: 1 }}>

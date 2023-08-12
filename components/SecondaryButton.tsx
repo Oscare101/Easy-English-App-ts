@@ -2,11 +2,12 @@ import { Text, TouchableOpacity, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import colors from '../constants/colors'
 import MaskedView from '@react-native-masked-view/masked-view'
+import rules from '../constants/rules'
 
 export default function SecondaryButton(props: any) {
   return (
     <TouchableOpacity
-      style={[{ width: '90%' }, props.style]}
+      style={[{ width: rules.componentWidthPercent }, props.style]}
       activeOpacity={0.8}
       onPress={() => props.action()}
     >

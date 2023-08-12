@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Keyboard,
   ScrollView,
   StatusBar,
@@ -22,8 +23,10 @@ export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [error, setError] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
 
   async function LogInFunc() {
+    setLoading(true)
     const response = await LogIn(email, password)
     if (!response.error) {
       navigation.reset({
@@ -32,6 +35,7 @@ export default function LoginScreen({ navigation }: any) {
       })
     } else {
       setError(response.error)
+      setLoading(false)
     }
   }
 
@@ -67,18 +71,31 @@ export default function LoginScreen({ navigation }: any) {
               <></>
             )}
 
-            <MainButton
-              title="Login"
-              disable={
-                !(
-                  rules.email.test(email) &&
-                  password.length >= rules.passwordMinLengh
-                )
-              }
-              action={() => {
-                LogInFunc()
-              }}
-            />
+            {loading ? (
+              <View
+                style={{
+                  height: 60,
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <ActivityIndicator size={'large'} />
+              </View>
+            ) : (
+              <MainButton
+                title="Login"
+                disable={
+                  !(
+                    rules.email.test(email) &&
+                    password.length >= rules.passwordMinLengh
+                  )
+                }
+                action={() => {
+                  LogInFunc()
+                }}
+              />
+            )}
           </View>
           <View></View>
         </View>

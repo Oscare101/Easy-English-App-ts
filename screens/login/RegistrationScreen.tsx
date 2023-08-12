@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Keyboard,
   ScrollView,
   StatusBar,
@@ -23,8 +24,10 @@ export default function RegistrationScreen({ navigation }: any) {
   const [password1, setPassword1] = useState<string>('')
   const [password2, setPassword2] = useState<string>('')
   const [error, setError] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
 
   async function RegistrationFunc() {
+    setLoading(true)
     const response: any = await Registration(email, password1)
     if (!response.error) {
       navigation.reset({
@@ -33,6 +36,7 @@ export default function RegistrationScreen({ navigation }: any) {
       })
     } else {
       setError(response.error)
+      setLoading(false)
     }
   }
 
@@ -73,19 +77,32 @@ export default function RegistrationScreen({ navigation }: any) {
             ) : (
               <></>
             )}
-            <MainButton
-              title="Login"
-              disable={
-                !(
-                  rules.email.test(email) &&
-                  password1.length >= rules.passwordMinLengh &&
-                  password1 === password2
-                )
-              }
-              action={() => {
-                RegistrationFunc()
-              }}
-            />
+            {loading ? (
+              <View
+                style={{
+                  height: 60,
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <ActivityIndicator size={'large'} />
+              </View>
+            ) : (
+              <MainButton
+                title="Registration"
+                disable={
+                  !(
+                    rules.email.test(email) &&
+                    password1.length >= rules.passwordMinLengh &&
+                    password1 === password2
+                  )
+                }
+                action={() => {
+                  RegistrationFunc()
+                }}
+              />
+            )}
           </View>
           <View></View>
         </View>

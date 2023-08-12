@@ -65,6 +65,8 @@ export async function LogOut() {
   }
 }
 
+// USER
+
 export async function SetNewUser(email: string) {
   try {
     await set(
@@ -75,8 +77,6 @@ export async function SetNewUser(email: string) {
     console.log('SetNewUser', error)
   }
 }
-
-// FIX
 
 export async function GetUser(email: string) {
   try {
@@ -99,8 +99,30 @@ export async function UpdateUser(email: string, data: any) {
 
 export async function DeleteUser(email: string) {
   try {
+    await AsyncStorage.setItem('email', '')
+    await AsyncStorage.setItem('password', '')
     remove(ref(getDatabase(), 'user/' + email.replace('.', ',')))
     auth.currentUser?.delete()
+  } catch (error) {
+    console.log('DeleteUser', error)
+  }
+}
+
+// POSTS
+
+export async function CreatePost(email: string, data: any) {
+  try {
+    console.log(data)
+
+    await set(ref(getDatabase(), 'post/' + data.key), data)
+  } catch (error) {
+    console.log('SetNewUser', error)
+  }
+}
+
+export async function DeletePost(key: string) {
+  try {
+    remove(ref(getDatabase(), 'post/' + key))
   } catch (error) {
     console.log('DeleteUser', error)
   }

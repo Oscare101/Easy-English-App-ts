@@ -46,7 +46,7 @@ export default function LaunchScreen({ navigation }: any) {
 
   useEffect(() => {
     GetUserStorage()
-  })
+  }, [])
 
   return (
     <View style={styles.ViewCenter}>

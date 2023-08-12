@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Keyboard,
   ScrollView,
   StatusBar,
@@ -26,8 +27,10 @@ export default function NewUserScreen({ navigation }: any) {
   const [birthDate, setBirthdate] = useState<any>('')
 
   const [error, setError] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
 
   async function SetNewUserDataFunc() {
+    setLoading(true)
     const data = {
       name: name,
       surname: surname,
@@ -90,13 +93,26 @@ export default function NewUserScreen({ navigation }: any) {
             ) : (
               <></>
             )}
-            <MainButton
-              title="Save"
-              disable={!name.trim()}
-              action={() => {
-                SetNewUserDataFunc()
-              }}
-            />
+            {loading ? (
+              <View
+                style={{
+                  height: 60,
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <ActivityIndicator size={'large'} />
+              </View>
+            ) : (
+              <MainButton
+                title="Save"
+                disable={!name.trim()}
+                action={() => {
+                  SetNewUserDataFunc()
+                }}
+              />
+            )}
           </View>
           <DangerousButton
             title="Cancel and delete account"

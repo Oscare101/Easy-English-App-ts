@@ -11,6 +11,8 @@ export default function MainButton(props: any) {
           width: rules.componentWidthPercent,
           opacity: props.disable ? 0.5 : 1,
           marginTop: 8,
+          borderRadius: 8,
+          overflow: 'hidden',
         },
         props.style,
       ]}
@@ -24,7 +26,6 @@ export default function MainButton(props: any) {
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
         style={{
-          borderRadius: 8,
           padding: 10,
           width: '100%',
           alignItems: 'center',

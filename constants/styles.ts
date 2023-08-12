@@ -21,6 +21,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-around',
   },
+  ViewStart: {
+    flex: 1,
+    width: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: colors.White,
+  },
   ViewAbsolute: {
     position: 'absolute',
     flex: 1,
@@ -87,6 +95,14 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  Card: {
+    width: rules.componentWidthPercent,
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: colors.RealWhite,
+    elevation: 1,
+    marginTop: 10,
+  },
 
   textInput: {
     flexDirection: 'row',
@@ -103,6 +119,59 @@ export const styles = StyleSheet.create({
 
   // TEXTS
 
+  textCourseText: {
+    fontSize: 20,
+    color: colors.Black,
+  },
+  textCourseRed: {
+    fontSize: 20,
+    color: colors.Error,
+  },
+  textCourseYellow: {
+    fontSize: 20,
+    color: colors.Yellow,
+  },
+  textCourseGreen: {
+    fontSize: 20,
+    color: colors.Green,
+  },
+  textCourseBold: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.Black,
+  },
+  textCourseItalic: {
+    fontSize: 20,
+    fontStyle: 'italic',
+    color: colors.Black,
+  },
+  textCourseComment: {
+    fontSize: 20,
+    fontFamily: 'monospace',
+    color: colors.Black,
+  },
+
+  BigTitle: {
+    fontSize: 50,
+    fontWeight: '700',
+    letterSpacing: 2,
+  },
+  commentText: {
+    fontSize: 12,
+    color: colors.Grey,
+    textAlign: 'center',
+  },
+
+  textName: {
+    fontSize: 22,
+    color: colors.Black,
+  },
+  textFollowersNumber: {
+    fontSize: 18,
+    color: colors.Black,
+  },
+  textFollowers: { fontSize: 14, color: colors.DarkGrey },
+
   text8: {
     fontSize: 8,
   },
@@ -114,6 +183,15 @@ export const styles = StyleSheet.create({
   },
   text16: {
     fontSize: 16,
+  },
+  text18: {
+    fontSize: 18,
+  },
+  text20: {
+    fontSize: 20,
+  },
+  text30: {
+    fontSize: 30,
   },
   text40: {
     fontSize: 40,

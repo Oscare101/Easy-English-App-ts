@@ -18,6 +18,9 @@ import ProfileSettings from '../screens/application/profile/ProfileSettings'
 import CoursePage from '../screens/application/courses/CoursePage'
 import PersonalInfoSettings from '../screens/application/profile/PersonalInfoSettings'
 import NewPostScreen from '../screens/application/profile/NewPostScreen'
+import FriendsScreen from '../screens/application/friends/FriendsScreen'
+import ChatsScreen from '../screens/application/chat/ChatsScreen'
+import GlobalChatScreen from '../screens/application/chat/GlobalChatScreen'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -52,19 +55,19 @@ export default function MainNavigation() {
         iconActive: 'ios-chatbubble-ellipses-sharp',
         iconInactive: 'ios-chatbubble-ellipses-outline',
         action: () => {
-          navigation.navigate('CoursesNavigation', {
-            screen: 'CoursesScreen',
+          navigation.navigate('ChatNavigation', {
+            screen: 'ChatsScreen',
             initial: false,
           })
         },
       },
       {
         title: '',
-        iconActive: 'ios-settings',
-        iconInactive: 'ios-settings-outline',
+        iconActive: 'people',
+        iconInactive: 'people-outline',
         action: () => {
-          navigation.navigate('CoursesNavigation', {
-            screen: 'CoursesScreen',
+          navigation.navigate('FriendsNavigation', {
+            screen: 'FriendsScreen',
             initial: false,
           })
         },
@@ -122,17 +125,6 @@ export default function MainNavigation() {
           name="ProfileScreen"
           component={ProfileScreen}
         />
-        {/* <Stack.Screen
-          options={{
-            headerShown: false,
-            gestureDirection: 'horizontal',
-            animationEnabled: true,
-            gestureEnabled: true,
-            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-          }}
-          name="ProjectInfoScreen"
-          component={ProjectInfoScreen}
-        /> */}
       </Stack.Navigator>
     )
   }
@@ -151,6 +143,34 @@ export default function MainNavigation() {
     )
   }
 
+  function ChatNavigation() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name="ChastScreen"
+          component={ChatsScreen}
+        />
+      </Stack.Navigator>
+    )
+  }
+
+  function FriendsNavigation() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen
+          options={{
+            headerShown: false,
+          }}
+          name="FriendsScreen"
+          component={FriendsScreen}
+        />
+      </Stack.Navigator>
+    )
+  }
+
   function NavigationApp() {
     return (
       <Tab.Navigator tabBar={(props) => <TabBar {...props} />}>
@@ -164,6 +184,20 @@ export default function MainNavigation() {
         <Tab.Screen
           name="CoursesNavigation"
           component={CoursesNavigation}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Tab.Screen
+          name="ChatNavigation"
+          component={ChatNavigation}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Tab.Screen
+          name="FriendsNavigation"
+          component={FriendsNavigation}
           options={{
             headerShown: false,
           }}
@@ -266,6 +300,17 @@ export default function MainNavigation() {
         }}
         name="NewPostScreen"
         component={NewPostScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          gestureDirection: 'horizontal',
+          gestureEnabled: true,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+        name="GlobalChatScreen"
+        component={GlobalChatScreen}
       />
     </Stack.Navigator>
   )

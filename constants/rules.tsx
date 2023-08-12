@@ -2,7 +2,6 @@ import colors from './colors'
 
 const rules: any = {
   // DESIGN
-
   componentWidthPercent: '92%',
   componentWidth: 0.92,
   bottomTabHeight: 70,

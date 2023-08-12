@@ -112,8 +112,6 @@ export async function DeleteUser(email: string) {
 
 export async function CreatePost(email: string, data: any) {
   try {
-    console.log(data)
-
     await set(ref(getDatabase(), 'post/' + data.key), data)
   } catch (error) {
     console.log('SetNewUser', error)
@@ -125,5 +123,15 @@ export async function DeletePost(key: string) {
     remove(ref(getDatabase(), 'post/' + key))
   } catch (error) {
     console.log('DeleteUser', error)
+  }
+}
+
+// MESSAGES
+
+export async function CreateMessage(chatID: string, data: any) {
+  try {
+    await set(ref(getDatabase(), 'chat/' + chatID + '/' + data.key), data)
+  } catch (error) {
+    console.log('SetNewUser', error)
   }
 }

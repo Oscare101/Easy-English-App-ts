@@ -14,4 +14,7 @@ export default {
   Grey: '#A9A9A9',
   DarkGrey: '#808080',
   ShadowBG: 'rgba(0, 0, 0, 0.2)',
+
+  userMessage: '#d4ddff',
+  otherMessage: '#d5cae6',
 }

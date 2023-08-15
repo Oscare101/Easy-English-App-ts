@@ -21,6 +21,8 @@ import {
 import { firebase } from '@react-native-firebase/database'
 import database from '@react-native-firebase/database'
 
+// ACCOUNT
+
 export async function Registration(email: string, password: string) {
   try {
     const response = await createUserWithEmailAndPassword(auth, email, password)

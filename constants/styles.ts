@@ -117,6 +117,23 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
   },
 
+  // CHAT
+
+  messageBlock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    padding: 5,
+  },
+  messageItem: {
+    maxWidth: width * 0.8,
+    padding: 10,
+    borderRadius: 16,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  messageAuthor: { fontSize: 14, color: colors.DarkGrey },
+
   // TEXTS
 
   textCourseText: {

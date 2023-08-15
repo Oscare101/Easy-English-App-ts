@@ -12,7 +12,7 @@ import {
 import { styles } from '../../../constants/styles'
 import MainButton from '../../../components/MainButton'
 import InputText from '../../../components/InputText'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { User } from '../../../constants/interfaces'
 import { auth } from '../../../firebase'
 import { get, getDatabase, onValue, ref } from 'firebase/database'
@@ -29,8 +29,11 @@ const width = Dimensions.get('screen').width
 
 export default function GlobalChatScreen({ navigation, route }: any) {
   const [messages, setMessages] = useState<any>([])
+  const [users, setUsers] = useState<any>({})
+
   const [newMessage, setNewMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
+
   async function CreateMessageFunc() {
     setLoading(true)
     if (auth.currentUser && auth.currentUser.email && route.params.user) {
@@ -59,39 +62,50 @@ export default function GlobalChatScreen({ navigation, route }: any) {
     }
   }
 
+  async function GetUsers() {
+    if (auth.currentUser && auth.currentUser.email) {
+      const data = ref(getDatabase(), `user/`)
+      onValue(data, (snapshot) => {
+        if (snapshot.val()) {
+          setUsers(snapshot.val())
+          GetMessages()
+        }
+      })
+    }
+  }
+
   useEffect(() => {
-    GetMessages()
+    GetUsers()
   }, [])
 
-  function RenderChatItem({ item }: any) {
-    const userMessage = auth.currentUser?.email === item.authorEmail
+  const RenderChatItem = ({ item, email }: any) => {
+    const userMessage = email === item.authorEmail
     return (
       <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: userMessage ? 'flex-end' : 'flex-start',
-          width: '100%',
-          padding: 5,
-        }}
+        style={[
+          styles.messageBlock,
+          {
+            justifyContent: userMessage ? 'flex-end' : 'flex-start',
+          },
+        ]}
       >
         <View
-          style={{
-            maxWidth: width * 0.8,
-            backgroundColor: userMessage
-              ? colors.userMessage
-              : colors.otherMessage,
-            padding: 10,
-            borderRadius: 16,
-            borderBottomRightRadius: userMessage ? 0 : 16,
-            borderBottomLeftRadius: userMessage ? 16 : 0,
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: userMessage ? 'flex-end' : 'flex-start',
-          }}
+          style={[
+            styles.messageItem,
+            {
+              backgroundColor: userMessage
+                ? colors.userMessage
+                : colors.otherMessage,
+
+              borderBottomRightRadius: userMessage ? 0 : 16,
+              borderBottomLeftRadius: userMessage ? 16 : 0,
+
+              alignItems: userMessage ? 'flex-end' : 'flex-start',
+            },
+          ]}
         >
-          <Text style={{ fontSize: 14, color: colors.DarkGrey }}>
-            {item.author}
+          <Text style={styles.messageAuthor}>
+            {users ? users[item.authorEmail.replace('.', ',')].name : ''}
           </Text>
           <Text
             style={{
@@ -126,21 +140,23 @@ export default function GlobalChatScreen({ navigation, route }: any) {
           justifyContent: 'center',
         }}
       >
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          style={{}}
-          data={messages}
-          inverted
-          // getItemLayout={(data, index) => ({
-          //   length: 120,
-          //   offset: 120 * index,
-          //   index,
-          // })}
-          removeClippedSubviews={true}
-          maxToRenderPerBatch={10}
-          windowSize={5}
-          renderItem={({ item }: any) => <RenderChatItem item={item} />}
-        />
+        {users && messages ? (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            style={{ width: '100%' }}
+            data={messages}
+            inverted
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={10}
+            initialNumToRender={10}
+            windowSize={5}
+            renderItem={({ item }: any) => (
+              <RenderChatItem item={item} email={auth.currentUser?.email} />
+            )}
+          />
+        ) : (
+          <></>
+        )}
       </View>
       <View
         style={{

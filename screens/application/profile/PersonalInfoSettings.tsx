@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Dimensions,
+  KeyboardAvoidingView,
   ScrollView,
   StatusBar,
   Text,
@@ -115,7 +116,8 @@ export default function PersonalInfoSettings({ navigation }: any) {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={{ flex: 1, width: '100%' }}
+        style={{ width: '100%' }}
+        keyboardShouldPersistTaps={'handled'}
       >
         <View style={[styles.ViewStart, { paddingVertical: 20 }]}>
           <Text style={{ fontSize: 24, paddingBottom: 20 }}>
@@ -195,7 +197,7 @@ export default function PersonalInfoSettings({ navigation }: any) {
             }}
           >
             <TextInput
-              style={{ fontSize: 18 }}
+              style={{ fontSize: 18, width: '100%' }}
               editable
               multiline
               maxLength={rules.maxBioLength}

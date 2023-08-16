@@ -26,6 +26,9 @@ const width = Dimensions.get('screen').width
 
 export default function CoursesScreen({ navigation }: any) {
   const [courses, setCourses] = useState<any>([])
+  const [tests, setTests] = useState<any>([])
+  const [pageTitle, setPageTitle] = useState<string>('Courses')
+  const [page, setPage] = useState<string>('course')
 
   async function GetCourses() {
     if (auth.currentUser && auth.currentUser.email) {
@@ -36,8 +39,18 @@ export default function CoursesScreen({ navigation }: any) {
     }
   }
 
+  async function GetTests() {
+    if (auth.currentUser && auth.currentUser.email) {
+      const data = ref(getDatabase(), `test/`)
+      onValue(data, (snapshot) => {
+        setTests(Object.values(snapshot.val()))
+      })
+    }
+  }
+
   useEffect(() => {
     GetCourses()
+    GetTests()
   }, [])
 
   const reportCoursesData = [
@@ -50,6 +63,25 @@ export default function CoursesScreen({ navigation }: any) {
       icon: 'documents-outline',
       title: 'PDF',
       action: () => {},
+    },
+  ]
+
+  const coursesTestsData = [
+    {
+      title: 'Courses',
+      action: () => {
+        setPage('course')
+        setPageTitle('Courses')
+      },
+      colors: [colors.Main, colors.Purple],
+    },
+    {
+      title: 'Tests',
+      action: () => {
+        setPage('test')
+        setPageTitle('Tests')
+      },
+      colors: [colors.Green, colors.Main],
     },
   ]
 
@@ -98,14 +130,14 @@ export default function CoursesScreen({ navigation }: any) {
         <StatusBar barStyle="dark-content" backgroundColor={colors.White} />
         <GradientText
           onPress={() => {}}
-          color1={colors.Main}
-          color2={colors.Purple}
+          color1={pageTitle === 'Courses' ? colors.Main : colors.Green}
+          color2={pageTitle === 'Courses' ? colors.Purple : colors.Main}
           style={[styles.BigTitle]}
         >
-          Courses
+          {pageTitle}
         </GradientText>
         <Text style={[styles.commentText, { padding: 15 }]}>
-          {text.coursesComment}
+          {pageTitle === 'Courses' ? text.coursesComment : text.testsComment}
         </Text>
         <View
           style={{
@@ -134,13 +166,63 @@ export default function CoursesScreen({ navigation }: any) {
           padding: width * 0.02,
         }}
       >
-        <FlatList
-          scrollEnabled={false}
-          numColumns={2}
-          style={{ height: '100%', flex: 1 }}
-          data={courses}
-          renderItem={RenderCourseItem}
-        />
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-around',
+            width: '100%',
+            borderBottomWidth: 1,
+            borderColor: colors.White,
+            marginBottom: 10,
+          }}
+        >
+          {coursesTestsData.map((item: any, index: number) => (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => item.action()}
+              style={{
+                width: '40%',
+                padding: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              key={index}
+            >
+              {pageTitle === item.title ? (
+                <GradientText
+                  onPress={() => {}}
+                  color1={item.colors[0]}
+                  color2={item.colors[1]}
+                  style={{ fontSize: 20, fontWeight: '700', letterSpacing: 1 }}
+                >
+                  {pageTitle}
+                </GradientText>
+              ) : (
+                <Text style={{ fontSize: 20, letterSpacing: 1 }}>
+                  {item.title}
+                </Text>
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
+        {pageTitle === 'Courses' ? (
+          <FlatList
+            scrollEnabled={false}
+            numColumns={2}
+            style={{ height: '100%', flex: 1 }}
+            data={courses}
+            renderItem={RenderCourseItem}
+          />
+        ) : (
+          <FlatList
+            scrollEnabled={false}
+            numColumns={2}
+            style={{ height: '100%', flex: 1 }}
+            data={tests}
+            renderItem={RenderCourseItem}
+          />
+        )}
       </View>
     </ScrollView>
   )

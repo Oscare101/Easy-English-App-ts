@@ -8,7 +8,9 @@ const text: Text = {
   'user-not-found': 'No such user',
   error: 'Something went wrong',
   coursesComment:
-    'these lessons are available for self-study, the more lessons you complete, the higher your level will be',
+    'these lessons are available for self-study, you can go through them in your free time and do not forget about practice:)',
+  testsComment:
+    'this is a practical component of training, the more tests you complete, the higher your level will be',
   ConfirmDeletingAccount:
     'By confirming the action, you agree to the permanent deletion of the account from the application database',
   DeletingPost:

@@ -1,17 +1,17 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 const themeSlice = createSlice({
-  name: 'themeFilter',
+  name: 'theme',
   initialState: {
-    themeFilter: 'system', // system dark light
+    theme: 'system', // system dark light
   },
   reducers: {
-    setThemeFilter(state, value: PayloadAction<string>) {
+    setTheme(state, value: PayloadAction<string>) {
       // action: PayloadAction<string>
-      state.themeFilter = value.payload
+      state.theme = value.payload
     },
   },
 })
 
-export const { setThemeFilter } = themeSlice.actions
+export const { setTheme } = themeSlice.actions
 export default themeSlice.reducer

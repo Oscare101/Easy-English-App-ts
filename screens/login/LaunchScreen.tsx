@@ -17,6 +17,7 @@ import BGCircles from '../../components/BGCircles'
 import { setAuthentication } from '../../redux/authentication'
 import { useDispatch } from 'react-redux'
 import * as LocalAuthentication from 'expo-local-authentication'
+import { setTheme } from '../../redux/theme'
 
 export default function LaunchScreen({ navigation }: any) {
   const dispatch = useDispatch()
@@ -25,6 +26,11 @@ export default function LaunchScreen({ navigation }: any) {
     const email = await AsyncStorage.getItem('email')
     const password = await AsyncStorage.getItem('password')
     const authentication = await AsyncStorage.getItem('authentication')
+    const theme = await AsyncStorage.getItem('theme')
+    if (theme) {
+      dispatch(setTheme(theme))
+    }
+
     const hasBiometric = await LocalAuthentication.hasHardwareAsync()
     if (authentication) {
       dispatch(setAuthentication(authentication))

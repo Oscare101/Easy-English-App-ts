@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { Text, View, StatusBar } from 'react-native'
+import { Text, View, StatusBar, useColorScheme } from 'react-native'
 import { Provider } from 'react-redux'
 import { store } from './redux/store'
 import { useSelector } from 'react-redux'
@@ -14,6 +14,11 @@ import Toast from 'react-native-toast-message'
 import colors from './constants/colors'
 import rules from './constants/rules'
 import MainNavigation from './navigation/MainNavigation'
+import { useEffect } from 'react'
+import { GetTheme, GetThemeOpposite } from './functions/Functions'
+import * as NavigationBar from 'expo-navigation-bar'
+import { useDispatch } from 'react-redux'
+import { setThemeColor } from './redux/themeColor'
 
 export default function App() {
   const toastConfig = {
@@ -41,12 +46,43 @@ export default function App() {
       </View>
     ),
   }
+
+  function AppComponent() {
+    const dispatch = useDispatch()
+    const systemTheme = useColorScheme()
+    const { theme } = useSelector((state: RootState) => state.theme)
+    useEffect(() => {
+      NavigationBar.setBackgroundColorAsync(
+        GetTheme(systemTheme, theme) === 'dark' ? colors.DarkBG : colors.LightBG
+      )
+      NavigationBar.setButtonStyleAsync(GetThemeOpposite(systemTheme, theme))
+      dispatch(setThemeColor(GetTheme(systemTheme, theme)))
+    }, [systemTheme, theme])
+    return (
+      <>
+        <StatusBar
+          barStyle={
+            GetTheme(systemTheme, theme) === 'dark'
+              ? 'light-content'
+              : 'dark-content'
+          }
+          backgroundColor={
+            GetTheme(systemTheme, theme) === 'dark'
+              ? colors.DarkBG
+              : colors.LightBG
+          }
+        />
+        <MainNavigation />
+      </>
+    )
+  }
+
   return (
     <Provider store={store}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer theme={DefaultTheme}>
           <StatusBar barStyle="dark-content" backgroundColor={colors.White} />
-          <MainNavigation />
+          <AppComponent />
         </NavigationContainer>
       </GestureHandlerRootView>
       <Toast config={toastConfig} />

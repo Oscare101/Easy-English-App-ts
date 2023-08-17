@@ -12,7 +12,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.White,
   },
   ViewBetween: {
     flex: 1,
@@ -27,7 +26,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    backgroundColor: colors.White,
   },
   ViewAbsolute: {
     position: 'absolute',
@@ -99,7 +97,6 @@ export const styles = StyleSheet.create({
     width: rules.componentWidthPercent,
     padding: 16,
     borderRadius: 16,
-    backgroundColor: colors.RealWhite,
     elevation: 1,
     marginTop: 10,
   },
@@ -178,16 +175,6 @@ export const styles = StyleSheet.create({
     color: colors.Grey,
     textAlign: 'center',
   },
-
-  textName: {
-    fontSize: 22,
-    color: colors.Black,
-  },
-  textFollowersNumber: {
-    fontSize: 18,
-    color: colors.Black,
-  },
-  textFollowers: { fontSize: 14, color: colors.DarkGrey },
 
   text8: {
     fontSize: 8,

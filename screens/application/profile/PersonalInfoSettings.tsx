@@ -112,8 +112,6 @@ export default function PersonalInfoSettings({ navigation }: any) {
 
   return (
     <View style={styles.ViewCenter}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.White} />
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ width: '100%' }}

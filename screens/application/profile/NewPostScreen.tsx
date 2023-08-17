@@ -48,8 +48,6 @@ export default function NewPostScreen({ navigation, route }: any) {
 
   return (
     <View style={styles.ViewCenter}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.White} />
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ flex: 1, width: '100%' }}

@@ -3,16 +3,19 @@ import { LinearGradient } from 'expo-linear-gradient'
 import colors from '../constants/colors'
 import MaskedView from '@react-native-masked-view/masked-view'
 import rules from '../constants/rules'
+import { useSelector } from 'react-redux'
+import { RootState } from '../redux'
 
 export default function SecondaryButton(props: any) {
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+
   return (
     <TouchableOpacity
       style={[{ width: rules.componentWidthPercent }, props.style]}
       activeOpacity={0.8}
       onPress={() => props.action()}
     >
-      <LinearGradient
-        // Button Linear Gradient
+      {/* <LinearGradient
         colors={[colors.Main, colors.Main]}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
@@ -24,22 +27,33 @@ export default function SecondaryButton(props: any) {
           justifyContent: 'center',
           height: 60,
         }}
+      > */}
+      <View
+        style={{
+          flex: 1,
+          height: 60,
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+
+          backgroundColor:
+            themeColor === 'dark' ? colors.DarkBGBlue : colors.LightBGBlue,
+
+          borderRadius: 6,
+        }}
       >
-        <View
+        <Text
           style={{
-            flex: 1,
-            height: '100%',
-            width: '100%',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: colors.White,
-            borderRadius: 6,
+            fontSize: 18,
+            color:
+              themeColor === 'dark'
+                ? colors.DarkTextBlue
+                : colors.LightTextBlue,
           }}
         >
-          <Text style={{ fontSize: 18, color: colors.Main }}>
-            {props.title}
-          </Text>
-          {/* <MaskedView
+          {props.title}
+        </Text>
+        {/* <MaskedView
             style={{ height: 24 }}
             maskElement={
               <Text style={{ fontSize: 18, color: colors.White }}>
@@ -54,8 +68,8 @@ export default function SecondaryButton(props: any) {
               style={{ flex: 1 }}
             />
           </MaskedView> */}
-        </View>
-      </LinearGradient>
+      </View>
+      {/* </LinearGradient> */}
     </TouchableOpacity>
   )
 }

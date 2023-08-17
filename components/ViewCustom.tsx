@@ -5,9 +5,9 @@ import { RootState } from '../redux'
 import colors from '../constants/colors'
 
 export default function ViewCustom({ style, children }: any) {
-  const { themeFilter } = useSelector((state: RootState) => state.themeFilter)
+  const { theme } = useSelector((state: RootState) => state.theme)
   let system = useColorScheme()
-  let colorScheme = themeFilter === 'system' ? system : themeFilter
+  let colorScheme = theme === 'system' ? system : theme
 
   return (
     <ScrollView style={{ flexGrow: 1, backgroundColor: colors.White }}>

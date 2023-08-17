@@ -122,3 +122,19 @@ export function GetText(text: string) {
 
   return GetBlocks(text)
 }
+
+export function GetTheme(systemTheme: any, theme: string) {
+  if (theme === 'system') {
+    return systemTheme
+  } else {
+    return theme
+  }
+}
+
+export function GetThemeOpposite(systemTheme: any, theme: string) {
+  if (theme === 'system') {
+    return systemTheme === 'dakt' ? 'light' : 'dark'
+  } else {
+    return theme === 'dark' ? 'light' : 'dark'
+  }
+}

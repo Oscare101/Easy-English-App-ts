@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   createStackNavigator,
   CardStyleInterpolators,
@@ -9,7 +9,7 @@ import RegistrationScreen from '../screens/login/RegistrationScreen'
 import ProfileScreen from '../screens/application/profile/ProfileScreen'
 import NewUserScreen from '../screens/login/NewUserScreen'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View, useColorScheme } from 'react-native'
 import CoursesScreen from '../screens/application/courses/CoursesScreen'
 import { Ionicons } from '@expo/vector-icons'
 import colors from '../constants/colors'
@@ -21,11 +21,15 @@ import NewPostScreen from '../screens/application/profile/NewPostScreen'
 import FriendsScreen from '../screens/application/friends/FriendsScreen'
 import ChatsScreen from '../screens/application/chat/ChatsScreen'
 import GlobalChatScreen from '../screens/application/chat/GlobalChatScreen'
+import { useSelector } from 'react-redux'
+import { RootState } from '../redux'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
 
 export default function MainNavigation() {
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+
   function TabBar({ state, navigation }: any) {
     const bottomTabData = [
       {
@@ -81,7 +85,10 @@ export default function MainNavigation() {
           height: rules.bottomTabHeight,
           justifyContent: 'center',
           alignItems: 'center',
-          backgroundColor: colors.White,
+          backgroundColor:
+            themeColor === 'dark'
+              ? colors.DarkBGComponent
+              : colors.LightBGComponent,
           elevation: 5,
         }}
       >
@@ -101,12 +108,24 @@ export default function MainNavigation() {
             }}
           >
             {state.index === index ? (
-              <Ionicons name={item.iconActive} size={24} color={colors.Black} />
+              <Ionicons
+                name={item.iconActive}
+                size={24}
+                color={
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText
+                }
+              />
             ) : (
               <Ionicons
                 name={item.iconInactive}
                 size={24}
-                color={colors.Black}
+                color={
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText
+                }
               />
             )}
           </TouchableOpacity>

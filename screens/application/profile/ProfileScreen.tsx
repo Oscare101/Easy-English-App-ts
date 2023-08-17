@@ -25,9 +25,14 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet'
 import text from '../../../constants/text'
+import { GetTheme } from '../../../functions/Functions'
+import { RootState } from '../../../redux'
+import { useSelector } from 'react-redux'
 const width = Dimensions.get('screen').width
 
 export default function ProfileScreen({ navigation }: any) {
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+
   const [user, setUser] = useState<User>({} as User)
   const [usersPosts, setUsersPost] = useState<any>([])
   const [post, setPost] = useState<any>({})
@@ -90,6 +95,13 @@ export default function ProfileScreen({ navigation }: any) {
             width: rules.componentWidthPercent,
             alignSelf: 'center',
             borderRadius: 8,
+            backgroundColor:
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
+            borderWidth: 1,
+            borderColor:
+              themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
           },
         ]}
       >
@@ -110,7 +122,13 @@ export default function ProfileScreen({ navigation }: any) {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={{ fontSize: 18, color: colors.Black }}
+              style={{
+                fontSize: 18,
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText,
+              }}
             >
               {item.author}
             </Text>
@@ -144,14 +162,34 @@ export default function ProfileScreen({ navigation }: any) {
             ))}
           </TouchableOpacity>
         </View>
-        <Text style={{ fontSize: 18, color: colors.Black }}>{item.text}</Text>
+        <Text
+          style={{
+            fontSize: 18,
+            color:
+              themeColor === 'dark'
+                ? colors.DarkMainText
+                : colors.LightMainText,
+          }}
+        >
+          {item.text}
+        </Text>
       </View>
     )
   }
 
   const userCard = (
     <>
-      <View style={styles.Card}>
+      <View
+        style={[
+          styles.Card,
+          {
+            backgroundColor:
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
+          },
+        ]}
+      >
         <View
           style={{
             flexDirection: 'row',
@@ -200,16 +238,36 @@ export default function ProfileScreen({ navigation }: any) {
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.textName}
+              style={{
+                fontSize: 22,
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText,
+              }}
             >
               {user ? user.name : ''}
             </Text>
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.textFollowers}
+              style={{
+                fontSize: 14,
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkCommentText
+                    : colors.LightCommentText,
+              }}
             >
-              <Text style={styles.textFollowersNumber}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color:
+                    themeColor === 'dark'
+                      ? colors.DarkMainText
+                      : colors.LightMainText,
+                }}
+              >
                 {user && user.followers ? user.followers.length : 0}
               </Text>{' '}
               followers
@@ -259,10 +317,27 @@ export default function ProfileScreen({ navigation }: any) {
         </View>
         {user && user.description ? (
           <>
-            <Text style={{ fontSize: 14, paddingTop: 8, color: colors.Grey }}>
+            <Text
+              style={{
+                fontSize: 14,
+                paddingTop: 8,
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkCommentText
+                    : colors.LightCommentText,
+              }}
+            >
               bio
             </Text>
-            <Text style={{ fontSize: 14, color: colors.Black }}>
+            <Text
+              style={{
+                fontSize: 14,
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkCommentText
+                    : colors.LightCommentText,
+              }}
+            >
               {user ? user.description : ''}
             </Text>
           </>
@@ -297,9 +372,15 @@ export default function ProfileScreen({ navigation }: any) {
 
   return (
     <BottomSheetModalProvider>
-      <View style={styles.ViewStart}>
-        <StatusBar barStyle="dark-content" backgroundColor={colors.White} />
-
+      <View
+        style={[
+          styles.ViewStart,
+          {
+            backgroundColor:
+              themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+          },
+        ]}
+      >
         <FlatList
           showsVerticalScrollIndicator={false}
           style={{ flex: 1, width: '100%' }}
@@ -309,7 +390,12 @@ export default function ProfileScreen({ navigation }: any) {
       </View>
       {/* BottomSheet */}
       <BottomSheetModal
-        backgroundStyle={{ backgroundColor: colors.White }}
+        backgroundStyle={{
+          backgroundColor:
+            themeColor === 'dark'
+              ? colors.DarkBGComponent
+              : colors.LightBGComponent,
+        }}
         ref={bottomSheetModalRef}
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
@@ -317,16 +403,38 @@ export default function ProfileScreen({ navigation }: any) {
           <TouchableWithoutFeedback
             onPress={() => bottomSheetModalRef.current?.dismiss()}
           >
-            <View style={[style, { backgroundColor: colors.ShadowBG }]}>
-              <StatusBar backgroundColor={colors.ShadowBG} />
+            <View
+              style={[
+                style,
+                {
+                  backgroundColor:
+                    themeColor === 'dark' ? colors.DarkShadow : colors.ShadowBG,
+                  opacity: 0.5,
+                },
+              ]}
+            >
+              <StatusBar
+                backgroundColor={
+                  themeColor === 'dark' ? colors.DarkShadow : colors.LightShadow
+                }
+              />
             </View>
           </TouchableWithoutFeedback>
         )}
       >
-        <View style={{ backgroundColor: colors.White, flex: 1 }}>
+        <View
+          style={{
+            backgroundColor:
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
+            flex: 1,
+          }}
+        >
           <View
             style={{
-              borderColor: colors.LightGrey,
+              borderColor:
+                themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
               borderBottomWidth: 1,
               width: '100%',
             }}
@@ -340,6 +448,10 @@ export default function ProfileScreen({ navigation }: any) {
                 paddingVertical: 10,
                 width: rules.componentWidthPercent,
                 alignSelf: 'center',
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText,
               }}
             >
               {post && post.text ? post.text.replace(/\n/g, ' ') : ''}
@@ -350,7 +462,10 @@ export default function ProfileScreen({ navigation }: any) {
               fontSize: 18,
               textAlign: 'center',
               paddingVertical: 10,
-              color: colors.DarkGrey,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
             }}
           >
             {text.DeletingPost}
@@ -364,8 +479,16 @@ export default function ProfileScreen({ navigation }: any) {
               marginTop: 20,
               borderRadius: 8,
               overflow: 'hidden',
-              backgroundColor: colors.White,
-              borderColor: colors.Error,
+              backgroundColor:
+                themeColor === 'dark'
+                  ? colors.DarkBGComponent
+                  : colors.LightBGComponent,
+
+              borderColor:
+                themeColor === 'dark'
+                  ? colors.DarkDangerText
+                  : colors.LightDangerText,
+
               borderWidth: 2,
               height: 60,
               alignSelf: 'center',
@@ -374,7 +497,15 @@ export default function ProfileScreen({ navigation }: any) {
               padding: 2,
             }}
           >
-            <Text style={{ color: colors.Error, fontSize: 20 }}>
+            <Text
+              style={{
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkDangerText
+                    : colors.LightDangerText,
+                fontSize: 20,
+              }}
+            >
               Delete post
             </Text>
           </TouchableOpacity>

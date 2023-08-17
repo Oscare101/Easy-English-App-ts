@@ -375,8 +375,6 @@ export default function ProfileSettings({ navigation }: any) {
   return (
     <BottomSheetModalProvider>
       <View style={styles.ViewCenter}>
-        <StatusBar barStyle="dark-content" backgroundColor={colors.White} />
-
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={{ flex: 1, width: '100%' }}

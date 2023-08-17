@@ -14,14 +14,47 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { GetUser, LogIn } from '../../functions/Actions'
 import { User } from '../../constants/interfaces'
 import BGCircles from '../../components/BGCircles'
+import { setAuthentication } from '../../redux/authentication'
+import { useDispatch } from 'react-redux'
+import * as LocalAuthentication from 'expo-local-authentication'
 
 export default function LaunchScreen({ navigation }: any) {
+  const dispatch = useDispatch()
   const [loadingData, setLoadingData] = useState<boolean>(true)
-
   async function GetUserStorage() {
     const email = await AsyncStorage.getItem('email')
     const password = await AsyncStorage.getItem('password')
-    if (email && password) {
+    const authentication = await AsyncStorage.getItem('authentication')
+    const hasBiometric = await LocalAuthentication.hasHardwareAsync()
+    if (authentication) {
+      dispatch(setAuthentication(authentication))
+    }
+    if (authentication === 'biometric' && email && password && hasBiometric) {
+      setLoadingData(false)
+
+      const user = await LocalAuthentication.authenticateAsync()
+
+      if (user.success) {
+        setLoadingData(true)
+        const responseLogin = await LogIn(email, password)
+        const responseUser: any = await GetUser(email)
+        if (!responseLogin.error) {
+          if (responseUser && responseUser.name) {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'NavigationApp' }],
+            })
+          } else {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'NewUserScreen' }],
+            })
+          }
+        } else {
+          setLoadingData(false)
+        }
+      }
+    } else if (authentication === 'auto' && email && password) {
       const responseLogin = await LogIn(email, password)
       const responseUser: any = await GetUser(email)
       if (!responseLogin.error) {

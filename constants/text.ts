@@ -15,6 +15,8 @@ const text: Text = {
     'By confirming the action, you agree to the permanent deletion of the account from the application database',
   DeletingPost:
     'By deleting this post, you agree that it will be permanently deleted from the application database',
+  SecurityRulesText:
+    'These settings will affect the security of your account. Choose a format convenient for you',
 }
 
 export default text

@@ -1,0 +1,149 @@
+{
+  "user": {
+    "123@gmail.com": {
+      "name": "Kyryl",
+      "surname": "",
+      "email": "123@gmail.com",
+      "birthDate": "05.10.2000",
+      "level": 2,
+      "mentor": false,
+      "admin": false,
+      "lastOnline": "1686036227659",
+      "onLine": false,
+      "photo": "image.DATA",
+      "description": "erty uiol mhg fd cv bnm klo iu ytr ewasdf ghjk l, mnb vcs we rt yui ol mn bvd swa xfgy uiol kmn g",
+      "interests": {
+        "0": {
+          "title": "programming"
+        },
+        "COMMMENT": "----- MUCH MORE INTERESTS -----"
+      },
+      "courses": {},
+      "posts": {
+        "1686036149671": {
+          "title": "First post",
+          "text": "wertyuiolkj hgfdsxcvbnmkjhgfd swertyuiok hgxc vbnm liuytre",
+          "time": "1686036149671",
+
+          "likes": {
+            "0": {
+              "email": "qwerty@gmail.com"
+            },
+            "COMMMENT": "----- MUCH MORE LIKES -----"
+          },
+          "comments": {
+            "1686036149671": {
+              "email": "qwerty@gmail.com",
+              "name": "Someone",
+              "text": "ertyuio kjhgfd cvbnk uyfd"
+            },
+            "COMMMENT": "----- MUCH MORE COMMENTS -----"
+          }
+        },
+        "COMMMENT": "----- MUCH MORE POSTS -----"
+      },
+      "chats": {
+        "privat": {
+          "123@gmail.com_qwerty@gmail.com": {
+            "person": "qwerty@gmail.com"
+          },
+          "COMMMENT": "----- MUCH MORE PERSONAL CHATS -----"
+        },
+        "group": {}
+      },
+      "friends": {
+        "qwerty@gmail.com": {
+          "name": "Name",
+          "email": "qwerty@gmail.com",
+          "chat": "123@gmail.com_qwerty@gmail.com"
+        },
+        "COMMMENT": "----- MUCH MORE FRIENDS -----"
+      }
+    },
+    "COMMMENT": "----- MUCH MORE USERS -----"
+  },
+
+  "posts": {
+    "1686036149671": {
+      "email": "123@gmail.com",
+      "name": "Kyryl",
+      "time": "1686036149671",
+      "title": "First post",
+      "text": "wertyuiolkj hgfdsxcvbnmkjhgfd swertyuiok hgxc vbnm liuytre",
+      "likes": {
+        "0": {
+          "email": "qwerty@gmail.com"
+        },
+        "COMMMENT": "----- MUCH MORE LIKES -----"
+      },
+      "comments": {
+        "1686036149671": {
+          "email": "qwerty@gmail.com",
+          "name": "Someone",
+          "text": "ertyuio kjhgfd cvbnk uyfd"
+        },
+        "COMMMENT": "----- MUCH MORE COMMENTS -----"
+      }
+    },
+    "COMMMENT": "----- MUCH MORE POSTS -----"
+  },
+
+  "chats": {
+    "global": {
+      "main": {
+        "title": "Main Chat",
+        "messages": {
+          "1686036149671": {
+            "message": "Hi, what is your name?",
+            "author": "qwerty@gmail.com",
+            "name": "Someone",
+            "time": "1686036149671"
+          },
+          "1686036227659": {
+            "message": "Hello, Kyryl?",
+            "author": "123@gmail.com",
+            "name": "Kyryl",
+            "time": "1686036227659"
+          },
+          "COMMMENT": "----- MUCH MORE MESSAGES -----"
+        }
+      },
+      "COMMMENT": "----- MUCH MORE GLOBAL CHATS -----"
+    },
+    "private": {
+      "123@gmail.com_qwerty@gmail.com": {
+        "persons": {
+          "qwerty@gmail.com": {
+            "email": "qwerty@gmail.com",
+            "name": "Someone"
+          },
+          "123@gmail.com": {
+            "email": "123@gmail.com",
+            "name": "Kyryl"
+          },
+          "COMMMENT": "----- MUCH MORE PRIVATE CHAT USERS  -----"
+        },
+        "messages": {
+          "1686036149671": {
+            "message": "Hi, what is your name?",
+            "author": "qwerty@gmail.com",
+            "name": "Someone",
+            "time": "1686036149671"
+          },
+          "1686036227659": {
+            "message": "Hello, Kyryl?",
+            "author": "123@gmail.com",
+            "name": "Kyryl",
+            "time": "1686036227659"
+          },
+          "COMMMENT": "----- MUCH MORE MESSAGES -----"
+        }
+      },
+      "COMMMENT": "----- MUCH MORE PERSONAL CHATS -----"
+    },
+    "group": {
+      "COMMMENT": "----- TODO GROUP CHATS -----"
+    }
+  },
+  "courses": {}
+}

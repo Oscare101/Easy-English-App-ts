@@ -20,12 +20,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { auth } from '../../firebase'
 import DangerousButton from '../../components/DangerousButton'
 import BGCircles from '../../components/BGCircles'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../redux'
 
 export default function NewUserScreen({ navigation }: any) {
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+
   const [name, setName] = useState<string>('')
   const [surname, setSurname] = useState<string>('')
   const [birthDate, setBirthdate] = useState<any>('')
-
   const [error, setError] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -62,26 +65,41 @@ export default function NewUserScreen({ navigation }: any) {
       }}
     >
       <View style={styles.ViewCenter}>
-        <StatusBar barStyle="light-content" backgroundColor={colors.Main} />
+        <StatusBar
+          barStyle={themeColor === 'dark' ? 'dark-content' : 'light-content'}
+          backgroundColor={
+            themeColor === 'dark' ? colors.DarkTextBlue : colors.LightTextBlue
+          }
+        />
         <BGCircles type={1} />
         <View style={styles.ViewBetween}>
-          <Text style={[styles.text40, styles.textWhite, styles.textTitle]}>
-            New User
+          <Text
+            style={{
+              fontSize: 40,
+              letterSpacing: 1,
+              fontWeight: '700',
+              color: themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+            }}
+          >
+            Create user
           </Text>
           <View style={styles.center100}>
             <InputText
+              colorState={1}
               placeholder="name *"
               type="name"
               value={name}
               setValue={(value: string) => setName(value)}
             />
             <InputText
+              colorState={1}
               placeholder="surname"
               type="name"
               value={surname}
               setValue={(value: string) => setSurname(value)}
             />
             <InputText
+              colorState={1}
               placeholder="birthdate"
               type="date"
               value={birthDate}

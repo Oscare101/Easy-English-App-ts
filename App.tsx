@@ -48,18 +48,22 @@ export default function App() {
   }
 
   function AppComponent() {
+    const { themeColor } = useSelector((state: RootState) => state.themeColor)
     const dispatch = useDispatch()
     const systemTheme = useColorScheme()
     const { theme } = useSelector((state: RootState) => state.theme)
+
     useEffect(() => {
+      dispatch(setThemeColor(GetTheme(systemTheme, theme)))
       NavigationBar.setBackgroundColorAsync(
         GetTheme(systemTheme, theme) === 'dark' ? colors.DarkBG : colors.LightBG
       )
       NavigationBar.setButtonStyleAsync(GetThemeOpposite(systemTheme, theme))
-      dispatch(setThemeColor(GetTheme(systemTheme, theme)))
     }, [systemTheme, theme])
     return (
-      <>
+      <NavigationContainer
+        theme={themeColor === 'dark' ? DarkTheme : DefaultTheme}
+      >
         <StatusBar
           barStyle={
             GetTheme(systemTheme, theme) === 'dark'
@@ -73,17 +77,14 @@ export default function App() {
           }
         />
         <MainNavigation />
-      </>
+      </NavigationContainer>
     )
   }
 
   return (
     <Provider store={store}>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer theme={DefaultTheme}>
-          <StatusBar barStyle="dark-content" backgroundColor={colors.White} />
-          <AppComponent />
-        </NavigationContainer>
+        <AppComponent />
       </GestureHandlerRootView>
       <Toast config={toastConfig} />
     </Provider>

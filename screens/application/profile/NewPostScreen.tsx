@@ -19,16 +19,19 @@ import { CreatePost, UpdateUser } from '../../../functions/Actions'
 import { Ionicons } from '@expo/vector-icons'
 import colors from '../../../constants/colors'
 import rules from '../../../constants/rules'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../redux'
 
 const width = Dimensions.get('screen').width
 
 export default function NewPostScreen({ navigation, route }: any) {
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+
   const [post, setPost] = useState<string>('')
   const [surname, setSurname] = useState<string>('')
   const [birthDate, setBirthdate] = useState<any>('')
   const [gender, setGender] = useState<any>('')
   const [description, setDescription] = useState<string>('')
-
   const [loading, setLoading] = useState<boolean>(false)
 
   async function CreatePostFunc() {
@@ -47,15 +50,36 @@ export default function NewPostScreen({ navigation, route }: any) {
   }
 
   return (
-    <View style={styles.ViewCenter}>
+    <View
+      style={[
+        styles.ViewCenter,
+        {
+          backgroundColor:
+            themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+        },
+      ]}
+    >
+      <StatusBar
+        barStyle={themeColor === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor={themeColor === 'dark' ? colors.DarkBG : colors.LightBG}
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ flex: 1, width: '100%' }}
         keyboardShouldPersistTaps={'handled'}
       >
         <View style={[styles.ViewStart, { paddingVertical: 20 }]}>
-          <Text style={{ fontSize: 24, paddingBottom: 20 }}>
-            ProfileSettings
+          <Text
+            style={{
+              fontSize: 24,
+              paddingBottom: 20,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
+            }}
+          >
+            Create post
           </Text>
 
           <View
@@ -64,7 +88,10 @@ export default function NewPostScreen({ navigation, route }: any) {
               alignItems: 'center',
               justifyContent: 'space-between',
               width: rules.componentWidthPercent,
-              borderColor: colors.Border,
+              borderColor:
+                themeColor === 'dark'
+                  ? colors.DarkBorder
+                  : colors.LightCommentText,
               borderWidth: 2,
               borderRadius: 8,
               marginVertical: 8,
@@ -73,7 +100,14 @@ export default function NewPostScreen({ navigation, route }: any) {
             }}
           >
             <TextInput
-              style={{ fontSize: 18, width: '100%' }}
+              style={{
+                fontSize: 18,
+                width: '100%',
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText,
+              }}
               editable
               multiline
               maxLength={rules.maxPostLength}
@@ -81,6 +115,11 @@ export default function NewPostScreen({ navigation, route }: any) {
               value={post}
               onChangeText={(text) => setPost(text)}
               placeholder="your text here"
+              placeholderTextColor={
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText
+              }
             />
           </View>
           <Text
@@ -88,7 +127,10 @@ export default function NewPostScreen({ navigation, route }: any) {
               textAlign: 'right',
               alignSelf: 'flex-end',
               paddingRight: '4%',
-              color: colors.DarkGrey,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
             }}
           >
             {post.length}/{rules.maxPostLength}

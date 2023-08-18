@@ -44,6 +44,7 @@ export default function ProfileScreen({ navigation }: any) {
       setPost({})
     }
   }, [])
+
   function GetUserFunc() {
     if (auth.currentUser && auth.currentUser.email) {
       const data = ref(
@@ -132,7 +133,15 @@ export default function ProfileScreen({ navigation }: any) {
             >
               {item.author}
             </Text>
-            <Text style={{ fontSize: 14, color: colors.DarkGrey }}>
+            <Text
+              style={{
+                fontSize: 14,
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkCommentText
+                    : colors.LightCommentText,
+              }}
+            >
               {new Date(item.date).toLocaleString()}
             </Text>
           </View>
@@ -154,7 +163,10 @@ export default function ProfileScreen({ navigation }: any) {
                 style={{
                   width: 4,
                   height: 4,
-                  backgroundColor: colors.DarkGrey,
+                  backgroundColor:
+                    themeColor === 'dark'
+                      ? colors.DarkCommentText
+                      : colors.LightCommentText,
                   borderRadius: 4,
                   margin: 2,
                 }}
@@ -212,7 +224,10 @@ export default function ProfileScreen({ navigation }: any) {
                 style={{
                   width: '100%',
                   height: '100%',
-                  backgroundColor: colors.Grey,
+                  backgroundColor:
+                    themeColor === 'dark'
+                      ? colors.DarkCommentText
+                      : colors.LightCommentText,
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
@@ -220,7 +235,11 @@ export default function ProfileScreen({ navigation }: any) {
                 <MaterialIcons
                   name="insert-photo"
                   size={width * 0.15}
-                  color={colors.LightGrey}
+                  color={
+                    themeColor === 'dark'
+                      ? colors.DarkBorder
+                      : colors.LightBorder
+                  }
                 />
               </View>
             )}
@@ -306,7 +325,10 @@ export default function ProfileScreen({ navigation }: any) {
                   style={{
                     width: 5,
                     height: 5,
-                    backgroundColor: colors.DarkGrey,
+                    backgroundColor:
+                      themeColor === 'dark'
+                        ? colors.DarkCommentText
+                        : colors.LightCommentText,
                     borderRadius: 5,
                     margin: 2,
                   }}
@@ -372,6 +394,10 @@ export default function ProfileScreen({ navigation }: any) {
 
   return (
     <BottomSheetModalProvider>
+      <StatusBar
+        barStyle={themeColor === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor={themeColor === 'dark' ? colors.DarkBG : colors.LightBG}
+      />
       <View
         style={[
           styles.ViewStart,
@@ -408,14 +434,15 @@ export default function ProfileScreen({ navigation }: any) {
                 style,
                 {
                   backgroundColor:
-                    themeColor === 'dark' ? colors.DarkShadow : colors.ShadowBG,
-                  opacity: 0.5,
+                    themeColor === 'dark'
+                      ? colors.DarkShadow
+                      : colors.LightShadow,
                 },
               ]}
             >
               <StatusBar
                 backgroundColor={
-                  themeColor === 'dark' ? colors.DarkShadow : colors.LightShadow
+                  themeColor === 'dark' ? colors.DarkBG : colors.LightShadow
                 }
               />
             </View>
@@ -425,9 +452,7 @@ export default function ProfileScreen({ navigation }: any) {
         <View
           style={{
             backgroundColor:
-              themeColor === 'dark'
-                ? colors.DarkBGComponent
-                : colors.LightBGComponent,
+              themeColor === 'dark' ? colors.DarkBGModal : colors.LightBGModal,
             flex: 1,
           }}
         >
@@ -436,6 +461,10 @@ export default function ProfileScreen({ navigation }: any) {
               borderColor:
                 themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
               borderBottomWidth: 1,
+              backgroundColor:
+                themeColor === 'dark'
+                  ? colors.DarkBGComponent
+                  : colors.LightBGComponent,
               width: '100%',
             }}
           >
@@ -457,19 +486,33 @@ export default function ProfileScreen({ navigation }: any) {
               {post && post.text ? post.text.replace(/\n/g, ' ') : ''}
             </Text>
           </View>
-          <Text
+          <View
             style={{
-              fontSize: 18,
-              textAlign: 'center',
-              paddingVertical: 10,
-              color:
+              width: rules.componentWidthPercent,
+              alignSelf: 'center',
+              marginTop: 16,
+              borderRadius: 8,
+              backgroundColor:
                 themeColor === 'dark'
-                  ? colors.DarkCommentText
-                  : colors.LightCommentText,
+                  ? colors.DarkBGComponent
+                  : colors.LightBGComponent,
+              padding: 8,
             }}
           >
-            {text.DeletingPost}
-          </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                textAlign: 'center',
+                paddingVertical: 10,
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkCommentText
+                    : colors.LightCommentText,
+              }}
+            >
+              {text.DeletingPost}
+            </Text>
+          </View>
 
           <TouchableOpacity
             activeOpacity={0.8}
@@ -481,15 +524,15 @@ export default function ProfileScreen({ navigation }: any) {
               overflow: 'hidden',
               backgroundColor:
                 themeColor === 'dark'
-                  ? colors.DarkBGComponent
-                  : colors.LightBGComponent,
+                  ? colors.DarkBGDanger
+                  : colors.LightBGDanger,
 
               borderColor:
                 themeColor === 'dark'
                   ? colors.DarkDangerText
                   : colors.LightDangerText,
 
-              borderWidth: 2,
+              borderWidth: 1,
               height: 60,
               alignSelf: 'center',
               alignItems: 'center',

@@ -23,6 +23,7 @@ import ChatsScreen from '../screens/application/chat/ChatsScreen'
 import GlobalChatScreen from '../screens/application/chat/GlobalChatScreen'
 import { useSelector } from 'react-redux'
 import { RootState } from '../redux'
+import PDFScreen from '../screens/application/pdf/PDFScreen'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -90,6 +91,9 @@ export default function MainNavigation() {
               ? colors.DarkBGComponent
               : colors.LightBGComponent,
           elevation: 5,
+          borderTopWidth: 1,
+          borderColor:
+            themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
         }}
       >
         {bottomTabData.map((item: any, index: number) => (
@@ -330,6 +334,17 @@ export default function MainNavigation() {
         }}
         name="GlobalChatScreen"
         component={GlobalChatScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          gestureDirection: 'horizontal',
+          gestureEnabled: true,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+        name="PDFScreen"
+        component={PDFScreen}
       />
     </Stack.Navigator>
   )

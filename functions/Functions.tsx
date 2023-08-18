@@ -1,9 +1,13 @@
 import { Dimensions, Text, View } from 'react-native'
 import colors from '../constants/colors'
 import { styles } from '../constants/styles'
+import { useSelector } from 'react-redux'
+import { RootState } from '../redux'
 const width = Dimensions.get('screen').width
 
 export function GetText(text: string) {
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+
   function ParseText(text: string) {
     const parts = text
       .split(/(#T#|#R#|#Y#|#G#|#I#|#B#|#C#|#E#)/)
@@ -12,49 +16,115 @@ export function GetText(text: string) {
     return parts.map((part: any, index: any) => {
       if (part === '#T#' && !!parts[index + 1] && parts[index + 2] === '#T#') {
         return (
-          <Text key={index} style={styles.textCourseText}>
+          <Text
+            key={index}
+            style={{
+              fontSize: 20,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
+            }}
+          >
             {parts[index + 1]}{' '}
           </Text>
         )
       }
       if (part === '#R#' && !!parts[index + 1] && parts[index + 2] === '#R#') {
         return (
-          <Text key={index} style={styles.textCourseRed}>
+          <Text
+            key={index}
+            style={{
+              fontSize: 20,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkDangerText
+                  : colors.LightDangerText,
+            }}
+          >
             {parts[index + 1]}{' '}
           </Text>
         )
       }
       if (part === '#Y#' && !!parts[index + 1] && parts[index + 2] === '#Y#') {
         return (
-          <Text key={index} style={styles.textCourseYellow}>
+          <Text
+            key={index}
+            style={{
+              fontSize: 20,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkWarningText
+                  : colors.LightWarningText,
+            }}
+          >
             {parts[index + 1]}{' '}
           </Text>
         )
       }
       if (part === '#G#' && !!parts[index + 1] && parts[index + 2] === '#G#') {
         return (
-          <Text key={index} style={styles.textCourseGreen}>
+          <Text
+            key={index}
+            style={{
+              fontSize: 20,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkSuccessText
+                  : colors.LightSuccessText,
+            }}
+          >
             {parts[index + 1]}{' '}
           </Text>
         )
       }
       if (part === '#B#' && !!parts[index + 1] && parts[index + 2] === '#B#') {
         return (
-          <Text key={index} style={styles.textCourseBold}>
+          <Text
+            key={index}
+            style={{
+              fontSize: 20,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
+              fontWeight: '700',
+            }}
+          >
             {parts[index + 1]}{' '}
           </Text>
         )
       }
       if (part === '#I#' && !!parts[index + 1] && parts[index + 2] === '#I#') {
         return (
-          <Text key={index} style={styles.textCourseItalic}>
+          <Text
+            key={index}
+            style={{
+              fontSize: 20,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
+              fontStyle: 'italic',
+            }}
+          >
             {parts[index + 1]}{' '}
           </Text>
         )
       }
       if (part === '#C#' && !!parts[index + 1] && parts[index + 2] === '#C#') {
         return (
-          <Text key={index} style={styles.textCourseComment}>
+          <Text
+            key={index}
+            style={{
+              fontSize: 20,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
+              fontFamily: 'monospace',
+            }}
+          >
             {parts[index + 1]}{' '}
           </Text>
         )
@@ -87,7 +157,8 @@ export function GetText(text: string) {
             style={{
               flexDirection: 'column',
               width: '98%',
-              backgroundColor: colors.RealWhite,
+              backgroundColor:
+                themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
               paddingLeft: 20,
               borderRadius: 4,
               elevation: 2,
@@ -96,7 +167,10 @@ export function GetText(text: string) {
           >
             <Text
               style={{
-                color: colors.Grey,
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkCommentText
+                    : colors.LightCommentText,
                 textAlign: 'right',
                 paddingRight: 20,
               }}

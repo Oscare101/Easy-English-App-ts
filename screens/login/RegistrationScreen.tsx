@@ -18,8 +18,12 @@ import { Registration } from '../../functions/Actions'
 import text from '../../constants/text'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import BGCircles from '../../components/BGCircles'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../redux'
 
 export default function RegistrationScreen({ navigation }: any) {
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+
   const [email, setEmail] = useState<string>('')
   const [password1, setPassword1] = useState<string>('')
   const [password2, setPassword2] = useState<string>('')
@@ -47,26 +51,41 @@ export default function RegistrationScreen({ navigation }: any) {
       }}
     >
       <View style={styles.ViewCenter}>
-        <StatusBar barStyle="light-content" backgroundColor={colors.Main} />
+        <StatusBar
+          barStyle={themeColor === 'dark' ? 'dark-content' : 'light-content'}
+          backgroundColor={
+            themeColor === 'dark' ? colors.DarkTextBlue : colors.LightTextBlue
+          }
+        />
         <BGCircles type={1} />
         <View style={styles.ViewBetween}>
-          <Text style={[styles.text40, styles.textWhite, styles.textTitle]}>
+          <Text
+            style={{
+              fontSize: 40,
+              letterSpacing: 1,
+              fontWeight: '700',
+              color: themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+            }}
+          >
             Registration
           </Text>
           <View style={styles.center100}>
             <InputText
+              colorState={1}
               placeholder="email"
               type="email"
               value={email}
               setValue={(value: string) => setEmail(value)}
             />
             <InputText
+              colorState={1}
               placeholder="password"
               type="password"
               value={password1}
               setValue={(value: string) => setPassword1(value)}
             />
             <InputText
+              colorState={1}
               placeholder="password"
               type="password"
               value={password2}

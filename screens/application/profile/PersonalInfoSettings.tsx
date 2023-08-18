@@ -20,10 +20,14 @@ import { UpdateUser } from '../../../functions/Actions'
 import { Ionicons } from '@expo/vector-icons'
 import colors from '../../../constants/colors'
 import rules from '../../../constants/rules'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../redux'
 
 const width = Dimensions.get('screen').width
 
 export default function PersonalInfoSettings({ navigation }: any) {
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+
   const [name, setName] = useState<string>('')
   const [surname, setSurname] = useState<string>('')
   const [birthDate, setBirthdate] = useState<any>('')
@@ -111,23 +115,42 @@ export default function PersonalInfoSettings({ navigation }: any) {
   ]
 
   return (
-    <View style={styles.ViewCenter}>
+    <View
+      style={[
+        styles.ViewCenter,
+        {
+          backgroundColor:
+            themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+        },
+      ]}
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ width: '100%' }}
         keyboardShouldPersistTaps={'handled'}
       >
         <View style={[styles.ViewStart, { paddingVertical: 20 }]}>
-          <Text style={{ fontSize: 24, paddingBottom: 20 }}>
+          <Text
+            style={{
+              fontSize: 24,
+              paddingBottom: 20,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
+            }}
+          >
             ProfileSettings
           </Text>
           <InputText
+            colorState={2}
             type="name"
             value={name}
             setValue={(value: string) => setName(value)}
             placeholder="name *"
           />
           <InputText
+            colorState={2}
             type="name"
             value={surname}
             setValue={(value: string) => setSurname(value)}
@@ -136,7 +159,10 @@ export default function PersonalInfoSettings({ navigation }: any) {
           <Text
             style={{
               fontSize: 18,
-              color: colors.DarkGrey,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
               textAlign: 'left',
               alignSelf: 'flex-start',
               paddingLeft: '4%',
@@ -166,16 +192,32 @@ export default function PersonalInfoSettings({ navigation }: any) {
                         : item.title === 'female'
                         ? colors.Purple
                         : colors.Green
-                      : colors.Border,
+                      : themeColor === 'dark'
+                      ? colors.DarkBorder
+                      : colors.LightCommentText,
                   borderRadius: 8,
                   alignItems: 'center',
                   justifyContent: 'center',
                   height: 60,
                   marginVertical: 8,
-                  opacity: gender === item.title ? 1 : 0.3,
+                  // opacity: gender === item.title ? 1 : 0.3,
                 }}
               >
-                <Ionicons name={item.icon} size={24} color="black" />
+                <Ionicons
+                  name={item.icon}
+                  size={24}
+                  color={
+                    gender === item.title
+                      ? item.title === 'male'
+                        ? colors.Main
+                        : item.title === 'female'
+                        ? colors.Purple
+                        : colors.Green
+                      : themeColor === 'dark'
+                      ? colors.DarkBorder
+                      : colors.LightCommentText
+                  }
+                />
               </TouchableOpacity>
             ))}
           </View>
@@ -185,7 +227,10 @@ export default function PersonalInfoSettings({ navigation }: any) {
               alignItems: 'center',
               justifyContent: 'space-between',
               width: rules.componentWidthPercent,
-              borderColor: colors.Border,
+              borderColor:
+                themeColor === 'dark'
+                  ? colors.DarkBorder
+                  : colors.LightCommentText,
               borderWidth: 2,
               borderRadius: 8,
               marginVertical: 8,
@@ -195,7 +240,14 @@ export default function PersonalInfoSettings({ navigation }: any) {
             }}
           >
             <TextInput
-              style={{ fontSize: 18, width: '100%' }}
+              style={{
+                fontSize: 18,
+                width: '100%',
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText,
+              }}
               editable
               multiline
               maxLength={rules.maxBioLength}
@@ -203,6 +255,11 @@ export default function PersonalInfoSettings({ navigation }: any) {
               value={description}
               onChangeText={(text) => setDescription(text)}
               placeholder="description"
+              placeholderTextColor={
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText
+              }
             />
           </View>
           <Text
@@ -210,7 +267,10 @@ export default function PersonalInfoSettings({ navigation }: any) {
               textAlign: 'right',
               alignSelf: 'flex-end',
               paddingRight: '4%',
-              color: colors.DarkGrey,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
             }}
           >
             {description.length}/{rules.maxBioLength}

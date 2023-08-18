@@ -18,8 +18,12 @@ import { LogIn } from '../../functions/Actions'
 import text from '../../constants/text'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import BGCircles from '../../components/BGCircles'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../redux'
 
 export default function LoginScreen({ navigation }: any) {
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [error, setError] = useState<string>('')
@@ -45,21 +49,43 @@ export default function LoginScreen({ navigation }: any) {
         Keyboard.dismiss()
       }}
     >
-      <View style={styles.ViewCenter}>
-        <StatusBar barStyle="light-content" backgroundColor={colors.Main} />
+      <View
+        style={[
+          styles.ViewCenter,
+          {
+            backgroundColor:
+              themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+          },
+        ]}
+      >
+        <StatusBar
+          barStyle={themeColor === 'dark' ? 'dark-content' : 'light-content'}
+          backgroundColor={
+            themeColor === 'dark' ? colors.DarkTextBlue : colors.LightTextBlue
+          }
+        />
         <BGCircles type={1} />
         <View style={styles.ViewBetween}>
-          <Text style={[styles.text40, styles.textWhite, styles.textTitle]}>
+          <Text
+            style={{
+              fontSize: 40,
+              letterSpacing: 1,
+              fontWeight: '700',
+              color: themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+            }}
+          >
             Login
           </Text>
           <View style={styles.center100}>
             <InputText
+              colorState={1}
               placeholder="email"
               type="email"
               value={email}
               setValue={(value: string) => setEmail(value)}
             />
             <InputText
+              colorState={1}
               placeholder="password"
               type="password"
               value={password}

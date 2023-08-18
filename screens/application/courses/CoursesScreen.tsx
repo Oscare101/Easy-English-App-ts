@@ -21,14 +21,19 @@ import GradientText from '../../../components/GradientText'
 import rules from '../../../constants/rules'
 import RenderReportCoursesItem from '../../../components/RenderReportCoursesItem'
 import text from '../../../constants/text'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../redux'
 
 const width = Dimensions.get('screen').width
 
 export default function CoursesScreen({ navigation }: any) {
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+
   const [courses, setCourses] = useState<any>([])
   const [tests, setTests] = useState<any>([])
   const [pageTitle, setPageTitle] = useState<string>('Courses')
   const [page, setPage] = useState<string>('course')
+  const [topCardHeight, setTopCardHeight] = useState<number>(232.38)
 
   async function GetCourses() {
     if (auth.currentUser && auth.currentUser.email) {
@@ -62,7 +67,9 @@ export default function CoursesScreen({ navigation }: any) {
     {
       icon: 'documents-outline',
       title: 'PDF',
-      action: () => {},
+      action: () => {
+        navigation.navigate('PDFScreen')
+      },
     },
   ]
 
@@ -92,14 +99,25 @@ export default function CoursesScreen({ navigation }: any) {
         style={{
           padding: 10,
           width: width * 0.44,
-          borderColor: colors.Border,
+          borderColor:
+            themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
           borderWidth: 1,
           borderRadius: 8,
           margin: width * 0.02,
         }}
         onPress={() => navigation.navigate('CoursePage', { course: item })}
       >
-        <Text style={{ fontSize: 18 }}>{item.title}</Text>
+        <Text
+          style={{
+            fontSize: 18,
+            color:
+              themeColor === 'dark'
+                ? colors.DarkMainText
+                : colors.LightMainText,
+          }}
+        >
+          {item.title}
+        </Text>
         <GradientText
           onPress={() => navigation.navigate('CoursePage', { course: item })}
           color1={rules.colors[rules.levels[item.level]][0]}
@@ -108,7 +126,44 @@ export default function CoursesScreen({ navigation }: any) {
         >
           {rules.levels[item.level]}
         </GradientText>
-        <Text>{item.description}</Text>
+      </TouchableOpacity>
+    )
+  }
+
+  function RenderTestItem({ item }: any) {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.8}
+        style={{
+          padding: 10,
+          width: width * 0.44,
+          borderColor:
+            themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
+          borderWidth: 1,
+          borderRadius: 8,
+          margin: width * 0.02,
+        }}
+        onPress={() => navigation.navigate('CoursePage', { course: item })}
+      >
+        <Text
+          style={{
+            fontSize: 18,
+            color:
+              themeColor === 'dark'
+                ? colors.DarkMainText
+                : colors.LightMainText,
+          }}
+        >
+          {item.title}
+        </Text>
+        <GradientText
+          onPress={() => navigation.navigate('CoursePage', { course: item })}
+          color1={rules.colors[rules.levels[item.level]][0]}
+          color2={rules.colors[rules.levels[item.level]][1]}
+          style={[styles.text16]}
+        >
+          {rules.levels[item.level]}
+        </GradientText>
       </TouchableOpacity>
     )
   }
@@ -116,18 +171,43 @@ export default function CoursesScreen({ navigation }: any) {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      style={{ flex: 1, backgroundColor: colors.RealWhite }}
+      style={{
+        flex: 1,
+        backgroundColor:
+          themeColor === 'dark'
+            ? colors.DarkBGComponent
+            : colors.LightBGComponent,
+      }}
     >
       <View
+        onLayout={(event) => {
+          setTopCardHeight(event.nativeEvent.layout.height)
+        }}
         style={{
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: colors.White,
+          backgroundColor:
+            themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
           paddingVertical: 20,
         }}
       >
-        <StatusBar barStyle="dark-content" backgroundColor={colors.White} />
+        <View
+          style={{
+            position: 'absolute',
+            backgroundColor:
+              themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+            height: 50,
+            width: '100%',
+            top: topCardHeight,
+          }}
+        />
+        <StatusBar
+          barStyle={themeColor === 'dark' ? 'light-content' : 'dark-content'}
+          backgroundColor={
+            themeColor === 'dark' ? colors.DarkBG : colors.LightBG
+          }
+        />
         <GradientText
           onPress={() => {}}
           color1={pageTitle === 'Courses' ? colors.Main : colors.Green}
@@ -136,7 +216,17 @@ export default function CoursesScreen({ navigation }: any) {
         >
           {pageTitle}
         </GradientText>
-        <Text style={[styles.commentText, { padding: 15 }]}>
+        <Text
+          style={{
+            padding: 15,
+            color:
+              themeColor === 'dark'
+                ? colors.DarkCommentText
+                : colors.LightCommentText,
+            textAlign: 'center',
+            fontSize: 12,
+          }}
+        >
           {pageTitle === 'Courses' ? text.coursesComment : text.testsComment}
         </Text>
         <View
@@ -158,10 +248,13 @@ export default function CoursesScreen({ navigation }: any) {
           width: '100%',
           height: '100%',
           flex: 1,
-          borderRadius: 16,
+          borderRadius: 24,
           borderBottomRightRadius: 0,
           borderBottomLeftRadius: 0,
-          backgroundColor: colors.RealWhite,
+          backgroundColor:
+            themeColor === 'dark'
+              ? colors.DarkBGComponent
+              : colors.LightBGComponent,
           elevation: 25,
           padding: width * 0.02,
         }}
@@ -173,7 +266,8 @@ export default function CoursesScreen({ navigation }: any) {
             justifyContent: 'space-around',
             width: '100%',
             borderBottomWidth: 1,
-            borderColor: colors.White,
+            borderColor:
+              themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
             marginBottom: 10,
           }}
         >
@@ -199,7 +293,16 @@ export default function CoursesScreen({ navigation }: any) {
                   {pageTitle}
                 </GradientText>
               ) : (
-                <Text style={{ fontSize: 20, letterSpacing: 1 }}>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    letterSpacing: 1,
+                    color:
+                      themeColor === 'dark'
+                        ? colors.DarkCommentText
+                        : colors.LightCommentText,
+                  }}
+                >
                   {item.title}
                 </Text>
               )}
@@ -220,7 +323,7 @@ export default function CoursesScreen({ navigation }: any) {
             numColumns={2}
             style={{ height: '100%', flex: 1 }}
             data={tests}
-            renderItem={RenderCourseItem}
+            renderItem={RenderTestItem}
           />
         )}
       </View>

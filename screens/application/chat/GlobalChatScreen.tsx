@@ -24,13 +24,16 @@ import {
 import { Ionicons } from '@expo/vector-icons'
 import colors from '../../../constants/colors'
 import rules from '../../../constants/rules'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../redux'
 
 const width = Dimensions.get('screen').width
 
 export default function GlobalChatScreen({ navigation, route }: any) {
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+
   const [messages, setMessages] = useState<any>([])
   const [users, setUsers] = useState<any>({})
-
   const [newMessage, setNewMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -94,8 +97,12 @@ export default function GlobalChatScreen({ navigation, route }: any) {
             styles.messageItem,
             {
               backgroundColor: userMessage
-                ? colors.userMessage
-                : colors.otherMessage,
+                ? themeColor === 'dark'
+                  ? colors.DarkBGBlue
+                  : colors.LightBGBlue
+                : themeColor === 'dark'
+                ? colors.DarkBGModal
+                : colors.LightBGModal,
 
               borderBottomRightRadius: userMessage ? 0 : 16,
               borderBottomLeftRadius: userMessage ? 16 : 0,
@@ -104,19 +111,38 @@ export default function GlobalChatScreen({ navigation, route }: any) {
             },
           ]}
         >
-          <Text style={styles.messageAuthor}>
+          <Text
+            style={{
+              fontSize: 14,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
+            }}
+          >
             {users ? users[item.authorEmail.replace('.', ',')].name : ''}
           </Text>
           <Text
             style={{
               alignSelf: userMessage ? 'flex-start' : 'flex-end',
               fontSize: 20,
-              color: colors.Black,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
             }}
           >
             {item.text}
           </Text>
-          <Text style={{ fontSize: 12, color: colors.Grey }}>
+          <Text
+            style={{
+              fontSize: 12,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
+            }}
+          >
             {new Date(item.date).toLocaleString()}
           </Text>
         </View>
@@ -125,16 +151,38 @@ export default function GlobalChatScreen({ navigation, route }: any) {
   }
 
   return (
-    <View style={styles.ViewCenter}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.White} />
-
-      <Text style={{ fontSize: 20, paddingVertical: 10 }}>Chat</Text>
+    <View
+      style={[
+        styles.ViewCenter,
+        {
+          backgroundColor:
+            themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+        },
+      ]}
+    >
+      <StatusBar
+        barStyle={themeColor === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor={themeColor === 'dark' ? colors.DarkBG : colors.LightBG}
+      />
+      <Text
+        style={{
+          fontSize: 20,
+          paddingVertical: 10,
+          color:
+            themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
+        }}
+      >
+        Chat
+      </Text>
       <View
         style={{
           flex: 1,
           width: '100%',
           height: '100%',
-          backgroundColor: colors.RealWhite,
+          backgroundColor:
+            themeColor === 'dark'
+              ? colors.DarkBGComponent
+              : colors.LightBGComponent,
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
@@ -171,7 +219,8 @@ export default function GlobalChatScreen({ navigation, route }: any) {
             alignItems: 'center',
             justifyContent: 'space-between',
             width: width * rules.componentWidth - 40,
-            borderColor: colors.Border,
+            borderColor:
+              themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
             borderWidth: 2,
             borderRadius: 8,
             marginVertical: 8,
@@ -181,7 +230,14 @@ export default function GlobalChatScreen({ navigation, route }: any) {
           }}
         >
           <TextInput
-            style={{ fontSize: 18, width: '100%' }}
+            style={{
+              fontSize: 18,
+              width: '100%',
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
+            }}
             editable
             multiline
             maxLength={rules.maxPostLength}
@@ -193,6 +249,11 @@ export default function GlobalChatScreen({ navigation, route }: any) {
               }
             }}
             placeholder="your text here"
+            placeholderTextColor={
+              themeColor === 'dark'
+                ? colors.DarkCommentText
+                : colors.LightCommentText
+            }
           />
         </View>
 
@@ -207,7 +268,19 @@ export default function GlobalChatScreen({ navigation, route }: any) {
           disabled={!newMessage || loading}
           onPress={CreateMessageFunc}
         >
-          <Ionicons name="send-outline" size={24} color="black" />
+          <Ionicons
+            name="send-outline"
+            size={24}
+            color={
+              !newMessage || loading
+                ? themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText
+                : themeColor === 'dark'
+                ? colors.DarkMainText
+                : colors.LightMainText
+            }
+          />
         </TouchableOpacity>
       </View>
     </View>

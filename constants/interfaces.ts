@@ -26,5 +26,6 @@ export interface User {
   interests?: userInterest[]
   courses?: any
   posts?: userPost[]
+  phone?: string
   // chats?:userChats[]
 }

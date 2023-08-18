@@ -4,19 +4,42 @@ import rules from '../../../constants/rules'
 import GradientText from '../../../components/GradientText'
 import colors from '../../../constants/colors'
 import { GetText } from '../../../functions/Functions'
+import { RootState } from '../../../redux'
+import { useSelector } from 'react-redux'
 
 const width = Dimensions.get('screen').width
 
 export default function CoursePage({ navigation, route }: any) {
-  return (
-    <View style={styles.ViewCenter}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.White} />
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
 
+  return (
+    <View
+      style={[
+        styles.ViewCenter,
+        {
+          backgroundColor:
+            themeColor === 'dark'
+              ? colors.DarkBGComponent
+              : colors.LightBGComponent,
+        },
+      ]}
+    >
+      <StatusBar
+        barStyle={themeColor === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor={themeColor === 'dark' ? colors.DarkBG : colors.LightBG}
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ flex: 1, width: '100%' }}
       >
-        <View style={[styles.ViewStart, { paddingVertical: 20 }]}>
+        <View
+          style={[
+            styles.ViewStart,
+            {
+              paddingVertical: 20,
+            },
+          ]}
+        >
           <GradientText
             onPress={() => {}}
             color1={rules.colors[rules.levels[route.params.course.level]][0]}
@@ -29,7 +52,8 @@ export default function CoursePage({ navigation, route }: any) {
             style={{
               width: rules.componentWidthPercent,
               height: 1,
-              backgroundColor: colors.LightGrey,
+              backgroundColor:
+                themeColor === 'dark' ? colors.DarkBorder : colors.LightBG,
               marginVertical: 10,
             }}
           />

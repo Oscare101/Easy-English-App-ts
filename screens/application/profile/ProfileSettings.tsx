@@ -28,12 +28,16 @@ import { RootState } from '../../../redux'
 import { useDispatch } from 'react-redux'
 import { setAuthentication } from '../../../redux/authentication'
 import * as LocalAuthentication from 'expo-local-authentication'
+import { setTheme } from '../../../redux/theme'
 
 export default function ProfileSettings({ navigation }: any) {
   const dispatch = useDispatch()
   const { authentication } = useSelector(
     (state: RootState) => state.authentication
   )
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+  const { theme } = useSelector((state: RootState) => state.theme)
+
   const [hasBiometric, setHasBiometric] = useState<boolean>(false)
   const [bottomSheetContent, setBottomSheetContent] = useState<string>('')
   const [user, setUser] = useState<User>({} as User)
@@ -54,7 +58,7 @@ export default function ProfileSettings({ navigation }: any) {
       type: 'button',
       title: 'Edit personal info',
       icon: 'chevron-forward',
-      color: colors.Black,
+      color: themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
       action: () => {
         navigation.navigate('PersonalInfoSettings')
       },
@@ -63,9 +67,19 @@ export default function ProfileSettings({ navigation }: any) {
       type: 'button',
       title: user && user.photo ? 'Change photo' : 'Set photo',
       icon: 'chevron-forward',
-      color: colors.Black,
+      color: themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
       action: () => {
         // navigation.navigate('PersonalInfoSettings')
+      },
+    },
+    {
+      type: 'button',
+      title: 'Theme',
+      icon: themeColor === 'dark' ? 'moon-outline' : 'sunny-outline',
+      color: themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
+      action: () => {
+        setBottomSheetContent('themeZone')
+        bottomSheetModalRef.current?.present()
       },
     },
     { type: 'title', title: 'Security' },
@@ -73,14 +87,9 @@ export default function ProfileSettings({ navigation }: any) {
       type: 'button',
       title: 'Security settings',
       icon: 'lock-open-outline',
-      color: colors.Black,
+      color: themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
       action: () => {
-        // if (hasBiometric) {
-        //   dispatch(setBiometric(!biometric))
-        //   AsyncStorage.setItem('biometric', (!biometric).toString())
-        // }
         setBottomSheetContent('securityZone')
-
         bottomSheetModalRef.current?.present()
       },
     },
@@ -89,7 +98,8 @@ export default function ProfileSettings({ navigation }: any) {
       type: 'button',
       title: 'LogOut',
       icon: 'log-out-outline',
-      color: colors.Error,
+      color:
+        themeColor === 'dark' ? colors.DarkDangerText : colors.DarkDangerText,
       action: () => {
         LogOutFunc()
       },
@@ -98,7 +108,7 @@ export default function ProfileSettings({ navigation }: any) {
       type: 'button',
       title: 'Danger zone',
       icon: '',
-      color: colors.Black,
+      color: themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
       action: () => {
         setBottomSheetContent('dangerZone')
         bottomSheetModalRef.current?.present()
@@ -109,6 +119,8 @@ export default function ProfileSettings({ navigation }: any) {
   async function DeleteAccountFunc() {
     if (auth.currentUser && auth.currentUser.email) {
       await DeleteUser(auth.currentUser.email)
+      dispatch(setAuthentication('auto'))
+      AsyncStorage.setItem('authentication', 'auto')
 
       navigation.reset({
         index: 0,
@@ -120,6 +132,8 @@ export default function ProfileSettings({ navigation }: any) {
   async function LogOutFunc() {
     const response = await LogOut()
     if (!response.error) {
+      dispatch(setAuthentication('auto'))
+      AsyncStorage.setItem('authentication', 'auto')
       navigation.reset({
         index: 0,
         routes: [{ name: 'LaunchScreen' }],
@@ -150,8 +164,7 @@ export default function ProfileSettings({ navigation }: any) {
     {
       state: 'password',
       title: 'Password',
-      description:
-        'Use your email and password for every login. This method is the most secure',
+      description: 'Use your email and password for every login',
       icon: 'lock-open-outline',
       needBiometric: false,
     },
@@ -171,16 +184,47 @@ export default function ProfileSettings({ navigation }: any) {
     },
   ]
 
+  const themeRules = [
+    {
+      state: 'system',
+      title: 'System',
+      description: "Use your device's theme",
+      icon: 'phone-portrait-outline',
+    },
+    {
+      state: 'light',
+      title: 'Light',
+      description: 'Always use light theme',
+      icon: 'sunny-outline',
+    },
+    {
+      state: 'dark',
+      title: 'Dark',
+      description: 'Always use dark theme',
+      icon: 'moon-outline',
+    },
+  ]
+
   function RenderSettingsItem({ item }: any) {
     const title = (
       <View
         style={{
-          width: '100%',
-          opacity: 0.5,
-          padding: 10,
+          width: rules.componentWidthPercent,
+          alignSelf: 'center',
+          paddingVertical: 10,
         }}
       >
-        <Text style={{ fontSize: 16, color: colors.Black }}>{item.title}</Text>
+        <Text
+          style={{
+            fontSize: 16,
+            color:
+              themeColor === 'dark'
+                ? colors.DarkCommentText
+                : colors.LightCommentText,
+          }}
+        >
+          {item.title}
+        </Text>
       </View>
     )
     const button = (
@@ -188,17 +232,25 @@ export default function ProfileSettings({ navigation }: any) {
         activeOpacity={0.8}
         onPress={() => item.action()}
         style={{
-          borderColor: colors.LightGrey,
+          borderColor:
+            themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
           borderBottomWidth: 1,
-          width: '100%',
+          width: rules.componentWidthPercent,
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: item.icon ? 'space-between' : 'center',
-          padding: 15,
-          paddingHorizontal: 20,
+          paddingVertical: 15,
+          alignSelf: 'center',
         }}
       >
-        <Text style={{ fontSize: 20, color: item.color }}>{item.title}</Text>
+        <Text
+          style={{
+            fontSize: 20,
+            color: item.color,
+          }}
+        >
+          {item.title}
+        </Text>
         <Ionicons name={item.icon} size={24} color={item.color} />
       </TouchableOpacity>
     )
@@ -208,11 +260,22 @@ export default function ProfileSettings({ navigation }: any) {
 
   function DangerZone() {
     return (
-      <View style={{ backgroundColor: colors.White, flex: 1 }}>
+      <View
+        style={{
+          backgroundColor:
+            themeColor === 'dark' ? colors.DarkBGModal : colors.LightBGModal,
+          flex: 1,
+        }}
+      >
         <View
           style={{
-            borderColor: colors.LightGrey,
+            borderColor:
+              themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
             borderBottomWidth: 1,
+            backgroundColor:
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
             width: '100%',
           }}
         >
@@ -221,21 +284,43 @@ export default function ProfileSettings({ navigation }: any) {
               fontSize: 20,
               textAlign: 'center',
               paddingVertical: 10,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
             }}
           >
             Dange Zone
           </Text>
         </View>
-        <Text
+        <View
           style={{
-            fontSize: 18,
-            textAlign: 'center',
-            paddingVertical: 10,
-            color: colors.Black,
+            width: rules.componentWidthPercent,
+            alignSelf: 'center',
+            marginTop: 16,
+            borderRadius: 8,
+            backgroundColor:
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
+            padding: 8,
           }}
         >
-          {text.ConfirmDeletingAccount}
-        </Text>
+          <Text
+            style={{
+              fontSize: 18,
+              textAlign: 'center',
+              paddingVertical: 10,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
+            }}
+          >
+            {text.ConfirmDeletingAccount}
+          </Text>
+        </View>
+
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => setConfirmDeletingAccount(!confirmDeletingAccount)}
@@ -246,12 +331,16 @@ export default function ProfileSettings({ navigation }: any) {
             padding: 10,
             width: '100%',
             paddingHorizontal: 20,
+            opacity: confirmDeletingAccount ? 1 : 0.5,
           }}
         >
           <Text
             style={{
               fontSize: 18,
-              color: confirmDeletingAccount ? colors.Black : colors.Grey,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
             }}
           >
             I confirm
@@ -264,11 +353,22 @@ export default function ProfileSettings({ navigation }: any) {
               justifyContent: 'center',
               borderRadius: 4,
               borderWidth: 2,
-              borderColor: confirmDeletingAccount ? colors.Black : colors.Grey,
+              borderColor:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
             }}
           >
             {confirmDeletingAccount ? (
-              <Ionicons name="checkmark-sharp" size={24} color="black" />
+              <Ionicons
+                name="checkmark-sharp"
+                size={24}
+                color={
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText
+                }
+              />
             ) : (
               <></>
             )}
@@ -276,21 +376,43 @@ export default function ProfileSettings({ navigation }: any) {
         </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={0.8}
-          onPress={DeleteAccountFunc}
+          disabled={!confirmDeletingAccount}
+          onPress={() => {
+            if (confirmDeletingAccount) {
+              DeleteAccountFunc()
+            }
+          }}
           style={{
             width: rules.componentWidthPercent,
             opacity: confirmDeletingAccount ? 1 : 0.5,
             marginTop: 20,
             borderRadius: 8,
             overflow: 'hidden',
-            backgroundColor: colors.Error,
+            backgroundColor: confirmDeletingAccount
+              ? themeColor === 'dark'
+                ? colors.DarkBGDanger
+                : colors.LightBGDanger
+              : '#00000000',
             height: 60,
             alignSelf: 'center',
             alignItems: 'center',
             justifyContent: 'center',
+            borderWidth: 1,
+            borderColor:
+              themeColor === 'dark'
+                ? colors.DarkDangerText
+                : colors.LightDangerText,
           }}
         >
-          <Text style={{ color: colors.White, fontSize: 20 }}>
+          <Text
+            style={{
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkDangerText
+                  : colors.LightDangerText,
+              fontSize: 20,
+            }}
+          >
             Delete Account
           </Text>
         </TouchableOpacity>
@@ -300,12 +422,23 @@ export default function ProfileSettings({ navigation }: any) {
 
   function SecurityZone() {
     return (
-      <View style={{ backgroundColor: colors.White, flex: 1 }}>
+      <View
+        style={{
+          backgroundColor:
+            themeColor === 'dark' ? colors.DarkBGModal : colors.LightBGModal,
+          flex: 1,
+        }}
+      >
         <View
           style={{
-            borderColor: colors.LightGrey,
+            borderColor:
+              themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
             borderBottomWidth: 1,
             width: '100%',
+            backgroundColor:
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
           }}
         >
           <Text
@@ -313,21 +446,43 @@ export default function ProfileSettings({ navigation }: any) {
               fontSize: 20,
               textAlign: 'center',
               paddingVertical: 10,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
             }}
           >
             Security
           </Text>
         </View>
-        <Text
+        <View
           style={{
-            fontSize: 18,
-            textAlign: 'center',
-            paddingVertical: 10,
-            color: colors.Black,
+            width: rules.componentWidthPercent,
+            alignSelf: 'center',
+            marginTop: 16,
+            borderRadius: 8,
+            backgroundColor:
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
+            padding: 8,
           }}
         >
-          {text.SecurityRulesText}
-        </Text>
+          <Text
+            style={{
+              fontSize: 18,
+              textAlign: 'center',
+              paddingVertical: 10,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
+            }}
+          >
+            {text.SecurityRulesText}
+          </Text>
+        </View>
+
         {securityRules
           .filter((i: any) =>
             i.needBiometric ? hasBiometric : !i.needBiometric
@@ -349,7 +504,15 @@ export default function ProfileSettings({ navigation }: any) {
                 AsyncStorage.setItem('authentication', item.state)
               }}
             >
-              <Ionicons name={item.icon} size={24} color={colors.Black} />
+              <Ionicons
+                name={item.icon}
+                size={24}
+                color={
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText
+                }
+              />
               <View
                 style={{
                   width: '100%',
@@ -359,10 +522,157 @@ export default function ProfileSettings({ navigation }: any) {
                   paddingHorizontal: 20,
                 }}
               >
-                <Text style={{ fontSize: 18, color: colors.Black }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color:
+                      themeColor === 'dark'
+                        ? colors.DarkMainText
+                        : colors.LightMainText,
+                  }}
+                >
                   {item.title}
                 </Text>
-                <Text style={{ fontSize: 10, color: colors.DarkGrey }}>
+                <Text
+                  style={{
+                    fontSize: 10,
+                    color:
+                      themeColor === 'dark'
+                        ? colors.DarkCommentText
+                        : colors.LightCommentText,
+                  }}
+                >
+                  {item.description}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+      </View>
+    )
+  }
+
+  function ThemeZone() {
+    return (
+      <View
+        style={{
+          backgroundColor:
+            themeColor === 'dark' ? colors.DarkBGModal : colors.LightBGModal,
+          flex: 1,
+        }}
+      >
+        <View
+          style={{
+            borderColor:
+              themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
+            borderBottomWidth: 1,
+            width: '100%',
+            backgroundColor:
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 20,
+              textAlign: 'center',
+              paddingVertical: 10,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
+            }}
+          >
+            Theme
+          </Text>
+        </View>
+        <View
+          style={{
+            width: rules.componentWidthPercent,
+            alignSelf: 'center',
+            marginTop: 16,
+            borderRadius: 8,
+            backgroundColor:
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
+            padding: 8,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              textAlign: 'center',
+              paddingVertical: 10,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
+            }}
+          >
+            {text.ThemeRulesText}
+          </Text>
+        </View>
+
+        {themeRules
+          .filter((i: any) =>
+            i.needBiometric ? hasBiometric : !i.needBiometric
+          )
+          .map((item: any, index: number) => (
+            <TouchableOpacity
+              key={index}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: 10,
+                width: '100%',
+                paddingHorizontal: 20,
+                opacity: theme === item.state ? 1 : 0.5,
+              }}
+              onPress={async () => {
+                dispatch(setTheme(item.state))
+                AsyncStorage.setItem('theme', item.state)
+              }}
+            >
+              <Ionicons
+                name={item.icon}
+                size={24}
+                color={
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText
+                }
+              />
+              <View
+                style={{
+                  width: '100%',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                  paddingHorizontal: 20,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color:
+                      themeColor === 'dark'
+                        ? colors.DarkMainText
+                        : colors.LightMainText,
+                  }}
+                >
+                  {item.title}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 10,
+                    color:
+                      themeColor === 'dark'
+                        ? colors.DarkCommentText
+                        : colors.LightCommentText,
+                  }}
+                >
                   {item.description}
                 </Text>
               </View>
@@ -374,7 +684,21 @@ export default function ProfileSettings({ navigation }: any) {
 
   return (
     <BottomSheetModalProvider>
-      <View style={styles.ViewCenter}>
+      <View
+        style={[
+          styles.ViewCenter,
+          {
+            backgroundColor:
+              themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+          },
+        ]}
+      >
+        <StatusBar
+          barStyle={themeColor === 'dark' ? 'light-content' : 'dark-content'}
+          backgroundColor={
+            themeColor === 'dark' ? colors.DarkBG : colors.LightBG
+          }
+        />
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={{ flex: 1, width: '100%' }}
@@ -382,7 +706,10 @@ export default function ProfileSettings({ navigation }: any) {
           <View style={[styles.ViewStart, { paddingVertical: 20 }]}>
             <View
               style={{
-                borderColor: colors.LightGrey,
+                borderColor:
+                  themeColor === 'dark'
+                    ? colors.DarkBorder
+                    : colors.LightBorder,
                 borderBottomWidth: 1,
                 borderStyle: 'dashed',
                 width: '100%',
@@ -392,10 +719,26 @@ export default function ProfileSettings({ navigation }: any) {
                 marginBottom: 20,
               }}
             >
-              <Text style={{ fontSize: 24, color: colors.Black }}>
+              <Text
+                style={{
+                  fontSize: 24,
+                  color:
+                    themeColor === 'dark'
+                      ? colors.DarkMainText
+                      : colors.LightMainText,
+                }}
+              >
                 {user ? user.name : ''}
               </Text>
-              <Text style={{ fontSize: 18, color: colors.DarkGrey }}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color:
+                    themeColor === 'dark'
+                      ? colors.DarkCommentText
+                      : colors.LightCommentText,
+                }}
+              >
                 {user ? user.email : ''}
               </Text>
             </View>
@@ -409,21 +752,44 @@ export default function ProfileSettings({ navigation }: any) {
 
             {/* BottomSheet */}
             <BottomSheetModal
-              backgroundStyle={{ backgroundColor: colors.White }}
+              backgroundStyle={{
+                backgroundColor:
+                  themeColor === 'dark'
+                    ? colors.DarkBGComponent
+                    : colors.LightBGComponent,
+              }}
               ref={bottomSheetModalRef}
               snapPoints={snapPoints}
               backdropComponent={({ style }) => (
                 <TouchableWithoutFeedback
                   onPress={() => bottomSheetModalRef.current?.dismiss()}
                 >
-                  <View style={[style, { backgroundColor: colors.ShadowBG }]}>
-                    <StatusBar backgroundColor={colors.ShadowBG} />
+                  <View
+                    style={[
+                      style,
+                      {
+                        backgroundColor:
+                          themeColor === 'dark'
+                            ? colors.DarkShadow
+                            : colors.LightShadow,
+                      },
+                    ]}
+                  >
+                    <StatusBar
+                      backgroundColor={
+                        themeColor === 'dark'
+                          ? colors.DarkBG
+                          : colors.LightShadow
+                      }
+                    />
                   </View>
                 </TouchableWithoutFeedback>
               )}
             >
               {bottomSheetContent === 'dangerZone' ? (
                 <DangerZone />
+              ) : bottomSheetContent === 'themeZone' ? (
+                <ThemeZone />
               ) : (
                 <SecurityZone />
               )}

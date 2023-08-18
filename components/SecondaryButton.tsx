@@ -11,7 +11,14 @@ export default function SecondaryButton(props: any) {
 
   return (
     <TouchableOpacity
-      style={[{ width: rules.componentWidthPercent }, props.style]}
+      style={[
+        {
+          width: rules.componentWidthPercent,
+          height: 60,
+          opacity: props.disable ? 0.5 : 1,
+        },
+        props.style,
+      ]}
       activeOpacity={0.8}
       onPress={() => props.action()}
     >

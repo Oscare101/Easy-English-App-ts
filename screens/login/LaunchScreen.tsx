@@ -18,8 +18,12 @@ import { setAuthentication } from '../../redux/authentication'
 import { useDispatch } from 'react-redux'
 import * as LocalAuthentication from 'expo-local-authentication'
 import { setTheme } from '../../redux/theme'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../redux'
 
 export default function LaunchScreen({ navigation }: any) {
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+
   const dispatch = useDispatch()
   const [loadingData, setLoadingData] = useState<boolean>(true)
   async function GetUserStorage() {
@@ -35,7 +39,12 @@ export default function LaunchScreen({ navigation }: any) {
     if (authentication) {
       dispatch(setAuthentication(authentication))
     }
-    if (authentication === 'biometric' && email && password && hasBiometric) {
+    if (
+      authentication === 'biometric' &&
+      email !== null &&
+      password !== null &&
+      hasBiometric
+    ) {
       setLoadingData(false)
 
       const user = await LocalAuthentication.authenticateAsync()
@@ -89,7 +98,12 @@ export default function LaunchScreen({ navigation }: any) {
 
   return (
     <View style={styles.ViewCenter}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.Main} />
+      <StatusBar
+        barStyle={themeColor === 'dark' ? 'dark-content' : 'light-content'}
+        backgroundColor={
+          themeColor === 'dark' ? colors.DarkTextBlue : colors.LightTextBlue
+        }
+      />
       <BGCircles type={2} />
 
       {loadingData ? (
@@ -100,7 +114,14 @@ export default function LaunchScreen({ navigation }: any) {
         <></>
       )}
       <View style={styles.ViewBetween}>
-        <Text style={[styles.text40, styles.textWhite, styles.textTitle]}>
+        <Text
+          style={{
+            fontSize: 40,
+            letterSpacing: 1,
+            fontWeight: '700',
+            color: themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+          }}
+        >
           Hello
         </Text>
         <View style={styles.center100}>

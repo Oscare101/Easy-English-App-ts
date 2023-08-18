@@ -1,5 +1,4 @@
 import { Dimensions, StyleSheet } from 'react-native'
-import colors from './colors'
 import rules from './rules'
 
 const width = Dimensions.get('screen').width
@@ -54,7 +53,6 @@ export const styles = StyleSheet.create({
     top: -height * 0.75,
     left: -height / 3,
     zIndex: 2,
-    backgroundColor: colors.Main,
   },
   Circle2: {
     width: height * 2,
@@ -64,10 +62,9 @@ export const styles = StyleSheet.create({
     top: -height * 1.15,
     left: -height,
     zIndex: 1,
-    backgroundColor: colors.White,
   },
-  Circle3: { width: '100%', height: '100%', backgroundColor: colors.Border },
-  Circle4: { width: '100%', height: '100%', backgroundColor: colors.Main },
+  Circle3: { width: '100%', height: '100%' },
+  Circle4: { width: '100%', height: '100%' },
   Circle5: {
     width: height * 2,
     height: height * 2,
@@ -76,7 +73,6 @@ export const styles = StyleSheet.create({
     bottom: -height * 1.3,
     right: -height,
     zIndex: 1,
-    backgroundColor: colors.White,
   },
   Circle6: {
     width: height,
@@ -86,7 +82,6 @@ export const styles = StyleSheet.create({
     bottom: -height * 0.75,
     right: -height / 3,
     zIndex: 2,
-    backgroundColor: colors.Border,
   },
   center100: {
     width: '100%',
@@ -107,7 +102,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: rules.componentWidthPercent,
     height: 60,
-    borderColor: colors.Border,
     borderWidth: 2,
     borderRadius: 8,
     marginVertical: 8,
@@ -129,51 +123,13 @@ export const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
   },
-  messageAuthor: { fontSize: 14, color: colors.DarkGrey },
 
   // TEXTS
-
-  textCourseText: {
-    fontSize: 20,
-    color: colors.Black,
-  },
-  textCourseRed: {
-    fontSize: 20,
-    color: colors.Error,
-  },
-  textCourseYellow: {
-    fontSize: 20,
-    color: colors.Yellow,
-  },
-  textCourseGreen: {
-    fontSize: 20,
-    color: colors.Green,
-  },
-  textCourseBold: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.Black,
-  },
-  textCourseItalic: {
-    fontSize: 20,
-    fontStyle: 'italic',
-    color: colors.Black,
-  },
-  textCourseComment: {
-    fontSize: 20,
-    fontFamily: 'monospace',
-    color: colors.Black,
-  },
 
   BigTitle: {
     fontSize: 50,
     fontWeight: '700',
     letterSpacing: 2,
-  },
-  commentText: {
-    fontSize: 12,
-    color: colors.Grey,
-    textAlign: 'center',
   },
 
   text8: {
@@ -204,15 +160,5 @@ export const styles = StyleSheet.create({
   textTitle: {
     letterSpacing: 1,
     fontWeight: '700',
-  },
-
-  textBlack: {
-    color: colors.Black,
-  },
-  textWhite: {
-    color: colors.White,
-  },
-  ErrorText: {
-    color: colors.Error,
   },
 })

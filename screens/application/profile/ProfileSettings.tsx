@@ -86,7 +86,12 @@ export default function ProfileSettings({ navigation }: any) {
     {
       type: 'button',
       title: 'Security settings',
-      icon: 'lock-open-outline',
+      icon:
+        authentication === 'auto'
+          ? 'repeat'
+          : authentication === 'biometric'
+          ? 'finger-print'
+          : 'lock-open-outline',
       color: themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
       action: () => {
         setBottomSheetContent('securityZone')
@@ -179,7 +184,7 @@ export default function ProfileSettings({ navigation }: any) {
       state: 'auto',
       title: 'Auto login',
       description: "Don't ask for a password and login automatically",
-      icon: 'log-in-outline',
+      icon: 'repeat',
       needBiometric: false,
     },
   ]

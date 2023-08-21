@@ -125,11 +125,27 @@ export default function ProfileSettings({ navigation }: any) {
     }
   }
 
+  const uriToBlob = (uri: string) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.onload = function () {
+        // return the blob
+        resolve(xhr.response)
+      }
+      xhr.onerror = function () {
+        reject(new Error('uriToBlob failed'))
+      }
+      xhr.responseType = 'blob'
+      xhr.open('GET', uri, true)
+
+      xhr.send(null)
+    })
+  }
+
   async function EditUserPhoto() {
     if (auth.currentUser && auth.currentUser.email && image) {
-      const localFile = await fetch(image)
-      const fileBlob = await localFile.blob()
-      console.log(image)
+      // const localFile = await fetch(image)
+      const fileBlob: any = await uriToBlob(image)
       const storageRef = refStorage(storage, `user/${auth.currentUser?.email}`)
       uploadBytes(storageRef, fileBlob).then((snapshot) => {
         Toast.show({
@@ -149,6 +165,7 @@ export default function ProfileSettings({ navigation }: any) {
       })
     }
   }
+
   async function DeletePhoto() {
     if (auth.currentUser && auth.currentUser.email) {
       const storageRef = refStorage(storage, `user/${auth.currentUser?.email}`)

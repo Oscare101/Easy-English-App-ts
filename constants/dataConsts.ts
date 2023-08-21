@@ -11,5 +11,6 @@ export function NewUser(email: string) {
     onLine: false,
     photo: '',
     description: '',
+    phone: '',
   }
 }

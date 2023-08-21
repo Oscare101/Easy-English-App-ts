@@ -1,13 +1,33 @@
-# TODO
+# Easy English
 
-## login
+✅ - done
+🔶 - in progress
+❌ - moved to the next release
 
-- Hash data
-- Check tab bar icons
-- combime fonts and colors
-- upload image
+### TODO 1.0.0 (mvp)
 
-###### ###### - title
+- ✅ login/registration
+- ✅ profile, theme, security
+- ✅ courses
+- ✅ chat
+- ✅ post
+
+### TODO 1.1.0
+
+- hash data
+- 🔶 tests
+- 🔶 pdf
+- profile image
+
+### TODO 1.2.0
+
+- friends
+- privat chats
+- user status (user, mentor, admin)
+
+---
+
+### styles for text parse
 
 #T# - text
 #C# - comment
@@ -20,5 +40,3 @@
 #N# - new paragraph
 #P# - paragraph blok
 #X# - example block
-
-#T#T#T{Do you know how to use adjectives with prepositions like interested in or similar to? Test what you know with interactive exercises and read the explanation to help you.}T#T#T##R#R#R{whong text}R#R#R#

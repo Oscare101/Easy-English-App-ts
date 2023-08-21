@@ -1,6 +1,7 @@
 import {
   Dimensions,
   FlatList,
+  Image,
   ScrollView,
   StatusBar,
   Text,
@@ -12,7 +13,9 @@ import { styles } from '../../../constants/styles'
 import MainButton from '../../../components/MainButton'
 import { DeletePost, LogOut } from '../../../functions/Actions'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { auth, db } from '../../../firebase'
+import { auth, db, storage } from '../../../firebase'
+import { ref as refStorage, getDownloadURL } from 'firebase/storage'
+
 import { getDatabase, onValue, ref, remove, update } from 'firebase/database'
 import { User } from '../../../constants/interfaces'
 import { MaterialIcons } from '@expo/vector-icons'
@@ -36,7 +39,7 @@ export default function ProfileScreen({ navigation }: any) {
   const [user, setUser] = useState<User>({} as User)
   const [usersPosts, setUsersPost] = useState<any>([])
   const [post, setPost] = useState<any>({})
-
+  const [image, setImage] = useState<any>('')
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(() => [300], [])
   const handleSheetChanges = useCallback((index: number) => {
@@ -54,6 +57,21 @@ export default function ProfileScreen({ navigation }: any) {
       onValue(data, (snapshot) => {
         setUser(snapshot.val() as User)
       })
+    }
+  }
+
+  async function GetUserPhoto() {
+    if (auth.currentUser && auth.currentUser.email) {
+      const img = refStorage(storage, `user/${auth.currentUser?.email}`)
+      await getDownloadURL(img)
+        .then((i) => {
+          setImage(i)
+        })
+        .catch((e) => {
+          if (e.code.includes('storage/object-not-found')) {
+            setImage('')
+          }
+        })
     }
   }
 
@@ -86,6 +104,10 @@ export default function ProfileScreen({ navigation }: any) {
   useEffect(() => {
     GetUserPostsFunc(user.email)
   }, [user])
+
+  useEffect(() => {
+    GetUserPhoto()
+  }, [user.photo])
 
   function renderUserPost({ item }: any) {
     return (
@@ -217,8 +239,13 @@ export default function ProfileScreen({ navigation }: any) {
               overflow: 'hidden',
             }}
           >
-            {user && user.photo ? (
-              <></>
+            {image ? (
+              <Image
+                style={{ width: '100%', height: '100%' }}
+                source={{
+                  uri: image,
+                }}
+              />
             ) : (
               <View
                 style={{

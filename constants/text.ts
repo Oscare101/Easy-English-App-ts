@@ -18,6 +18,8 @@ const text: Text = {
   SecurityRulesText:
     'These settings will affect the security of your account. Choose a format convenient for you',
   ThemeRulesText: 'Сolor theme is how the application will look',
+  ImageText:
+    'You can change your profile picture at any time. All other users will be able to see it',
 }
 
 export default text

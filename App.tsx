@@ -22,11 +22,11 @@ import { setThemeColor } from './redux/themeColor'
 
 export default function App() {
   const toastConfig = {
-    successToast: ({ props }: any) => (
+    ToastMessage: ({ props }: any) => (
       <View
         style={{
           width: rules.componentWidthPercent,
-          backgroundColor: colors.Black,
+          backgroundColor: colors.RealBlack,
           padding: 16,
           flexDirection: 'row',
           justifyContent: 'space-between',

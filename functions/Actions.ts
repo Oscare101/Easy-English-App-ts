@@ -137,3 +137,16 @@ export async function CreateMessage(chatID: string, data: any) {
     console.log('SetNewUser', error)
   }
 }
+
+// PHOTO
+
+export async function SetUserPhotoUpdate(email: string, time: string) {
+  try {
+    await set(
+      ref(getDatabase(), 'user/' + email.replace('.', ',') + '/photo'),
+      time
+    )
+  } catch (error) {
+    console.log('SetNewUser', error)
+  }
+}

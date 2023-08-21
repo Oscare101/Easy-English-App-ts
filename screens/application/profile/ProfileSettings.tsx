@@ -11,11 +11,15 @@ import { styles } from '../../../constants/styles'
 import MainButton from '../../../components/MainButton'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { User } from '../../../constants/interfaces'
-import { auth } from '../../../firebase'
+import { auth, storage } from '../../../firebase'
 import { Ionicons } from '@expo/vector-icons'
 import { getDatabase, onValue, ref } from 'firebase/database'
 import colors from '../../../constants/colors'
-import { DeleteUser, LogOut } from '../../../functions/Actions'
+import {
+  DeleteUser,
+  LogOut,
+  SetUserPhotoUpdate,
+} from '../../../functions/Actions'
 import {
   BottomSheetModal,
   BottomSheetModalProvider,
@@ -29,6 +33,10 @@ import { useDispatch } from 'react-redux'
 import { setAuthentication } from '../../../redux/authentication'
 import * as LocalAuthentication from 'expo-local-authentication'
 import { setTheme } from '../../../redux/theme'
+import { ref as refStorage, uploadBytes, deleteObject } from 'firebase/storage'
+import * as ImagePicker from 'expo-image-picker'
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator'
+import Toast from 'react-native-toast-message'
 
 export default function ProfileSettings({ navigation }: any) {
   const dispatch = useDispatch()
@@ -37,7 +45,7 @@ export default function ProfileSettings({ navigation }: any) {
   )
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
   const { theme } = useSelector((state: RootState) => state.theme)
-
+  const [image, setImage] = useState<any>('')
   const [hasBiometric, setHasBiometric] = useState<boolean>(false)
   const [bottomSheetContent, setBottomSheetContent] = useState<string>('')
   const [user, setUser] = useState<User>({} as User)
@@ -51,6 +59,121 @@ export default function ProfileSettings({ navigation }: any) {
     const has = await LocalAuthentication.hasHardwareAsync()
     setHasBiometric(has)
   }
+
+  async function convertToJPEGFunc(
+    imageUri: any,
+    height: number,
+    width: number
+  ) {
+    try {
+      const jpgImage = await manipulateAsync(
+        imageUri,
+        [{ resize: { width: width, height: height } }],
+        { format: SaveFormat.JPEG, compress: 0.8 }
+      )
+
+      return jpgImage
+    } catch (error) {}
+  }
+
+  async function OpenGallery() {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      quality: 1,
+    })
+
+    if (
+      !result.canceled &&
+      result.assets[0].width > 0 &&
+      result.assets[0].height > 0
+    ) {
+      bottomSheetModalRef.current?.dismiss()
+
+      if (
+        result.assets[0].uri.split('.').slice(-1).join() !== 'jpeg' ||
+        'jpg'
+      ) {
+        const imageJPG = await convertToJPEGFunc(
+          result.assets[0].uri,
+          result.assets[0].height,
+          result.assets[0].width
+        )
+        if (imageJPG && imageJPG.uri) {
+          setImage(imageJPG.uri)
+        }
+      } else {
+        setImage(result.assets[0].uri)
+      }
+    } else {
+    }
+  }
+
+  async function OpenCamera() {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync()
+    if (status !== 'granted') {
+      return
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    })
+
+    if (!result.canceled) {
+      bottomSheetModalRef.current?.dismiss()
+
+      setImage(result.assets[0].uri)
+    }
+  }
+
+  async function EditUserPhoto() {
+    if (auth.currentUser && auth.currentUser.email && image) {
+      const localFile = await fetch(image)
+      const fileBlob = await localFile.blob()
+      console.log(image)
+      const storageRef = refStorage(storage, `user/${auth.currentUser?.email}`)
+      uploadBytes(storageRef, fileBlob).then((snapshot) => {
+        Toast.show({
+          type: 'ToastMessage',
+          props: {
+            title: `Profile photo has been changed`,
+          },
+          position: 'bottom',
+        })
+        bottomSheetModalRef.current?.dismiss()
+        if (auth.currentUser && auth.currentUser.email && image) {
+          SetUserPhotoUpdate(
+            auth.currentUser?.email,
+            new Date().getTime().toString()
+          )
+        }
+      })
+    }
+  }
+  async function DeletePhoto() {
+    if (auth.currentUser && auth.currentUser.email) {
+      const storageRef = refStorage(storage, `user/${auth.currentUser?.email}`)
+      deleteObject(storageRef).then(() => {
+        Toast.show({
+          type: 'ToastMessage',
+          props: {
+            title: `Profile photo has been deleted`,
+          },
+          position: 'bottom',
+        })
+        bottomSheetModalRef.current?.dismiss()
+        if (auth.currentUser && auth.currentUser.email) {
+          SetUserPhotoUpdate(
+            auth.currentUser?.email,
+            new Date().getTime().toString()
+          )
+        }
+      })
+    }
+  }
+
+  useEffect(() => {
+    EditUserPhoto()
+  }, [image])
 
   const settingsData = [
     { type: 'title', title: 'Account' },
@@ -66,10 +189,11 @@ export default function ProfileSettings({ navigation }: any) {
     {
       type: 'button',
       title: user && user.photo ? 'Change photo' : 'Set photo',
-      icon: 'chevron-forward',
+      icon: 'image',
       color: themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
       action: () => {
-        // navigation.navigate('PersonalInfoSettings')
+        setBottomSheetContent('imageZone')
+        bottomSheetModalRef.current?.present()
       },
     },
     {
@@ -86,7 +210,12 @@ export default function ProfileSettings({ navigation }: any) {
     {
       type: 'button',
       title: 'Security settings',
-      icon: 'lock-open-outline',
+      icon:
+        authentication === 'auto'
+          ? 'repeat'
+          : authentication === 'biometric'
+          ? 'finger-print'
+          : 'lock-open-outline',
       color: themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
       action: () => {
         setBottomSheetContent('securityZone')
@@ -156,7 +285,6 @@ export default function ProfileSettings({ navigation }: any) {
 
   useEffect(() => {
     GetBiometricData()
-
     GetUserFunc()
   }, [])
 
@@ -179,7 +307,7 @@ export default function ProfileSettings({ navigation }: any) {
       state: 'auto',
       title: 'Auto login',
       description: "Don't ask for a password and login automatically",
-      icon: 'log-in-outline',
+      icon: 'repeat',
       needBiometric: false,
     },
   ]
@@ -202,6 +330,27 @@ export default function ProfileSettings({ navigation }: any) {
       title: 'Dark',
       description: 'Always use dark theme',
       icon: 'moon-outline',
+    },
+  ]
+
+  const imageOptions = [
+    {
+      action: () => OpenCamera(),
+      title: 'Camera',
+      description: "Use your device's camera to take photo",
+      icon: 'camera-outline',
+    },
+    {
+      action: () => OpenGallery(),
+      title: 'Gallery',
+      description: 'Use your gallery and choose a photo',
+      icon: 'images-outline',
+    },
+    {
+      action: () => DeletePhoto(),
+      title: 'Delete photo',
+      description: 'Remove photo from your ptofile',
+      icon: 'trash-outline',
     },
   ]
 
@@ -682,6 +831,135 @@ export default function ProfileSettings({ navigation }: any) {
     )
   }
 
+  function ImageZone() {
+    return (
+      <View
+        style={{
+          backgroundColor:
+            themeColor === 'dark' ? colors.DarkBGModal : colors.LightBGModal,
+          flex: 1,
+        }}
+      >
+        <View
+          style={{
+            borderColor:
+              themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
+            borderBottomWidth: 1,
+            width: '100%',
+            backgroundColor:
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 20,
+              textAlign: 'center',
+              paddingVertical: 10,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
+            }}
+          >
+            Photo
+          </Text>
+        </View>
+        <View
+          style={{
+            width: rules.componentWidthPercent,
+            alignSelf: 'center',
+            marginTop: 16,
+            borderRadius: 8,
+            backgroundColor:
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
+            padding: 8,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              textAlign: 'center',
+              paddingVertical: 10,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
+            }}
+          >
+            {text.ImageText}
+          </Text>
+        </View>
+
+        {imageOptions
+          .filter((i: any) =>
+            i.needBiometric ? hasBiometric : !i.needBiometric
+          )
+          .map((item: any, index: number) => (
+            <TouchableOpacity
+              key={index}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: 10,
+                width: '100%',
+                paddingHorizontal: 20,
+              }}
+              onPress={() => {
+                item.action()
+              }}
+            >
+              <Ionicons
+                name={item.icon}
+                size={24}
+                color={
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText
+                }
+              />
+              <View
+                style={{
+                  width: '100%',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                  paddingHorizontal: 20,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color:
+                      themeColor === 'dark'
+                        ? colors.DarkMainText
+                        : colors.LightMainText,
+                  }}
+                >
+                  {item.title}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 10,
+                    color:
+                      themeColor === 'dark'
+                        ? colors.DarkCommentText
+                        : colors.LightCommentText,
+                  }}
+                >
+                  {item.description}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+      </View>
+    )
+  }
+
   return (
     <BottomSheetModalProvider>
       <View
@@ -790,6 +1068,8 @@ export default function ProfileSettings({ navigation }: any) {
                 <DangerZone />
               ) : bottomSheetContent === 'themeZone' ? (
                 <ThemeZone />
+              ) : bottomSheetContent === 'imageZone' ? (
+                <ImageZone />
               ) : (
                 <SecurityZone />
               )}

@@ -17,7 +17,7 @@
 - hash data
 - 🔶 tests
 - 🔶 pdf
-- profile image
+- ✅ profile image
 
 ### TODO 1.2.0
 

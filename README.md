@@ -11,7 +11,7 @@
 ### TODO 1.1.0
 
 - hash data
-- 🔶 tests
+- ✅ tests
 - 🔶 pdf
 - chart
 - ✅ profile image

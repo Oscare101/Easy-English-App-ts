@@ -156,12 +156,18 @@ export async function SetUserPhotoUpdate(email: string, time: string) {
 export async function CreateUserTestPoints(
   email: string,
   testID: number,
-  points: number
+  points: number,
+  answers: any
 ) {
   try {
     await set(
       ref(getDatabase(), `user/${email.replace('.', ',')}/test/${testID}`),
-      { points: points, date: new Date().getTime(), testID: testID }
+      {
+        points: points,
+        date: new Date().getTime(),
+        testID: testID,
+        answers: answers,
+      }
     )
   } catch (error) {
     console.log('SetNewUser', error)

@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import themeReducer from './theme'
-import authenticationReducer from './authentications'
+import authenticationReducer from './authentication'
 import themeColorReducer from './themeColor'
 export const store = configureStore({
   reducer: {

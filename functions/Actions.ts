@@ -112,7 +112,7 @@ export async function DeleteUser(email: string) {
 
 // POSTS
 
-export async function CreatePost(email: string, data: any) {
+export async function CreatePost(data: any) {
   try {
     await set(ref(getDatabase(), 'post/' + data.key), data)
   } catch (error) {

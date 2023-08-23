@@ -1,15 +1,11 @@
 # Easy English
 
-✅ - done
-🔶 - in progress
-❌ - moved to the next release
-
 ### TODO 1.0.0 (mvp)
 
 - ✅ login/registration
 - ✅ profile, theme, security
 - ✅ courses
-- ✅ chat
+- ✅ global chat
 - ✅ post
 
 ### TODO 1.1.0
@@ -17,13 +13,28 @@
 - hash data
 - 🔶 tests
 - 🔶 pdf
+- chart
 - ✅ profile image
+- global posts
+- ✅ edit posts
 
 ### TODO 1.2.0
 
 - friends
-- privat chats
+- subscribers
+- privat chats, inchat actions
 - user status (user, mentor, admin)
+- online status
+- copy text
+- report
+- deleted user case
+- likes
+- promote
+
+### TODO 1.3.0
+
+- oauth
+- restore password
 
 ---
 

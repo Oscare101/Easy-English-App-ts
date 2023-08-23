@@ -129,7 +129,6 @@ export default function ProfileSettings({ navigation }: any) {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest()
       xhr.onload = function () {
-        // return the blob
         resolve(xhr.response)
       }
       xhr.onerror = function () {
@@ -144,7 +143,6 @@ export default function ProfileSettings({ navigation }: any) {
 
   async function EditUserPhoto() {
     if (auth.currentUser && auth.currentUser.email && image) {
-      // const localFile = await fetch(image)
       const fileBlob: any = await uriToBlob(image)
       const storageRef = refStorage(storage, `user/${auth.currentUser?.email}`)
       uploadBytes(storageRef, fileBlob).then((snapshot) => {

@@ -27,11 +27,9 @@ const width = Dimensions.get('screen').width
 export default function NewPostScreen({ navigation, route }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
 
-  const [post, setPost] = useState<string>('')
-  const [surname, setSurname] = useState<string>('')
-  const [birthDate, setBirthdate] = useState<any>('')
-  const [gender, setGender] = useState<any>('')
-  const [description, setDescription] = useState<string>('')
+  const [post, setPost] = useState<string>(
+    route.params.post ? route.params.post.text : ''
+  )
   const [loading, setLoading] = useState<boolean>(false)
 
   async function CreatePostFunc() {
@@ -40,11 +38,25 @@ export default function NewPostScreen({ navigation, route }: any) {
       const data = {
         text: post,
         date: new Date().getTime(),
-        author: route.params.user.name,
         authorEmail: route.params.user.email,
         key: new Date().getTime() + route.params.user.email.replace('.', ','),
+        lastEdited: '',
       }
-      await CreatePost(auth.currentUser?.email, data)
+      await CreatePost(data)
+      navigation.goBack()
+    } else if (
+      auth.currentUser &&
+      auth.currentUser.email &&
+      route.params.post
+    ) {
+      const data = {
+        text: post,
+        date: route.params.post.date,
+        authorEmail: route.params.post.authorEmail,
+        key: route.params.post.key,
+        lastEdited: new Date().getTime(),
+      }
+      await CreatePost(data)
       navigation.goBack()
     }
   }

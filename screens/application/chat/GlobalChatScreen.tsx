@@ -114,13 +114,21 @@ export default function GlobalChatScreen({ navigation, route }: any) {
           <Text
             style={{
               fontSize: 14,
-              color:
-                themeColor === 'dark'
+              color: users[item.authorEmail.replace('.', ',')]
+                ? themeColor === 'dark'
                   ? colors.DarkCommentText
-                  : colors.LightCommentText,
+                  : colors.LightCommentText
+                : themeColor === 'dark'
+                ? colors.DarkDangerText
+                : colors.LightDangerText,
+              opacity: users[item.authorEmail.replace('.', ',')] ? 1 : 0.5,
             }}
           >
-            {users ? users[item.authorEmail.replace('.', ',')].name : ''}
+            {users
+              ? users[item.authorEmail.replace('.', ',')]
+                ? users[item.authorEmail.replace('.', ',')].name
+                : 'deleted user'
+              : ''}
           </Text>
           <Text
             style={{

@@ -41,7 +41,7 @@ export default function ProfileScreen({ navigation }: any) {
   const [post, setPost] = useState<any>({})
   const [image, setImage] = useState<any>('')
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const snapPoints = useMemo(() => [300], [])
+  const snapPoints = useMemo(() => [360], [])
   const handleSheetChanges = useCallback((index: number) => {
     if (index === -1) {
       setPost({})
@@ -153,7 +153,7 @@ export default function ProfileScreen({ navigation }: any) {
                     : colors.LightMainText,
               }}
             >
-              {item.author}
+              {user.name}
             </Text>
             <Text
               style={{
@@ -207,6 +207,22 @@ export default function ProfileScreen({ navigation }: any) {
         >
           {item.text}
         </Text>
+        {item.lastEdited ? (
+          <Text
+            style={{
+              fontSize: 12,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
+              textAlign: 'right',
+            }}
+          >
+            edited {new Date(item.lastEdited).toLocaleString()}
+          </Text>
+        ) : (
+          <></>
+        )}
       </View>
     )
   }
@@ -513,6 +529,42 @@ export default function ProfileScreen({ navigation }: any) {
               {post && post.text ? post.text.replace(/\n/g, ' ') : ''}
             </Text>
           </View>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => {
+              console.log(post)
+
+              navigation.navigate('NewPostScreen', { post: post })
+              bottomSheetModalRef.current?.dismiss()
+            }}
+            style={{
+              width: rules.componentWidthPercent,
+              marginTop: 20,
+              borderRadius: 8,
+              overflow: 'hidden',
+              borderColor:
+                themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
+
+              borderWidth: 1,
+              height: 60,
+              alignSelf: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 2,
+            }}
+          >
+            <Text
+              style={{
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkCommentText
+                    : colors.LightCommentText,
+                fontSize: 20,
+              }}
+            >
+              Edit
+            </Text>
+          </TouchableOpacity>
           <View
             style={{
               width: rules.componentWidthPercent,

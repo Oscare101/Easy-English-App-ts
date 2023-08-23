@@ -34,6 +34,7 @@ export default function CoursesScreen({ navigation }: any) {
   const [pageTitle, setPageTitle] = useState<string>('Courses')
   const [page, setPage] = useState<string>('course')
   const [topCardHeight, setTopCardHeight] = useState<number>(232.38)
+  const [user, setUser] = useState<User>({} as User)
 
   async function GetCourses() {
     if (auth.currentUser && auth.currentUser.email) {
@@ -53,9 +54,22 @@ export default function CoursesScreen({ navigation }: any) {
     }
   }
 
+  function GetUserFunc() {
+    if (auth.currentUser && auth.currentUser.email) {
+      const data = ref(
+        getDatabase(),
+        `user/` + auth.currentUser.email.replace('.', ',')
+      )
+      onValue(data, (snapshot) => {
+        setUser(snapshot.val() as User)
+      })
+    }
+  }
+
   useEffect(() => {
     GetCourses()
     GetTests()
+    GetUserFunc()
   }, [])
 
   const reportCoursesData = [
@@ -105,7 +119,9 @@ export default function CoursesScreen({ navigation }: any) {
           borderRadius: 8,
           margin: width * 0.02,
         }}
-        onPress={() => navigation.navigate('CoursePage', { course: item })}
+        onPress={() => {
+          navigation.navigate('CoursePage', { course: item })
+        }}
       >
         <Text
           style={{
@@ -143,7 +159,9 @@ export default function CoursesScreen({ navigation }: any) {
           borderRadius: 8,
           margin: width * 0.02,
         }}
-        onPress={() => navigation.navigate('CoursePage', { course: item })}
+        onPress={() =>
+          navigation.navigate('TestPage', { test: item, user: user })
+        }
       >
         <Text
           style={{
@@ -157,13 +175,31 @@ export default function CoursesScreen({ navigation }: any) {
           {item.title}
         </Text>
         <GradientText
-          onPress={() => navigation.navigate('CoursePage', { course: item })}
+          onPress={() =>
+            navigation.navigate('TestPage', { test: item, user: user })
+          }
           color1={rules.colors[rules.levels[item.level]][0]}
           color2={rules.colors[rules.levels[item.level]][1]}
           style={[styles.text16]}
         >
           {rules.levels[item.level]}
         </GradientText>
+        {user.test && user.test[item.testID] ? (
+          <Text
+            style={{
+              fontSize: 18,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
+            }}
+          >
+            passed: {user.test[item.testID].points}/
+            {Object.values(item.test).length}
+          </Text>
+        ) : (
+          <></>
+        )}
       </TouchableOpacity>
     )
   }

@@ -24,6 +24,7 @@ import GlobalChatScreen from '../screens/application/chat/GlobalChatScreen'
 import { useSelector } from 'react-redux'
 import { RootState } from '../redux'
 import PDFScreen from '../screens/application/pdf/PDFScreen'
+import TestPage from '../screens/application/courses/TestPage'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -301,6 +302,17 @@ export default function MainNavigation() {
         }}
         name="CoursePage"
         component={CoursePage}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          gestureDirection: 'vertical',
+          gestureEnabled: true,
+          cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
+        }}
+        name="TestPage"
+        component={TestPage}
       />
       <Stack.Screen
         options={{

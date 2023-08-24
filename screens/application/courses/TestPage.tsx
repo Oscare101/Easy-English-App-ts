@@ -33,31 +33,33 @@ export default function TestPage({ navigation, route }: any) {
 
   async function CheckAnswers() {
     setTestFinished(true)
+
     let points: number = 0
     chosenOptions.forEach((i: any) => {
       if (
-        route.params.test.test[i.test].options[
-          route.params.test.test[i.test].answer
+        route.params.test.question[i.test].options[
+          route.params.test.question[i.test].answer
         ] === i.answer
       ) {
         points++
       }
     })
+
     setUserPoints(points)
     if (auth.currentUser && auth.currentUser.email) {
       await CreateUserTestPoints(
         auth.currentUser.email,
-        route.params.test.testID,
+        route.params.test.id,
         points,
         chosenOptions
       )
     }
 
     setUserTests((id: number) => ({
-      [route.params.test.testID]: {
+      [route.params.test.id]: {
         points: points,
         date: new Date().getTime(),
-        testID: route.params.test.testID,
+        id: route.params.test.id,
         answers: chosenOptions,
       },
     }))
@@ -68,8 +70,8 @@ export default function TestPage({ navigation, route }: any) {
   }
 
   useEffect(() => {
-    if (route.params.user && userTests && userTests[route.params.test.testID]) {
-      setUserPoints(userTests[route.params.test.testID].points)
+    if (route.params.user && userTests && userTests[route.params.test.id]) {
+      setUserPoints(userTests[route.params.test.id].points)
       setTestFinished(true)
     }
   }, [])
@@ -112,7 +114,7 @@ export default function TestPage({ navigation, route }: any) {
             width: '100%',
           }}
         >
-          {testIndex + 1}/{Object.values(route.params.test.test).length}
+          {testIndex + 1}/{Object.values(route.params.test.question).length}
         </Text>
 
         <Text
@@ -125,7 +127,7 @@ export default function TestPage({ navigation, route }: any) {
                 : colors.LightMainText,
           }}
         >
-          {item.question}
+          {item.title}
         </Text>
         {Object.values(item.options).map((option: any, index: number) => (
           <TouchableOpacity
@@ -139,8 +141,8 @@ export default function TestPage({ navigation, route }: any) {
               padding: 10,
 
               backgroundColor: testFinished
-                ? userTests[route.params.test.testID] &&
-                  userTests[route.params.test.testID].answers.find(
+                ? userTests[route.params.test.id] &&
+                  userTests[route.params.test.id].answers.find(
                     (i: any) => item.id === i.test
                   ).answer === option
                   ? themeColor === 'dark'
@@ -189,8 +191,8 @@ export default function TestPage({ navigation, route }: any) {
                   (i: any) => i.test === item.id && i.answer === option
                 ) ||
                 (userTests &&
-                  userTests[route.params.test.testID] &&
-                  userTests[route.params.test.testID].answers.find(
+                  userTests[route.params.test.id] &&
+                  userTests[route.params.test.id].answers.find(
                     (i: any) => item.id === i.test
                   ).answer === option)
                   ? 'radio-button-on'
@@ -199,8 +201,8 @@ export default function TestPage({ navigation, route }: any) {
               size={24}
               color={
                 testFinished
-                  ? userTests[route.params.test.testID] &&
-                    userTests[route.params.test.testID].answers.find(
+                  ? userTests[route.params.test.id] &&
+                    userTests[route.params.test.id].answers.find(
                       (i: any) => item.id === i.test
                     ).answer === option &&
                     item.options[item.answer] !== option
@@ -223,8 +225,8 @@ export default function TestPage({ navigation, route }: any) {
               style={{
                 fontSize: 20,
                 color: testFinished
-                  ? userTests[route.params.test.testID] &&
-                    userTests[route.params.test.testID].answers.find(
+                  ? userTests[route.params.test.id] &&
+                    userTests[route.params.test.id].answers.find(
                       (i: any) => item.id === i.test
                     ).answer === option &&
                     item.options[item.answer] !== option
@@ -292,7 +294,7 @@ export default function TestPage({ navigation, route }: any) {
           {testFinished ||
           (route.params.user &&
             userTests &&
-            userTests[route.params.test.testID]) ? (
+            userTests[route.params.test.id]) ? (
             <>
               <Text
                 style={{
@@ -303,13 +305,13 @@ export default function TestPage({ navigation, route }: any) {
                       : colors.LightMainText,
                 }}
               >
-                {userPoints}/{Object.values(route.params.test.test).length}
+                {userPoints}/{Object.values(route.params.test.question).length}
               </Text>
 
               <FlatList
                 style={{ width: '100%' }}
                 scrollEnabled={false}
-                data={Object.values(route.params.test.test)}
+                data={Object.values(route.params.test.question)}
                 renderItem={RenderTestItem}
               />
             </>
@@ -338,13 +340,13 @@ export default function TestPage({ navigation, route }: any) {
               <FlatList
                 style={{ width: '100%' }}
                 scrollEnabled={false}
-                data={Object.values(route.params.test.test)}
+                data={Object.values(route.params.test.question)}
                 renderItem={RenderTestItem}
               />
               <MainButton
                 title="Save"
                 disable={
-                  Object.values(route.params.test.test).length !==
+                  Object.values(route.params.test.question).length !==
                   chosenOptions.length
                 }
                 action={CheckAnswers}

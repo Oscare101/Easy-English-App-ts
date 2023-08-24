@@ -11,7 +11,7 @@ import MainButton from '../../components/MainButton'
 import SecondaryButton from '../../components/SecondaryButton'
 import { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { GetUser, LogIn } from '../../functions/Actions'
+import { GetUser, GetVersion, LogIn } from '../../functions/Actions'
 import { User } from '../../constants/interfaces'
 import BGCircles from '../../components/BGCircles'
 import { setAuthentication } from '../../redux/authentication'
@@ -42,6 +42,7 @@ export default function LaunchScreen({ navigation }: any) {
     if (authentication) {
       dispatch(setAuthentication(authentication))
     }
+
     if (
       authentication === 'biometric' &&
       email !== null &&
@@ -93,25 +94,25 @@ export default function LaunchScreen({ navigation }: any) {
     } else {
       setLoadingData(false)
     }
+    setLoadingData(false)
   }
 
   async function GetVersionFunc() {
-    const data = ref(getDatabase(), `info/`)
-    onValue(data, async (snapshot) => {
-      const versionDelay: number = await compareVersions(
-        snapshot.val().version,
-        app.expo.version
-      )
-      if (versionDelay === 1) {
-        const theme = await AsyncStorage.getItem('theme')
-        if (theme) {
-          dispatch(setTheme(theme))
-        }
-        navigation.navigate('ForceUpdateScreen')
-      } else {
-        GetUserStorage()
+    const response: any = await GetVersion()
+    const versionDelay: number = compareVersions(
+      response.version,
+      app.expo.version
+    )
+
+    if (versionDelay === 1) {
+      const theme = await AsyncStorage.getItem('theme')
+      if (theme) {
+        dispatch(setTheme(theme))
       }
-    })
+      navigation.navigate('ForceUpdateScreen')
+    } else {
+      GetUserStorage()
+    }
   }
 
   useEffect(() => {

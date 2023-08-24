@@ -45,7 +45,7 @@ export default function GlobalChatScreen({ navigation, route }: any) {
         date: new Date().getTime(),
         author: route.params.user.name,
         authorEmail: route.params.user.email,
-        key: new Date().getTime() + route.params.user.email.replace('.', ','),
+        id: new Date().getTime() + route.params.user.email.replace('.', ','),
       }
       setNewMessage('')
 

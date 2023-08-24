@@ -91,8 +91,8 @@ export default function ProfileScreen({ navigation }: any) {
   }
 
   async function DeletePostFunc() {
-    DeletePost(post.key)
-    setUsersPost(usersPosts.filter((i: any) => i.key !== post.key))
+    DeletePost(post.id)
+    setUsersPost(usersPosts.filter((i: any) => i.id !== post.id))
     setPost({})
     bottomSheetModalRef.current?.dismiss()
   }

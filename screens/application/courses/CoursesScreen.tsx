@@ -184,7 +184,7 @@ export default function CoursesScreen({ navigation }: any) {
         >
           {rules.levels[item.level]}
         </GradientText>
-        {user.test && user.test[item.testID] ? (
+        {user.test && user.test[item.id] ? (
           <Text
             style={{
               fontSize: 18,
@@ -194,8 +194,8 @@ export default function CoursesScreen({ navigation }: any) {
                   : colors.LightCommentText,
             }}
           >
-            passed: {user.test[item.testID].points}/
-            {Object.values(item.test).length}
+            passed: {user.test[item.id].points}/
+            {Object.values(item.question).length}
           </Text>
         ) : (
           <></>

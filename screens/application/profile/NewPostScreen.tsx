@@ -39,7 +39,7 @@ export default function NewPostScreen({ navigation, route }: any) {
         text: post,
         date: new Date().getTime(),
         authorEmail: route.params.user.email,
-        key: new Date().getTime() + route.params.user.email.replace('.', ','),
+        id: new Date().getTime() + route.params.user.email.replace('.', ','),
         lastEdited: '',
       }
       await CreatePost(data)
@@ -53,7 +53,7 @@ export default function NewPostScreen({ navigation, route }: any) {
         text: post,
         date: route.params.post.date,
         authorEmail: route.params.post.authorEmail,
-        key: route.params.post.key,
+        id: route.params.post.id,
         lastEdited: new Date().getTime(),
       }
       await CreatePost(data)

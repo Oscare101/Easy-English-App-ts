@@ -319,9 +319,9 @@ export default function MainNavigation() {
         options={{
           headerShown: false,
           animationEnabled: true,
-          gestureDirection: 'vertical',
+          gestureDirection: 'horizontal',
           gestureEnabled: true,
-          cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="TestPage"
         component={TestPage}

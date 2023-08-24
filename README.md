@@ -42,8 +42,7 @@
 ### FIX
 
 navigation fix
-post.key -> post.id
-chat.key -> chat.id
+
 course.courseID -> course.id
 test.testID -> test.id
 test[<id>].test -> test[<id>].question

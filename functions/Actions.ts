@@ -21,6 +21,17 @@ import {
 import { firebase } from '@react-native-firebase/database'
 import database from '@react-native-firebase/database'
 
+// VERSION
+
+export async function GetVersion() {
+  try {
+    const response = await get(ref(getDatabase(), 'info/'))
+    return response.val()
+  } catch (error) {
+    console.log('GetVersion', error)
+  }
+}
+
 // ACCOUNT
 
 export async function Registration(email: string, password: string) {
@@ -114,15 +125,15 @@ export async function DeleteUser(email: string) {
 
 export async function CreatePost(data: any) {
   try {
-    await set(ref(getDatabase(), 'post/' + data.key), data)
+    await set(ref(getDatabase(), 'post/' + data.id), data)
   } catch (error) {
     console.log('SetNewUser', error)
   }
 }
 
-export async function DeletePost(key: string) {
+export async function DeletePost(id: string) {
   try {
-    remove(ref(getDatabase(), 'post/' + key))
+    remove(ref(getDatabase(), 'post/' + id))
   } catch (error) {
     console.log('DeleteUser', error)
   }
@@ -132,7 +143,7 @@ export async function DeletePost(key: string) {
 
 export async function CreateMessage(chatID: string, data: any) {
   try {
-    await set(ref(getDatabase(), 'chat/' + chatID + '/' + data.key), data)
+    await set(ref(getDatabase(), 'chat/' + chatID + '/' + data.id), data)
   } catch (error) {
     console.log('SetNewUser', error)
   }
@@ -155,17 +166,17 @@ export async function SetUserPhotoUpdate(email: string, time: string) {
 
 export async function CreateUserTestPoints(
   email: string,
-  testID: number,
+  id: number,
   points: number,
   answers: any
 ) {
   try {
     await set(
-      ref(getDatabase(), `user/${email.replace('.', ',')}/test/${testID}`),
+      ref(getDatabase(), `user/${email.replace('.', ',')}/test/${id}`),
       {
         points: points,
         date: new Date().getTime(),
-        testID: testID,
+        id: id,
         answers: answers,
       }
     )

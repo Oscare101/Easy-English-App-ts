@@ -25,7 +25,7 @@ import text from '../../../constants/text'
 export default function PostsScreen({ navigation }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
   const [postInfo, setPostInfo] = useState<any>({})
-  const [posts, setPosts] = useState<any>({})
+  const [posts, setPosts] = useState<any>([])
   const [users, setUsers] = useState<any>({})
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(() => [360], [])
@@ -107,13 +107,21 @@ export default function PostsScreen({ navigation }: any) {
               ellipsizeMode="tail"
               style={{
                 fontSize: 18,
-                color:
-                  themeColor === 'dark'
-                    ? colors.DarkMainText
-                    : colors.LightMainText,
+                color: users[item.authorEmail.replace('.', ',')]
+                  ? themeColor === 'dark'
+                    ? colors.DarkCommentText
+                    : colors.LightCommentText
+                  : themeColor === 'dark'
+                  ? colors.DarkDangerText
+                  : colors.LightDangerText,
+                opacity: users[item.authorEmail.replace('.', ',')] ? 1 : 0.5,
               }}
             >
-              {users && users[item.authorEmail.replace('.', ',')].name}
+              {users
+                ? users[item.authorEmail.replace('.', ',')]
+                  ? users[item.authorEmail.replace('.', ',')].name
+                  : 'deleted user'
+                : ''}
             </Text>
             <Text
               style={{
@@ -193,14 +201,16 @@ export default function PostsScreen({ navigation }: any) {
   return (
     <BottomSheetModalProvider>
       <View style={styles.ViewStart}>
-        <ScrollView style={{ flex: 1, width: '100%' }}>
+        <Text>POSTS</Text>
+        {posts.length ? (
           <FlatList
-            scrollEnabled={false}
             style={{ width: '100%', paddingBottom: 20 }}
             data={posts}
             renderItem={renderUserPost}
           />
-        </ScrollView>
+        ) : (
+          <></>
+        )}
         {/* BottomSheet */}
         <BottomSheetModal
           backgroundStyle={{

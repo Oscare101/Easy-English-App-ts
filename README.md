@@ -15,7 +15,7 @@
 - 🔶 pdf
 - chart
 - ✅ profile image
-- global posts
+- ✅ global posts
 - ✅ edit posts
 - ✅ force update
 

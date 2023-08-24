@@ -20,6 +20,10 @@ const text: Text = {
   ThemeRulesText: 'Сolor theme is how the application will look',
   ImageText:
     'You can change your profile picture at any time. All other users will be able to see it',
+  ForceUpdateText:
+    'The app has become better and your version is no longer supported, please update the app',
+  ForceUpdateWhere:
+    'Tap on the plane to download the updated app from telegram',
 }
 
 export default text

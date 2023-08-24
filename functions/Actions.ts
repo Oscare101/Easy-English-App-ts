@@ -112,7 +112,7 @@ export async function DeleteUser(email: string) {
 
 // POSTS
 
-export async function CreatePost(email: string, data: any) {
+export async function CreatePost(data: any) {
   try {
     await set(ref(getDatabase(), 'post/' + data.key), data)
   } catch (error) {
@@ -145,6 +145,29 @@ export async function SetUserPhotoUpdate(email: string, time: string) {
     await set(
       ref(getDatabase(), 'user/' + email.replace('.', ',') + '/photo'),
       time
+    )
+  } catch (error) {
+    console.log('SetNewUser', error)
+  }
+}
+
+// TESTS
+
+export async function CreateUserTestPoints(
+  email: string,
+  testID: number,
+  points: number,
+  answers: any
+) {
+  try {
+    await set(
+      ref(getDatabase(), `user/${email.replace('.', ',')}/test/${testID}`),
+      {
+        points: points,
+        date: new Date().getTime(),
+        testID: testID,
+        answers: answers,
+      }
     )
   } catch (error) {
     console.log('SetNewUser', error)

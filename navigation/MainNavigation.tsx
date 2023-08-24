@@ -26,6 +26,7 @@ import { RootState } from '../redux'
 import PDFScreen from '../screens/application/pdf/PDFScreen'
 import TestPage from '../screens/application/courses/TestPage'
 import ForceUpdateScreen from '../screens/login/ForceUpdateScreen'
+import PostsScreen from '../screens/application/post/PostsScreen'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -70,11 +71,11 @@ export default function MainNavigation() {
       },
       {
         title: '',
-        iconActive: 'people',
-        iconInactive: 'people-outline',
+        iconActive: 'grid',
+        iconInactive: 'grid-outline',
         action: () => {
-          navigation.navigate('FriendsNavigation', {
-            screen: 'FriendsScreen',
+          navigation.navigate('PostNavigation', {
+            screen: 'PostsScreen',
             initial: false,
           })
         },
@@ -182,15 +183,15 @@ export default function MainNavigation() {
     )
   }
 
-  function FriendsNavigation() {
+  function PostNavigation() {
     return (
       <Stack.Navigator>
         <Stack.Screen
           options={{
             headerShown: false,
           }}
-          name="FriendsScreen"
-          component={FriendsScreen}
+          name="PostsScreen"
+          component={PostsScreen}
         />
       </Stack.Navigator>
     )
@@ -221,8 +222,8 @@ export default function MainNavigation() {
           }}
         />
         <Tab.Screen
-          name="FriendsNavigation"
-          component={FriendsNavigation}
+          name="PostNavigation"
+          component={PostNavigation}
           options={{
             headerShown: false,
           }}
@@ -308,9 +309,9 @@ export default function MainNavigation() {
         options={{
           headerShown: false,
           animationEnabled: true,
-          gestureDirection: 'vertical',
+          gestureDirection: 'horizontal',
           gestureEnabled: true,
-          cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="CoursePage"
         component={CoursePage}

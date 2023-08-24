@@ -25,6 +25,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../redux'
 import PDFScreen from '../screens/application/pdf/PDFScreen'
 import TestPage from '../screens/application/courses/TestPage'
+import ForceUpdateScreen from '../screens/login/ForceUpdateScreen'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -271,6 +272,17 @@ export default function MainNavigation() {
         }}
         name="NewUserScreen"
         component={NewUserScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          gestureDirection: 'horizontal',
+          gestureEnabled: true,
+          cardStyleInterpolator: CardStyleInterpolators.forFadeFromCenter,
+        }}
+        name="ForceUpdateScreen"
+        component={ForceUpdateScreen}
       />
       <Stack.Screen
         options={{

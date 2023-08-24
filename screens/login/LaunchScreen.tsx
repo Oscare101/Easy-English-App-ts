@@ -20,6 +20,9 @@ import * as LocalAuthentication from 'expo-local-authentication'
 import { setTheme } from '../../redux/theme'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux'
+import { compareVersions } from 'compare-versions'
+import { getDatabase, onValue, ref } from 'firebase/database'
+import app from '../../app.json'
 
 export default function LaunchScreen({ navigation }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
@@ -92,8 +95,27 @@ export default function LaunchScreen({ navigation }: any) {
     }
   }
 
+  async function GetVersionFunc() {
+    const data = ref(getDatabase(), `info/`)
+    onValue(data, async (snapshot) => {
+      const versionDelay: number = await compareVersions(
+        snapshot.val().version,
+        app.expo.version
+      )
+      if (versionDelay === 1) {
+        const theme = await AsyncStorage.getItem('theme')
+        if (theme) {
+          dispatch(setTheme(theme))
+        }
+        navigation.navigate('ForceUpdateScreen')
+      } else {
+        GetUserStorage()
+      }
+    })
+  }
+
   useEffect(() => {
-    GetUserStorage()
+    GetVersionFunc()
   }, [])
 
   return (

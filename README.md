@@ -17,6 +17,7 @@
 - ✅ profile image
 - global posts
 - ✅ edit posts
+- ✅ force update
 
 ### TODO 1.2.0
 
@@ -35,6 +36,18 @@
 
 - oauth
 - restore password
+
+---
+
+### FIX
+
+navigation fix
+post.key -> post.id
+chat.key -> chat.id
+course.courseID -> course.id
+test.testID -> test.id
+test[<id>].test -> test[<id>].question
+question.id.question -> question.id.title
 
 ---
 

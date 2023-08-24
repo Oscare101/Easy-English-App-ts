@@ -34,7 +34,7 @@ export default function TestPage({ navigation, route }: any) {
   async function CheckAnswers() {
     setTestFinished(true)
     let points: number = 0
-    chosenOptions.map((i: any) => {
+    chosenOptions.forEach((i: any) => {
       if (
         route.params.test.test[i.test].options[
           route.params.test.test[i.test].answer

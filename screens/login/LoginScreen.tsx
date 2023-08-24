@@ -92,7 +92,17 @@ export default function LoginScreen({ navigation }: any) {
               setValue={(value: string) => setPassword(value)}
             />
             {error ? (
-              <Text style={styles.ErrorText}>{text[error]}</Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color:
+                    themeColor === 'dark'
+                      ? colors.DarkDangerText
+                      : colors.LightDangerText,
+                }}
+              >
+                {text[error]}
+              </Text>
             ) : (
               <></>
             )}

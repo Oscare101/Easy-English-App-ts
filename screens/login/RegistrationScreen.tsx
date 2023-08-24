@@ -92,7 +92,17 @@ export default function RegistrationScreen({ navigation }: any) {
               setValue={(value: string) => setPassword2(value)}
             />
             {error ? (
-              <Text style={styles.ErrorText}>{text[error]}</Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color:
+                    themeColor === 'dark'
+                      ? colors.DarkDangerText
+                      : colors.LightDangerText,
+                }}
+              >
+                {text[error]}
+              </Text>
             ) : (
               <></>
             )}

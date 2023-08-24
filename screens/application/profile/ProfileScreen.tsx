@@ -532,8 +532,6 @@ export default function ProfileScreen({ navigation }: any) {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => {
-              console.log(post)
-
               navigation.navigate('NewPostScreen', { post: post })
               bottomSheetModalRef.current?.dismiss()
             }}

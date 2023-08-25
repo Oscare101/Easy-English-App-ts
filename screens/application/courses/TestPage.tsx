@@ -19,7 +19,10 @@ import MainButton from '../../../components/MainButton'
 import PieChart from 'react-native-pie-chart'
 import { VictoryPie } from 'victory-native'
 import { auth } from '../../../firebase'
-import { CreateUserTestPoints } from '../../../functions/Actions'
+import {
+  CreateUserTestPoints,
+  DeleteUserTestPoints,
+} from '../../../functions/Actions'
 
 const width = Dimensions.get('screen').width
 
@@ -46,14 +49,6 @@ export default function TestPage({ navigation, route }: any) {
     })
 
     setUserPoints(points)
-    if (auth.currentUser && auth.currentUser.email) {
-      await CreateUserTestPoints(
-        auth.currentUser.email,
-        route.params.test.id,
-        points,
-        chosenOptions
-      )
-    }
 
     setUserTests((id: number) => ({
       [route.params.test.id]: {
@@ -67,6 +62,26 @@ export default function TestPage({ navigation, route }: any) {
       y: 0,
       animated: true,
     })
+    if (auth.currentUser && auth.currentUser.email) {
+      await CreateUserTestPoints(
+        auth.currentUser.email,
+        route.params.test.id,
+        points,
+        chosenOptions
+      )
+    }
+  }
+
+  async function DeleteUserTestPointsFunc() {
+    if (auth.currentUser && auth.currentUser.email) {
+      setTestFinished(false)
+      setUserPoints(0)
+      setChosenOptions([])
+      let filteresTests = userTests
+      delete filteresTests[route.params.test.id]
+      setUserTests(filteresTests)
+      await DeleteUserTestPoints(auth.currentUser.email, route.params.test.id)
+    }
   }
 
   useEffect(() => {
@@ -116,7 +131,6 @@ export default function TestPage({ navigation, route }: any) {
         >
           {testIndex + 1}/{Object.values(route.params.test.question).length}
         </Text>
-
         <Text
           style={{
             paddingHorizontal: 10,
@@ -296,17 +310,72 @@ export default function TestPage({ navigation, route }: any) {
             userTests &&
             userTests[route.params.test.id]) ? (
             <>
-              <Text
+              <View
                 style={{
-                  fontSize: 40,
-                  color:
-                    themeColor === 'dark'
-                      ? colors.DarkMainText
-                      : colors.LightMainText,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: rules.componentWidthPercent,
+                  marginTop: 8,
                 }}
               >
-                {userPoints}/{Object.values(route.params.test.question).length}
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 40,
+                    color:
+                      themeColor === 'dark'
+                        ? colors.DarkMainText
+                        : colors.LightMainText,
+                    flex: 1,
+                    textAlign: 'center',
+                  }}
+                >
+                  {userPoints}/
+                  {Object.values(route.params.test.question).length}
+                </Text>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={DeleteUserTestPointsFunc}
+                  style={{
+                    width: '50%',
+                    backgroundColor:
+                      themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+                    borderWidth: 1,
+                    borderColor:
+                      themeColor === 'dark'
+                        ? colors.DarkBorder
+                        : colors.LightBorder,
+                    padding: 10,
+                    paddingHorizontal: 15,
+                    borderRadius: 16,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Ionicons
+                    name="refresh-outline"
+                    size={24}
+                    color={
+                      themeColor === 'dark'
+                        ? colors.DarkCommentText
+                        : colors.LightCommentText
+                    }
+                  />
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color:
+                        themeColor === 'dark'
+                          ? colors.DarkCommentText
+                          : colors.LightCommentText,
+                      paddingHorizontal: 4,
+                    }}
+                  >
+                    Reset the test and{'\n'}try again
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
               <FlatList
                 style={{ width: '100%' }}

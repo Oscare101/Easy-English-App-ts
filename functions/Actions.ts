@@ -23,12 +23,12 @@ import database from '@react-native-firebase/database'
 
 // VERSION
 
-export async function GetVersion() {
+export async function GetApplicationInfo() {
   try {
     const response = await get(ref(getDatabase(), 'info/'))
     return response.val()
   } catch (error) {
-    console.log('GetVersion', error)
+    console.log('GetApplicationInfo', error)
   }
 }
 
@@ -180,6 +180,14 @@ export async function CreateUserTestPoints(
         answers: answers,
       }
     )
+  } catch (error) {
+    console.log('SetNewUser', error)
+  }
+}
+
+export async function DeleteUserTestPoints(email: string, id: number) {
+  try {
+    remove(ref(getDatabase(), `user/${email.replace('.', ',')}/test/${id}`))
   } catch (error) {
     console.log('SetNewUser', error)
   }

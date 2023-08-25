@@ -14,11 +14,19 @@ import Toast from 'react-native-toast-message'
 import colors from './constants/colors'
 import rules from './constants/rules'
 import MainNavigation from './navigation/MainNavigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { GetTheme, GetThemeOpposite } from './functions/Functions'
 import * as NavigationBar from 'expo-navigation-bar'
 import { useDispatch } from 'react-redux'
 import { setThemeColor } from './redux/themeColor'
+import TechnicalPauseScreen from './screens/login/TechnicalPauseScreen'
+import { getDatabase, onValue, ref } from 'firebase/database'
+import { setTechnicalPause } from './redux/technicalPause'
+import { compareVersions } from 'compare-versions'
+import app from './app.json'
+import ForceUpdateScreen from './screens/login/ForceUpdateScreen'
+import { setTheme } from './redux/theme'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function App() {
   const toastConfig = {
@@ -52,14 +60,45 @@ export default function App() {
     const dispatch = useDispatch()
     const systemTheme = useColorScheme()
     const { theme } = useSelector((state: RootState) => state.theme)
+    const { technicalPause } = useSelector(
+      (state: RootState) => state.technicalPause
+    )
+    const [update, setUpdate] = useState<boolean>(false)
+
+    async function GetTechnicalPauseStatus() {
+      const data = ref(getDatabase(), `info/`)
+      onValue(data, (snapshot) => {
+        dispatch(setTechnicalPause(snapshot.val().technicalPause))
+        if (compareVersions(snapshot.val().version, app.expo.version)) {
+          setUpdate(true)
+        } else {
+          setUpdate(false)
+        }
+      })
+    }
+
+    async function GetThemeFunc() {
+      const theme = await AsyncStorage.getItem('theme')
+      if (theme) {
+        dispatch(setTheme(theme))
+      }
+    }
 
     useEffect(() => {
+      GetThemeFunc()
+      GetTechnicalPauseStatus()
+
       dispatch(setThemeColor(GetTheme(systemTheme, theme)))
       NavigationBar.setBackgroundColorAsync(
         GetTheme(systemTheme, theme) === 'dark' ? colors.DarkBG : colors.LightBG
       )
       NavigationBar.setButtonStyleAsync(GetThemeOpposite(systemTheme, theme))
     }, [systemTheme, theme])
+    if (technicalPause) {
+      return <TechnicalPauseScreen />
+    } else if (update) {
+      return <ForceUpdateScreen />
+    }
     return (
       <NavigationContainer
         theme={themeColor === 'dark' ? DarkTheme : DefaultTheme}

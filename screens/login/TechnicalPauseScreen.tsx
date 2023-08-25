@@ -7,7 +7,7 @@ import { RootState } from '../../redux'
 import text from '../../constants/text'
 import rules from '../../constants/rules'
 import { Ionicons } from '@expo/vector-icons'
-export default function ForceUpdateScreen({ navigation }: any) {
+export default function TechnicalPauseScreen({ navigation }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
 
   return (
@@ -35,13 +35,12 @@ export default function ForceUpdateScreen({ navigation }: any) {
               textAlign: 'center',
             }}
           >
-            {text.ForceUpdateText}
+            {text.TechnicalPause}
           </Text>
-
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => {
-              Linking.openURL('https://t.me/+tbk3HfCoN_NkOGIy')
+              Linking.openURL('https://t.me/funny_like_panda')
             }}
             style={{
               padding: 10,
@@ -55,12 +54,12 @@ export default function ForceUpdateScreen({ navigation }: any) {
                   : colors.LightMainText,
               width: rules.componentWidthPercent,
               alignSelf: 'center',
-              marginVertical: 8,
+              marginTop: 8,
               borderRadius: 8,
             }}
           >
             <Ionicons
-              name="paper-plane-outline"
+              name="chatbubble-ellipses-outline"
               size={24}
               color={
                 themeColor === 'dark'
@@ -81,20 +80,6 @@ export default function ForceUpdateScreen({ navigation }: any) {
               contact me
             </Text>
           </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: 20,
-              color:
-                themeColor === 'dark'
-                  ? colors.DarkMainText
-                  : colors.LightMainText,
-              width: rules.componentWidthPercent,
-              alignSelf: 'center',
-              textAlign: 'center',
-            }}
-          >
-            {text.ForceUpdateWhere}
-          </Text>
         </View>
 
         <View></View>

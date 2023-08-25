@@ -11,7 +11,7 @@ import MainButton from '../../components/MainButton'
 import SecondaryButton from '../../components/SecondaryButton'
 import { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { GetUser, GetVersion, LogIn } from '../../functions/Actions'
+import { GetApplicationInfo, GetUser, LogIn } from '../../functions/Actions'
 import { User } from '../../constants/interfaces'
 import BGCircles from '../../components/BGCircles'
 import { setAuthentication } from '../../redux/authentication'
@@ -23,6 +23,7 @@ import { RootState } from '../../redux'
 import { compareVersions } from 'compare-versions'
 import { getDatabase, onValue, ref } from 'firebase/database'
 import app from '../../app.json'
+import { setTechnicalPause } from '../../redux/technicalPause'
 
 export default function LaunchScreen({ navigation }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
@@ -97,26 +98,8 @@ export default function LaunchScreen({ navigation }: any) {
     setLoadingData(false)
   }
 
-  async function GetVersionFunc() {
-    const response: any = await GetVersion()
-    const versionDelay: number = compareVersions(
-      response.version,
-      app.expo.version
-    )
-
-    if (versionDelay === 1) {
-      const theme = await AsyncStorage.getItem('theme')
-      if (theme) {
-        dispatch(setTheme(theme))
-      }
-      navigation.navigate('ForceUpdateScreen')
-    } else {
-      GetUserStorage()
-    }
-  }
-
   useEffect(() => {
-    GetVersionFunc()
+    GetUserStorage()
   }, [])
 
   return (

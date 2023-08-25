@@ -24,6 +24,8 @@ const text: Text = {
     'The app has become better and your version is no longer supported, please update the app',
   ForceUpdateWhere:
     'Tap on the plane to download the updated app from telegram',
+  TechnicalPause:
+    'Hello, the server is undergoing technical work, please wait. The application will launch automatically as soon as everything is configured. If you think that the technical break is too long, you can write to me in Telegram',
 }
 
 export default text

@@ -13,7 +13,6 @@ import { auth, db, storage } from '../../../firebase'
 
 import { ref as refStorage, getDownloadURL } from 'firebase/storage'
 // import RNHTMLtoPDF from 'react-native-html-to-pdf' // not working
-import Share from 'react-native-share'
 import colors from '../../../constants/colors'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../redux'
@@ -62,21 +61,9 @@ export default function PDFScreen({ navigation }: any) {
   }, [])
 
   async function CreatePDF() {
-    const shareOptions = {
-      url: `data:application/pdf;base64,${base64_encode(htmlContent)}`,
-      type: 'application/pdf',
-      filename: 'report',
-    }
-    Share.open({
-      title: 'title',
-      message: 'message',
-      url: 'data:application/pdf;base64,' + base64_encode(htmlContent),
-    })
-
     // Share.open(shareOptions)
     //   .then(() => {})
     //   .catch((error) => console.error('Помилка надсилання пдф-файлу:', error))
-
     // console.log(file.filePath);
   }
 

@@ -69,7 +69,7 @@ export default function App() {
       const data = ref(getDatabase(), `info/`)
       onValue(data, (snapshot) => {
         dispatch(setTechnicalPause(snapshot.val().technicalPause))
-        if (compareVersions(snapshot.val().version, app.expo.version)) {
+        if (compareVersions(snapshot.val().version, app.expo.version) === 1) {
           setUpdate(true)
         } else {
           setUpdate(false)

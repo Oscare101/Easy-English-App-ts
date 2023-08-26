@@ -91,7 +91,7 @@ export default function NewPostScreen({ navigation, route }: any) {
                   : colors.LightMainText,
             }}
           >
-            Create post
+            {route.params.post ? 'Edit post' : 'Create post'}
           </Text>
 
           <View
@@ -112,6 +112,7 @@ export default function NewPostScreen({ navigation, route }: any) {
             }}
           >
             <TextInput
+              autoCorrect
               style={{
                 fontSize: 18,
                 width: '100%',
@@ -159,7 +160,11 @@ export default function NewPostScreen({ navigation, route }: any) {
               <ActivityIndicator size={'large'} />
             </View>
           ) : (
-            <MainButton title="Save" disable={!post} action={CreatePostFunc} />
+            <MainButton
+              title={route.params.post ? 'Edit' : 'Post'}
+              disable={!post}
+              action={CreatePostFunc}
+            />
           )}
         </View>
       </ScrollView>

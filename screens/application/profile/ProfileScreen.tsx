@@ -16,7 +16,7 @@ import { DeletePost, LogOut } from '../../../functions/Actions'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { auth, db, storage } from '../../../firebase'
 import { ref as refStorage, getDownloadURL } from 'firebase/storage'
-
+import * as Clipboard from 'expo-clipboard'
 import { getDatabase, onValue, ref, remove, update } from 'firebase/database'
 import { User } from '../../../constants/interfaces'
 import { MaterialIcons } from '@expo/vector-icons'
@@ -33,7 +33,7 @@ import { GetTheme } from '../../../functions/Functions'
 import { RootState } from '../../../redux'
 import { useSelector } from 'react-redux'
 import { Swipeable } from 'react-native-gesture-handler'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, Feather } from '@expo/vector-icons'
 import SwipeToDelete from '../../../components/SwipeToDelete'
 import EditButton from '../../../components/EditButton'
 
@@ -535,12 +535,35 @@ export default function ProfileScreen({ navigation }: any) {
               {post && post.text ? post.text.replace(/\n/g, ' ') : ''}
             </Text>
           </View>
-          <EditButton
-            action={() => {
-              navigation.navigate('NewPostScreen', { post: post })
-              bottomSheetModalRef.current?.dismiss()
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: rules.componentWidthPercent,
+              alignSelf: 'center',
             }}
-          />
+          >
+            <EditButton
+              amountInARow={2}
+              title="Copy"
+              icon="copy"
+              action={() => {
+                Clipboard.setStringAsync(post.text)
+                bottomSheetModalRef.current?.dismiss()
+              }}
+            />
+            <EditButton
+              amountInARow={2}
+              title="Edit"
+              icon="edit"
+              action={() => {
+                navigation.navigate('NewPostScreen', { post: post })
+                bottomSheetModalRef.current?.dismiss()
+              }}
+            />
+          </View>
+
           <View
             style={{
               width: rules.componentWidthPercent,

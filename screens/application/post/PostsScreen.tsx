@@ -1,4 +1,5 @@
 import {
+  Alert,
   FlatList,
   ScrollView,
   StatusBar,
@@ -23,6 +24,7 @@ import { DeletePost } from '../../../functions/Actions'
 import text from '../../../constants/text'
 import SwipeToDelete from '../../../components/SwipeToDelete'
 import EditButton from '../../../components/EditButton'
+import * as Clipboard from 'expo-clipboard'
 
 export default function PostsScreen({ navigation }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
@@ -31,6 +33,7 @@ export default function PostsScreen({ navigation }: any) {
   const [users, setUsers] = useState<any>({})
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(() => [360], [])
+  const snapPointsForOtherUsers = useMemo(() => [300], [])
   const handleSheetChanges = useCallback((index: number) => {
     if (index === -1) {
       setPostInfo({})
@@ -142,14 +145,10 @@ export default function PostsScreen({ navigation }: any) {
             style={{
               paddingHorizontal: 10,
               paddingVertical: 7,
-              opacity: item.authorEmail === auth.currentUser?.email ? 1 : 0,
             }}
-            disabled={item.authorEmail !== auth.currentUser?.email}
             onPress={() => {
-              if (item.authorEmail === auth.currentUser?.email) {
-                setPostInfo(item)
-                bottomSheetModalRef.current?.present()
-              }
+              setPostInfo(item)
+              bottomSheetModalRef.current?.present()
             }}
           >
             {[0, 1, 2].map((_: any, index: number) => (
@@ -202,8 +201,15 @@ export default function PostsScreen({ navigation }: any) {
 
   return (
     <BottomSheetModalProvider>
-      <View style={styles.ViewStart}>
-        <Text>POSTS</Text>
+      <View
+        style={[
+          styles.ViewStart,
+          {
+            backgroundColor:
+              themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+          },
+        ]}
+      >
         {posts.length ? (
           <FlatList
             style={{ width: '100%', paddingBottom: 20 }}
@@ -222,7 +228,11 @@ export default function PostsScreen({ navigation }: any) {
                 : colors.LightBGComponent,
           }}
           ref={bottomSheetModalRef}
-          snapPoints={snapPoints}
+          snapPoints={
+            postInfo.authorEmail === auth.currentUser?.email
+              ? snapPoints
+              : snapPointsForOtherUsers
+          }
           onChange={handleSheetChanges}
           backdropComponent={({ style }) => (
             <TouchableWithoutFeedback
@@ -291,12 +301,65 @@ export default function PostsScreen({ navigation }: any) {
                   : ''}
               </Text>
             </View>
-            <EditButton
-              action={() => {
-                navigation.navigate('NewPostScreen', { post: postInfo })
-                bottomSheetModalRef.current?.dismiss()
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: rules.componentWidthPercent,
+                alignSelf: 'center',
               }}
-            />
+            >
+              <EditButton
+                amountInARow={
+                  postInfo.authorEmail === auth.currentUser?.email ? 2 : 3
+                }
+                title="Copy"
+                icon="copy"
+                action={() => {
+                  Clipboard.setStringAsync(postInfo.text)
+                  bottomSheetModalRef.current?.dismiss()
+                }}
+              />
+              {postInfo.authorEmail === auth.currentUser?.email ? (
+                <EditButton
+                  amountInARow={2}
+                  title="Edit"
+                  icon="edit"
+                  action={() => {
+                    navigation.navigate('NewPostScreen', { post: postInfo })
+                    bottomSheetModalRef.current?.dismiss()
+                  }}
+                />
+              ) : (
+                <>
+                  <EditButton
+                    amountInARow={3}
+                    title="Profile"
+                    icon="user"
+                    action={() => {
+                      Alert.alert(
+                        'will be implemented in the next global version'
+                      )
+                      // navigation.navigate('NewPostScreen', { post: postInfo })
+                      // bottomSheetModalRef.current?.dismiss()
+                    }}
+                  />
+                  <EditButton
+                    amountInARow={3}
+                    title="Report"
+                    icon="alert-octagon"
+                    action={() => {
+                      Alert.alert(
+                        'will be implemented in the next global version'
+                      )
+                      // navigation.navigate('NewPostScreen', { post: postInfo })
+                      // bottomSheetModalRef.current?.dismiss()
+                    }}
+                  />
+                </>
+              )}
+            </View>
             <View
               style={{
                 width: rules.componentWidthPercent,
@@ -321,11 +384,16 @@ export default function PostsScreen({ navigation }: any) {
                       : colors.LightCommentText,
                 }}
               >
-                {text.DeletingPost}
+                {postInfo.authorEmail === auth.currentUser?.email
+                  ? text.DeletingPost
+                  : text.OtherUserPost}
               </Text>
             </View>
-
-            <SwipeToDelete action={DeletePostFunc} />
+            {postInfo.authorEmail === auth.currentUser?.email ? (
+              <SwipeToDelete action={DeletePostFunc} />
+            ) : (
+              <></>
+            )}
           </View>
         </BottomSheetModal>
       </View>

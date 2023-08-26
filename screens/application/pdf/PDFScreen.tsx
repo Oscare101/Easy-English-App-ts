@@ -1,16 +1,33 @@
 import { useEffect, useState } from 'react'
-import { Dimensions, ScrollView, View } from 'react-native'
+import {
+  Dimensions,
+  ScrollView,
+  StatusBar,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import WebView from 'react-native-webview'
-import { auth } from '../../../firebase'
 import { getDatabase, onValue, ref } from 'firebase/database'
 import { User } from '../../../constants/interfaces'
-// import RNHTMLtoPDF from 'react-native-html-to-pdf'
+import { auth, db, storage } from '../../../firebase'
+
+import { ref as refStorage, getDownloadURL } from 'firebase/storage'
+// import RNHTMLtoPDF from 'react-native-html-to-pdf' // not working
+import Share from 'react-native-share'
+import colors from '../../../constants/colors'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../../redux'
+import { Ionicons } from '@expo/vector-icons'
+import { decode as base64_decode, encode as base64_encode } from 'base-64'
 
 const width = Dimensions.get('screen').width
 const height = Dimensions.get('screen').height
 
-export default function PDFScreen() {
+export default function PDFScreen({ navigation }: any) {
+  const { themeColor } = useSelector((state: RootState) => state.themeColor)
+
   const [user, setUser] = useState<User>({} as User)
+  const [image, setImage] = useState<any>('')
 
   function GetUserFunc() {
     if (auth.currentUser && auth.currentUser.email) {
@@ -24,11 +41,46 @@ export default function PDFScreen() {
     }
   }
 
+  async function GetUserPhoto() {
+    if (auth.currentUser && auth.currentUser.email) {
+      const img = refStorage(storage, `user/${auth.currentUser?.email}`)
+      await getDownloadURL(img)
+        .then((i) => {
+          setImage(i)
+        })
+        .catch((e) => {
+          if (e.code.includes('storage/object-not-found')) {
+            setImage('')
+          }
+        })
+    }
+  }
+
   useEffect(() => {
     GetUserFunc()
+    GetUserPhoto()
   }, [])
 
-  const htmlContent = `
+  async function CreatePDF() {
+    const shareOptions = {
+      url: `data:application/pdf;base64,${base64_encode(htmlContent)}`,
+      type: 'application/pdf',
+      filename: 'report',
+    }
+    Share.open({
+      title: 'title',
+      message: 'message',
+      url: 'data:application/pdf;base64,' + base64_encode(htmlContent),
+    })
+
+    // Share.open(shareOptions)
+    //   .then(() => {})
+    //   .catch((error) => console.error('Помилка надсилання пдф-файлу:', error))
+
+    // console.log(file.filePath);
+  }
+
+  const htmlContent: any = `
  <html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>${'Easy English Certificate'}</title><style>
 /* cspell:disable-file */
 /* webkit printing magic: print all background colors */
@@ -704,7 +756,7 @@ blockquote {
 	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
 }
 	
-</style></head><body><article id="790a7406-410a-4a93-a636-4e3363779049" class="page mono"><header><h1 class="page-title">${'Easy English Certificate'}</h1><p class="page-description"></p></header><div class="page-body"><div id="97436137-183d-4769-9b4c-c9882ae1b844" class="column-list"><div id="ab4e1f72-c68f-4c71-a8c5-a13610cd063e" style="width:31.25%" class="column"><figure id="35bcca4d-928a-431f-a5ff-e751c7dc456f" class="image"><a href="Strong%20Junior%20React%20React%20Native%20790a7406410a4a93a6364e3363779049/PXL_20230521_113431535.jpg"><img style="width:240px" src="Strong%20Junior%20React%20React%20Native%20790a7406410a4a93a6364e3363779049/PXL_20230521_113431535.jpg"/></a></figure></div><div id="9108aeef-b003-4a89-80f6-f9310c8df297" style="width:68.75%" class="column"><h1 id="af28a588-401e-443b-af0b-4a5749666484" class="">${
+</style></head><body><article id="790a7406-410a-4a93-a636-4e3363779049" class="page mono"><header><h1 class="page-title">${'Easy English Certificate'}</h1><p class="page-description"></p></header><div class="page-body"><div id="97436137-183d-4769-9b4c-c9882ae1b844" class="column-list"><div id="ab4e1f72-c68f-4c71-a8c5-a13610cd063e" style="width:31.25%" class="column"><figure id="35bcca4d-928a-431f-a5ff-e751c7dc456f" class="image"><a href="Strong%20Junior%20React%20React%20Native%20790a7406410a4a93a6364e3363779049/PXL_20230521_113431535.jpg"><img style="width:240px" src="${image}"/></a></figure></div><div id="9108aeef-b003-4a89-80f6-f9310c8df297" style="width:68.75%" class="column"><h1 id="af28a588-401e-443b-af0b-4a5749666484" class="">${
     user.name || ''
   } ${
     user.surname || ''
@@ -743,6 +795,64 @@ blockquote {
 
   return (
     <ScrollView contentContainerStyle={{ flex: 1 }}>
+      <StatusBar
+        barStyle={themeColor === 'dark' ? 'light-content' : 'dark-content'}
+        backgroundColor={themeColor === 'dark' ? colors.DarkBG : colors.LightBG}
+      />
+      <View
+        style={{
+          width: '100%',
+          height: 50,
+          backgroundColor:
+            themeColor === 'dark' ? colors.DarkBG : colors.LightBG,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: 10,
+        }}
+      >
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            navigation.goBack()
+          }}
+          style={{
+            height: 50,
+            width: 50,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Ionicons
+            name="chevron-back"
+            size={24}
+            color={
+              themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText
+            }
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            CreatePDF()
+          }}
+          style={{
+            height: 50,
+            width: 50,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Ionicons
+            name="share-outline"
+            size={24}
+            color={
+              themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText
+            }
+          />
+        </TouchableOpacity>
+      </View>
+
       <WebView originWhitelist={['*']} source={{ html: htmlContent }} />
     </ScrollView>
   )

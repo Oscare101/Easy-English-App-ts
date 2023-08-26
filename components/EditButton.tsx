@@ -3,7 +3,7 @@ import rules from '../constants/rules'
 import colors from '../constants/colors'
 import { useSelector } from 'react-redux'
 import { RootState } from '../redux'
-
+import { Feather } from '@expo/vector-icons'
 export default function EditButton(props: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
 
@@ -14,7 +14,7 @@ export default function EditButton(props: any) {
         props.action()
       }}
       style={{
-        width: rules.componentWidthPercent,
+        width: props.amountInARow === 2 ? '48%' : '31%',
         marginTop: 20,
         borderRadius: 8,
         overflow: 'hidden',
@@ -22,21 +22,28 @@ export default function EditButton(props: any) {
           themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
 
         borderWidth: 1,
-        height: 60,
         alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 2,
+        padding: 10,
       }}
     >
+      <Feather
+        name={props.icon}
+        size={20}
+        color={
+          themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText
+        }
+      />
       <Text
         style={{
           color:
             themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
           fontSize: 20,
+          paddingTop: 5,
         }}
       >
-        Edit
+        {props.title}
       </Text>
     </TouchableOpacity>
   )

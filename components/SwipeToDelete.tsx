@@ -100,7 +100,7 @@ export default function SwipeToDelete(props: any) {
                 fontSize: 20,
               }}
             >
-              {'<<<'} Swipe to delete post
+              {'<<<'} Swipe to delete
             </Text>
             <Ionicons
               name="trash-outline"

@@ -27,6 +27,7 @@ import PDFScreen from '../screens/application/pdf/PDFScreen'
 import TestPage from '../screens/application/courses/TestPage'
 import ForceUpdateScreen from '../screens/login/ForceUpdateScreen'
 import PostsScreen from '../screens/application/post/PostsScreen'
+import ApplicationInfoScreen from '../screens/application/profile/ApplicationInfoScreen'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -370,6 +371,17 @@ export default function MainNavigation() {
         }}
         name="PDFScreen"
         component={PDFScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          gestureDirection: 'horizontal',
+          gestureEnabled: true,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+        name="ApplicationInfoScreen"
+        component={ApplicationInfoScreen}
       />
     </Stack.Navigator>
   )

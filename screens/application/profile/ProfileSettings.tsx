@@ -221,6 +221,15 @@ export default function ProfileSettings({ navigation }: any) {
         bottomSheetModalRef.current?.present()
       },
     },
+    {
+      type: 'button',
+      title: 'Application info',
+      icon: 'chevron-forward',
+      color: themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
+      action: () => {
+        navigation.navigate('ApplicationInfoScreen')
+      },
+    },
     { type: 'title', title: 'Security' },
     {
       type: 'button',

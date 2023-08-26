@@ -21,6 +21,8 @@ import {
 } from '@gorhom/bottom-sheet'
 import { DeletePost } from '../../../functions/Actions'
 import text from '../../../constants/text'
+import SwipeToDelete from '../../../components/SwipeToDelete'
+import EditButton from '../../../components/EditButton'
 
 export default function PostsScreen({ navigation }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
@@ -289,42 +291,12 @@ export default function PostsScreen({ navigation }: any) {
                   : ''}
               </Text>
             </View>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => {
+            <EditButton
+              action={() => {
                 navigation.navigate('NewPostScreen', { post: postInfo })
                 bottomSheetModalRef.current?.dismiss()
               }}
-              style={{
-                width: rules.componentWidthPercent,
-                marginTop: 20,
-                borderRadius: 8,
-                overflow: 'hidden',
-                borderColor:
-                  themeColor === 'dark'
-                    ? colors.DarkBorder
-                    : colors.LightBorder,
-
-                borderWidth: 1,
-                height: 60,
-                alignSelf: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 2,
-              }}
-            >
-              <Text
-                style={{
-                  color:
-                    themeColor === 'dark'
-                      ? colors.DarkCommentText
-                      : colors.LightCommentText,
-                  fontSize: 20,
-                }}
-              >
-                Edit
-              </Text>
-            </TouchableOpacity>
+            />
             <View
               style={{
                 width: rules.componentWidthPercent,
@@ -353,44 +325,7 @@ export default function PostsScreen({ navigation }: any) {
               </Text>
             </View>
 
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={DeletePostFunc}
-              style={{
-                width: rules.componentWidthPercent,
-                marginTop: 20,
-                borderRadius: 8,
-                overflow: 'hidden',
-                backgroundColor:
-                  themeColor === 'dark'
-                    ? colors.DarkBGDanger
-                    : colors.LightBGDanger,
-
-                borderColor:
-                  themeColor === 'dark'
-                    ? colors.DarkDangerText
-                    : colors.LightDangerText,
-
-                borderWidth: 1,
-                height: 60,
-                alignSelf: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 2,
-              }}
-            >
-              <Text
-                style={{
-                  color:
-                    themeColor === 'dark'
-                      ? colors.DarkDangerText
-                      : colors.LightDangerText,
-                  fontSize: 20,
-                }}
-              >
-                Delete post
-              </Text>
-            </TouchableOpacity>
+            <SwipeToDelete action={DeletePostFunc} />
           </View>
         </BottomSheetModal>
       </View>

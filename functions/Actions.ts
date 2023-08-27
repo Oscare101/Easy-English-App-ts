@@ -2,10 +2,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  signInWithCredential,
 } from 'firebase/auth'
-import { auth, db } from '../firebase'
-import { collection, getDocs, doc, setDoc } from 'firebase/firestore/lite'
+import { auth, db, storage } from '../firebase'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { NewUser } from '../constants/dataConsts'
@@ -18,8 +16,7 @@ import {
   update,
   remove,
 } from 'firebase/database'
-import { firebase } from '@react-native-firebase/database'
-import database from '@react-native-firebase/database'
+import { ref as refStorage, deleteObject } from 'firebase/storage'
 
 // VERSION
 
@@ -114,7 +111,9 @@ export async function DeleteUser(email: string) {
   try {
     await AsyncStorage.setItem('email', '')
     await AsyncStorage.setItem('password', '')
-    remove(ref(getDatabase(), 'user/' + email.replace('.', ',')))
+    await remove(ref(getDatabase(), 'user/' + email.replace('.', ',')))
+    deleteObject(refStorage(storage, `user/${auth.currentUser?.email}`))
+
     auth.currentUser?.delete()
   } catch (error) {
     console.log('DeleteUser', error)

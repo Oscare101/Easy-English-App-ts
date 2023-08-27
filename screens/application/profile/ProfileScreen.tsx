@@ -108,12 +108,14 @@ export default function ProfileScreen({ navigation }: any) {
   }, [])
 
   useEffect(() => {
-    GetUserPostsFunc(user.email)
+    if (user) {
+      GetUserPostsFunc(user.email)
+    }
   }, [user])
 
   useEffect(() => {
     GetUserPhoto()
-  }, [user.photo])
+  }, [user && user.photo])
 
   function renderUserPost({ item }: any) {
     return (

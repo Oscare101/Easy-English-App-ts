@@ -2,22 +2,19 @@ import {
   Dimensions,
   FlatList,
   Image,
-  ScrollView,
   StatusBar,
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-  Animated,
 } from 'react-native'
 import { styles } from '../../../constants/styles'
-import MainButton from '../../../components/MainButton'
 import { DeletePost, LogOut } from '../../../functions/Actions'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { auth, db, storage } from '../../../firebase'
 import { ref as refStorage, getDownloadURL } from 'firebase/storage'
 import * as Clipboard from 'expo-clipboard'
-import { getDatabase, onValue, ref, remove, update } from 'firebase/database'
+import { getDatabase, onValue, ref } from 'firebase/database'
 import { User } from '../../../constants/interfaces'
 import { MaterialIcons } from '@expo/vector-icons'
 import colors from '../../../constants/colors'
@@ -29,13 +26,12 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet'
 import text from '../../../constants/text'
-import { GetTheme } from '../../../functions/Functions'
 import { RootState } from '../../../redux'
 import { useSelector } from 'react-redux'
-import { Swipeable } from 'react-native-gesture-handler'
-import { Ionicons, Feather } from '@expo/vector-icons'
 import SwipeToDelete from '../../../components/SwipeToDelete'
 import EditButton from '../../../components/EditButton'
+import ImageView from 'react-native-image-viewing'
+import Toast from 'react-native-toast-message'
 
 const width = Dimensions.get('screen').width
 
@@ -46,6 +42,8 @@ export default function ProfileScreen({ navigation }: any) {
   const [usersPosts, setUsersPost] = useState<any>([])
   const [post, setPost] = useState<any>({})
   const [image, setImage] = useState<any>('')
+  const [imageVisible, setImageVisible] = useState<boolean>(false)
+
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(() => [360], [])
   const handleSheetChanges = useCallback((index: number) => {
@@ -248,6 +246,12 @@ export default function ProfileScreen({ navigation }: any) {
           },
         ]}
       >
+        <ImageView
+          images={[{ uri: image }]}
+          imageIndex={0}
+          visible={imageVisible}
+          onRequestClose={() => setImageVisible(false)}
+        />
         <View
           style={{
             flexDirection: 'row',
@@ -255,7 +259,21 @@ export default function ProfileScreen({ navigation }: any) {
             justifyContent: 'flex-start',
           }}
         >
-          <View
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => {
+              if (image) {
+                setImageVisible(true)
+              } else {
+                Toast.show({
+                  type: 'ToastMessage',
+                  props: {
+                    title: `Set image forst`,
+                  },
+                  position: 'bottom',
+                })
+              }
+            }}
             style={{
               width: width * 0.2,
               height: width * 0.2,
@@ -294,7 +312,7 @@ export default function ProfileScreen({ navigation }: any) {
                 />
               </View>
             )}
-          </View>
+          </TouchableOpacity>
           <View
             style={{
               flexDirection: 'column',
@@ -447,7 +465,13 @@ export default function ProfileScreen({ navigation }: any) {
     <BottomSheetModalProvider>
       <StatusBar
         barStyle={themeColor === 'dark' ? 'light-content' : 'dark-content'}
-        backgroundColor={themeColor === 'dark' ? colors.DarkBG : colors.LightBG}
+        backgroundColor={
+          imageVisible
+            ? '#000'
+            : themeColor === 'dark'
+            ? colors.DarkBG
+            : colors.LightBG
+        }
       />
       <View
         style={[

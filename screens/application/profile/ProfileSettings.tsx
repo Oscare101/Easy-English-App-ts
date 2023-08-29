@@ -230,6 +230,15 @@ export default function ProfileSettings({ navigation }: any) {
         navigation.navigate('ApplicationInfoScreen')
       },
     },
+    {
+      type: 'button',
+      title: 'Personal TODO list',
+      icon: 'chevron-forward',
+      color: themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
+      action: () => {
+        navigation.navigate('PersonalTodoScreen')
+      },
+    },
     { type: 'title', title: 'Security' },
     {
       type: 'button',

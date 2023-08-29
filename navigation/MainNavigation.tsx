@@ -28,6 +28,7 @@ import TestPage from '../screens/application/courses/TestPage'
 import ForceUpdateScreen from '../screens/login/ForceUpdateScreen'
 import PostsScreen from '../screens/application/post/PostsScreen'
 import ApplicationInfoScreen from '../screens/application/profile/ApplicationInfoScreen'
+import PersonalTodoScreen from '../screens/application/profile/PersonalTodoScreen'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -382,6 +383,17 @@ export default function MainNavigation() {
         }}
         name="ApplicationInfoScreen"
         component={ApplicationInfoScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          gestureDirection: 'horizontal',
+          gestureEnabled: true,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+        name="PersonalTodoScreen"
+        component={PersonalTodoScreen}
       />
     </Stack.Navigator>
   )

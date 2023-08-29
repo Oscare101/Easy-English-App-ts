@@ -126,7 +126,7 @@ export async function CreatePost(data: any) {
   try {
     await set(ref(getDatabase(), 'post/' + data.id), data)
   } catch (error) {
-    console.log('SetNewUser', error)
+    console.log('CreatePost', error)
   }
 }
 
@@ -134,7 +134,7 @@ export async function DeletePost(id: string) {
   try {
     remove(ref(getDatabase(), 'post/' + id))
   } catch (error) {
-    console.log('DeleteUser', error)
+    console.log('DeletePost', error)
   }
 }
 
@@ -144,7 +144,7 @@ export async function CreateMessage(chatID: string, data: any) {
   try {
     await set(ref(getDatabase(), 'chat/' + chatID + '/' + data.id), data)
   } catch (error) {
-    console.log('SetNewUser', error)
+    console.log('CreateMessage', error)
   }
 }
 
@@ -157,7 +157,7 @@ export async function SetUserPhotoUpdate(email: string, time: string) {
       time
     )
   } catch (error) {
-    console.log('SetNewUser', error)
+    console.log('SetUserPhotoUpdate', error)
   }
 }
 
@@ -180,7 +180,7 @@ export async function CreateUserTestPoints(
       }
     )
   } catch (error) {
-    console.log('SetNewUser', error)
+    console.log('CreateUserTestPoints', error)
   }
 }
 
@@ -188,6 +188,46 @@ export async function DeleteUserTestPoints(email: string, id: number) {
   try {
     remove(ref(getDatabase(), `user/${email.replace('.', ',')}/test/${id}`))
   } catch (error) {
-    console.log('SetNewUser', error)
+    console.log('DeleteUserTestPoints', error)
+  }
+}
+
+// TODO
+
+export async function CreateTODO(email: string, data: any) {
+  try {
+    await set(
+      ref(
+        getDatabase(),
+        `user/${email.replace('.', ',')}/todo/list/${data.id}`
+      ),
+      data
+    )
+  } catch (error) {
+    console.log('CreateTODO', error)
+  }
+}
+
+export async function ToggleTODO(email: string, data: any) {
+  try {
+    await update(
+      ref(
+        getDatabase(),
+        `user/${email.replace('.', ',')}/todo/list/${data.id}`
+      ),
+      { done: !data.done, finished: new Date().getTime() }
+    )
+  } catch (error) {
+    console.log('CreateTODO', error)
+  }
+}
+
+export async function DeleteTODO(email: string, id: any) {
+  try {
+    await remove(
+      ref(getDatabase(), `user/${email.replace('.', ',')}/todo/list/${id}`)
+    )
+  } catch (error) {
+    console.log('CreateTODO', error)
   }
 }

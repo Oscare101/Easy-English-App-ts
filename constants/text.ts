@@ -30,6 +30,10 @@ const text: Text = {
     'This post was posted by another user, if you find it offensive, you can report it',
   AboutApplication:
     "This application was developed as part of a master's thesis by a 5th-year student of KPI.\n\nThe main goal of this application is to facilitate and popularize self-study and practice of the English language\n\nif you find any inaccuracy in the application, or you want to offer me your idea, you can write to me in Telegram\n\nThere is also a Telegram channel in which I publish all updates regarding the application",
+  BePoliteInChat:
+    'be respectful in the chat, and never send personal information to other chat members',
+  MailForPasswordReset:
+    'A letter will be sent to your mail with all the instructions for changing the password',
 }
 
 export default text

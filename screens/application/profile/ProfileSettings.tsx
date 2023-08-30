@@ -33,12 +33,24 @@ import { useDispatch } from 'react-redux'
 import { setAuthentication } from '../../../redux/authentication'
 import * as LocalAuthentication from 'expo-local-authentication'
 import { setTheme } from '../../../redux/theme'
-import { ref as refStorage, uploadBytes, deleteObject } from 'firebase/storage'
+import {
+  connectAuthEmulator,
+  sendPasswordResetEmail,
+  confirmPasswordReset,
+} from 'firebase/auth'
+import {
+  ref as refStorage,
+  uploadBytes,
+  deleteObject,
+  getDownloadURL,
+} from 'firebase/storage'
 import * as ImagePicker from 'expo-image-picker'
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator'
 import Toast from 'react-native-toast-message'
+import SwipeToDelete from '../../../components/SwipeToDelete'
+import { openInbox } from 'react-native-email-link'
 
-export default function ProfileSettings({ navigation }: any) {
+export default function ProfileSettings({ navigation, route }: any) {
   const dispatch = useDispatch()
   const { authentication } = useSelector(
     (state: RootState) => state.authentication
@@ -58,6 +70,12 @@ export default function ProfileSettings({ navigation }: any) {
   async function GetBiometricData() {
     const has = await LocalAuthentication.hasHardwareAsync()
     setHasBiometric(has)
+  }
+
+  async function ResetPasswordFunc() {
+    if ((auth.currentUser && auth, auth.currentUser?.email)) {
+      sendPasswordResetEmail(auth, auth.currentUser?.email)
+    }
   }
 
   async function convertToJPEGFunc(
@@ -167,6 +185,7 @@ export default function ProfileSettings({ navigation }: any) {
   async function DeletePhoto() {
     if (auth.currentUser && auth.currentUser.email) {
       const storageRef = refStorage(storage, `user/${auth.currentUser?.email}`)
+
       deleteObject(storageRef).then(() => {
         Toast.show({
           type: 'ToastMessage',
@@ -177,10 +196,7 @@ export default function ProfileSettings({ navigation }: any) {
         })
         bottomSheetModalRef.current?.dismiss()
         if (auth.currentUser && auth.currentUser.email) {
-          SetUserPhotoUpdate(
-            auth.currentUser?.email,
-            new Date().getTime().toString()
-          )
+          SetUserPhotoUpdate(auth.currentUser?.email, '')
         }
       })
     }
@@ -228,6 +244,16 @@ export default function ProfileSettings({ navigation }: any) {
       color: themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
       action: () => {
         navigation.navigate('ApplicationInfoScreen')
+      },
+    },
+    {
+      type: 'button',
+      title: 'Reset password',
+      icon: 'cog',
+      color: themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
+      action: () => {
+        setBottomSheetContent('resetPassword')
+        bottomSheetModalRef.current?.present()
       },
     },
     {
@@ -319,6 +345,10 @@ export default function ProfileSettings({ navigation }: any) {
   useEffect(() => {
     GetBiometricData()
     GetUserFunc()
+    if (route.params && route.params.setImage) {
+      setBottomSheetContent('imageZone')
+      bottomSheetModalRef.current?.present()
+    }
   }, [])
 
   const securityRules = [
@@ -384,6 +414,7 @@ export default function ProfileSettings({ navigation }: any) {
       title: 'Delete photo',
       description: 'Remove photo from your ptofile',
       icon: 'trash-outline',
+      delete: true,
     },
   ]
 
@@ -556,48 +587,57 @@ export default function ProfileSettings({ navigation }: any) {
             )}
           </View>
         </TouchableOpacity>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          disabled={!confirmDeletingAccount}
-          onPress={() => {
-            if (confirmDeletingAccount) {
-              DeleteAccountFunc()
-            }
-          }}
-          style={{
-            width: rules.componentWidthPercent,
-            opacity: confirmDeletingAccount ? 1 : 0.5,
-            marginTop: 20,
-            borderRadius: 8,
-            overflow: 'hidden',
-            backgroundColor: confirmDeletingAccount
-              ? themeColor === 'dark'
-                ? colors.DarkBGDanger
-                : colors.LightBGDanger
-              : '#00000000',
-            height: 60,
-            alignSelf: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderWidth: 1,
-            borderColor:
-              themeColor === 'dark'
-                ? colors.DarkDangerText
-                : colors.LightDangerText,
-          }}
-        >
-          <Text
+        {confirmDeletingAccount ? (
+          <SwipeToDelete
+            title="Swipe to confirm"
+            action={DeleteAccountFunc}
+            icon="person-remove-outline"
+          />
+        ) : (
+          <View
             style={{
-              color:
+              width: rules.componentWidthPercent,
+              opacity: 0.5,
+              marginTop: 20,
+              borderRadius: 8,
+              overflow: 'hidden',
+              backgroundColor: '#00000000',
+              height: 60,
+              flexDirection: 'row',
+              alignSelf: 'center',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              borderWidth: 1,
+              borderColor:
                 themeColor === 'dark'
                   ? colors.DarkDangerText
                   : colors.LightDangerText,
-              fontSize: 20,
+              paddingHorizontal: '6%',
             }}
           >
-            Delete Account
-          </Text>
-        </TouchableOpacity>
+            <View></View>
+            <Text
+              style={{
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkDangerText
+                    : colors.LightDangerText,
+                fontSize: 20,
+              }}
+            >
+              {'<<<'} Swipe to confirm
+            </Text>
+            <Ionicons
+              name="person-remove-outline"
+              size={24}
+              color={
+                themeColor === 'dark'
+                  ? colors.DarkDangerText
+                  : colors.LightDangerText
+              }
+            />
+          </View>
+        )}
       </View>
     )
   }
@@ -864,6 +904,172 @@ export default function ProfileSettings({ navigation }: any) {
     )
   }
 
+  function PasswordZone() {
+    return (
+      <View
+        style={{
+          backgroundColor:
+            themeColor === 'dark' ? colors.DarkBGModal : colors.LightBGModal,
+          flex: 1,
+        }}
+      >
+        <View
+          style={{
+            borderColor:
+              themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
+            borderBottomWidth: 1,
+            width: '100%',
+            backgroundColor:
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 20,
+              textAlign: 'center',
+              paddingVertical: 10,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
+            }}
+          >
+            Reset password
+          </Text>
+        </View>
+        <View
+          style={{
+            width: rules.componentWidthPercent,
+            alignSelf: 'center',
+            marginTop: 16,
+            borderRadius: 8,
+            backgroundColor:
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
+            padding: 8,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 18,
+              textAlign: 'center',
+              paddingVertical: 10,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
+            }}
+          >
+            {text.MailForPasswordReset}
+          </Text>
+        </View>
+        <TouchableOpacity
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 15,
+            width: rules.componentWidthPercent,
+            paddingHorizontal: 20,
+            borderWidth: 2,
+            borderColor:
+              themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
+            alignSelf: 'center',
+            borderRadius: 8,
+            marginTop: 20,
+          }}
+          onPress={async () => {
+            ResetPasswordFunc()
+            Toast.show({
+              type: 'ToastMessage',
+              props: {
+                title: `The mail was sent to ${auth.currentUser?.email}`,
+              },
+              position: 'bottom',
+            })
+          }}
+        >
+          <Ionicons
+            name="mail-unread-outline"
+            size={24}
+            color={
+              themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText
+            }
+          />
+
+          <Text
+            style={{
+              fontSize: 18,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
+              paddingLeft: 10,
+            }}
+          >
+            Get a mail
+          </Text>
+        </TouchableOpacity>
+        <Text
+          style={{
+            fontSize: 18,
+            color:
+              themeColor === 'dark'
+                ? colors.DarkCommentText
+                : colors.LightCommentText,
+            width: '100%',
+            textAlign: 'center',
+            marginVertical: 10,
+          }}
+        >
+          and then
+        </Text>
+        <TouchableOpacity
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 15,
+            width: rules.componentWidthPercent,
+            paddingHorizontal: 20,
+            borderWidth: 2,
+            borderColor:
+              themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
+            alignSelf: 'center',
+            borderRadius: 8,
+          }}
+          onPress={() => {
+            openInbox()
+          }}
+        >
+          <Ionicons
+            name="phone-portrait-outline"
+            size={24}
+            color={
+              themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText
+            }
+          />
+
+          <Text
+            style={{
+              fontSize: 18,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText,
+              paddingLeft: 10,
+            }}
+          >
+            Open mail app
+          </Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
   function ImageZone() {
     return (
       <View
@@ -941,7 +1147,9 @@ export default function ProfileSettings({ navigation }: any) {
                 padding: 10,
                 width: '100%',
                 paddingHorizontal: 20,
+                opacity: item.delete && !user.photo ? 0.5 : 1,
               }}
+              disabled={item.delete && !user.photo}
               onPress={() => {
                 item.action()
               }}
@@ -1103,6 +1311,8 @@ export default function ProfileSettings({ navigation }: any) {
                 <ThemeZone />
               ) : bottomSheetContent === 'imageZone' ? (
                 <ImageZone />
+              ) : bottomSheetContent === 'resetPassword' ? (
+                <PasswordZone />
               ) : (
                 <SecurityZone />
               )}

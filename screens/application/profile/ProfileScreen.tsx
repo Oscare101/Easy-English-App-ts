@@ -159,7 +159,7 @@ export default function ProfileScreen({ navigation }: any) {
                     : colors.LightMainText,
               }}
             >
-              {user.name}
+              {user ? user.name : ''}
             </Text>
             <Text
               style={{
@@ -182,7 +182,6 @@ export default function ProfileScreen({ navigation }: any) {
             onPress={() => {
               setPost(item)
               bottomSheetModalRef.current?.present()
-              // navigation.navigate('ProfileSettings')
             }}
           >
             {[0, 1, 2].map((_: any, index: number) => (
@@ -265,13 +264,7 @@ export default function ProfileScreen({ navigation }: any) {
               if (image) {
                 setImageVisible(true)
               } else {
-                Toast.show({
-                  type: 'ToastMessage',
-                  props: {
-                    title: `Set image forst`,
-                  },
-                  position: 'bottom',
-                })
+                navigation.navigate('ProfileSettings', { setImage: true })
               }
             }}
             style={{
@@ -617,7 +610,11 @@ export default function ProfileScreen({ navigation }: any) {
               {text.DeletingPost}
             </Text>
           </View>
-          <SwipeToDelete action={DeletePostFunc} />
+          <SwipeToDelete
+            title="Swipe to delete"
+            action={DeletePostFunc}
+            icon="trash-outline"
+          />
         </View>
       </BottomSheetModal>
     </BottomSheetModalProvider>

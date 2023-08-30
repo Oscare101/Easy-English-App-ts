@@ -8,7 +8,9 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../redux'
 import colors from '../../../constants/colors'
-
+import text from '../../../constants/text'
+import rules from '../../../constants/rules'
+import { Ionicons } from '@expo/vector-icons'
 export default function ChatsScreen({ navigation }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
 
@@ -44,7 +46,32 @@ export default function ChatsScreen({ navigation }: any) {
         barStyle={themeColor === 'dark' ? 'light-content' : 'dark-content'}
         backgroundColor={themeColor === 'dark' ? colors.DarkBG : colors.LightBG}
       />
-      <Text>Chats</Text>
+      <View
+        style={{
+          width: rules.componentWidthPercent,
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 10,
+          backgroundColor:
+            themeColor === 'dark'
+              ? colors.DarkBGComponent
+              : colors.LightBGComponent,
+          borderRadius: 8,
+          marginBottom: 20,
+        }}
+      >
+        <Text
+          style={{
+            fontSize: 16,
+            color:
+              themeColor === 'dark'
+                ? colors.DarkCommentText
+                : colors.LightCommentText,
+          }}
+        >
+          {text.BePoliteInChat}
+        </Text>
+      </View>
       <MainButton
         title="Global chat"
         disable={false}

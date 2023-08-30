@@ -390,7 +390,11 @@ export default function PostsScreen({ navigation }: any) {
               </Text>
             </View>
             {postInfo.authorEmail === auth.currentUser?.email ? (
-              <SwipeToDelete action={DeletePostFunc} />
+              <SwipeToDelete
+                title="Swipe to delete"
+                action={DeletePostFunc}
+                icon="trash-outline"
+              />
             ) : (
               <></>
             )}

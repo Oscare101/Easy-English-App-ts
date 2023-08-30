@@ -12,12 +12,12 @@ import { User } from '../../../constants/interfaces'
 import { auth, db, storage } from '../../../firebase'
 
 import { ref as refStorage, getDownloadURL } from 'firebase/storage'
-// import RNHTMLtoPDF from 'react-native-html-to-pdf' // not working
 import colors from '../../../constants/colors'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../redux'
 import { Ionicons } from '@expo/vector-icons'
-import { decode as base64_decode, encode as base64_encode } from 'base-64'
+import * as Print from 'expo-print'
+import { shareAsync } from 'expo-sharing'
 
 const width = Dimensions.get('screen').width
 const height = Dimensions.get('screen').height
@@ -27,7 +27,7 @@ export default function PDFScreen({ navigation }: any) {
 
   const [user, setUser] = useState<User>({} as User)
   const [image, setImage] = useState<any>('')
-
+  const [PDF, setPDF] = useState<any>('')
   function GetUserFunc() {
     if (auth.currentUser && auth.currentUser.email) {
       const data = ref(
@@ -55,19 +55,7 @@ export default function PDFScreen({ navigation }: any) {
     }
   }
 
-  useEffect(() => {
-    GetUserFunc()
-    GetUserPhoto()
-  }, [])
-
-  async function CreatePDF() {
-    // Share.open(shareOptions)
-    //   .then(() => {})
-    //   .catch((error) => console.error('Помилка надсилання пдф-файлу:', error))
-    // console.log(file.filePath);
-  }
-
-  const htmlContent: any = `
+  const html = `
  <html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>${'Easy English Certificate'}</title><style>
 /* cspell:disable-file */
 /* webkit printing magic: print all background colors */
@@ -756,29 +744,15 @@ blockquote {
 </p></div></div><p id="397f82b6-cd2c-4ec1-854e-ef2282c89e43" class="">
 </p></div></article></body></html>
     `
+  async function SharePDF() {
+    const { uri } = await Print.printToFileAsync({ html })
+    await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' })
+  }
 
-  // useEffect(() => {
-  //   const generatePDF = async () => {
-  //     let options = {
-  //       html: '<h1>PDF TEST</h1>',
-  //       fileName: 'test',
-  //       directory: 'Documents',
-  //     }
-
-  //     let pdf: any = await RNHTMLtoPDF.convert(options)
-  //     console.log(pdf)
-
-  //     setPdfFilePath(pdf.filePath)
-  //   }
-
-  //   generatePDF()
-  // }, [])
-
-  // useEffect(() => {
-  //   const Buffer = require('buffer').Buffer
-  //   let encodedAuth = new Buffer(htmlContent).toString('base64')
-
-  // }, [])
+  useEffect(() => {
+    GetUserFunc()
+    GetUserPhoto()
+  }, [])
 
   return (
     <ScrollView contentContainerStyle={{ flex: 1 }}>
@@ -821,7 +795,7 @@ blockquote {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
-            CreatePDF()
+            SharePDF()
           }}
           style={{
             height: 50,
@@ -839,8 +813,7 @@ blockquote {
           />
         </TouchableOpacity>
       </View>
-
-      <WebView originWhitelist={['*']} source={{ html: htmlContent }} />
+      <WebView originWhitelist={['*']} source={{ html: html }} />
     </ScrollView>
   )
 }

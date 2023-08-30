@@ -218,7 +218,7 @@ export async function ToggleTODO(email: string, data: any) {
       { done: !data.done, finished: new Date().getTime() }
     )
   } catch (error) {
-    console.log('CreateTODO', error)
+    console.log('ToggleTODO', error)
   }
 }
 
@@ -228,6 +228,6 @@ export async function DeleteTODO(email: string, id: any) {
       ref(getDatabase(), `user/${email.replace('.', ',')}/todo/list/${id}`)
     )
   } catch (error) {
-    console.log('CreateTODO', error)
+    console.log('DeleteTODO', error)
   }
 }

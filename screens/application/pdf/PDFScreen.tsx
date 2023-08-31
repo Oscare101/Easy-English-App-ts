@@ -45,9 +45,28 @@ export default function PDFScreen({ navigation }: any) {
   function GetPDFFunc(user: any, image: string) {
     const data = ref(getDatabase(), `pdf/`)
     onValue(data, (snapshot) => {
+      let testString = ''
+      if (user.test && Object.values(user.test).length > 0) {
+        testString += snapshot.val().userPDF.nonEmptyTest
+        const createTestFunction = new Function(
+          'test',
+          'return `' + snapshot.val().userPDF.testBlock + '`'
+        )
+
+        Object.values(user.test).forEach((test: any) => {
+          testString += createTestFunction(test)
+        })
+      } else {
+        testString = snapshot.val().userPDF.emptyTestBlock
+      }
+
       const createTemplateFunction = new Function(
         'user,image',
-        'return `' + snapshot.val().userPDF + '`'
+        'return `' +
+          snapshot.val().userPDF.topWrapper +
+          testString +
+          snapshot.val().userPDF.bottomWrapper +
+          '`'
       )
 
       const processedString = createTemplateFunction(user, image)

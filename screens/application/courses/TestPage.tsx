@@ -56,6 +56,8 @@ export default function TestPage({ navigation, route }: any) {
         date: new Date().getTime(),
         id: route.params.test.id,
         answers: chosenOptions,
+        title: route.params.test.title,
+        level: route.params.test.level,
       },
     }))
     scrollRef.current?.scrollTo({
@@ -67,7 +69,9 @@ export default function TestPage({ navigation, route }: any) {
         auth.currentUser.email,
         route.params.test.id,
         points,
-        chosenOptions
+        chosenOptions,
+        route.params.test.title,
+        route.params.test.level
       )
     }
   }

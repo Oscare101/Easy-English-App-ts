@@ -167,7 +167,9 @@ export async function CreateUserTestPoints(
   email: string,
   id: number,
   points: number,
-  answers: any
+  answers: any,
+  title: string,
+  level: number
 ) {
   try {
     await set(
@@ -177,6 +179,8 @@ export async function CreateUserTestPoints(
         date: new Date().getTime(),
         id: id,
         answers: answers,
+        title: title,
+        level: level,
       }
     )
   } catch (error) {

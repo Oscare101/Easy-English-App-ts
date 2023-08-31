@@ -1013,59 +1013,6 @@ export default function ProfileSettings({ navigation, route }: any) {
             Get a mail
           </Text>
         </TouchableOpacity>
-        <Text
-          style={{
-            fontSize: 18,
-            color:
-              themeColor === 'dark'
-                ? colors.DarkCommentText
-                : colors.LightCommentText,
-            width: '100%',
-            textAlign: 'center',
-            marginVertical: 10,
-          }}
-        >
-          and then
-        </Text>
-        <TouchableOpacity
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 15,
-            width: rules.componentWidthPercent,
-            paddingHorizontal: 20,
-            borderWidth: 2,
-            borderColor:
-              themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
-            alignSelf: 'center',
-            borderRadius: 8,
-          }}
-          onPress={() => {
-            openInbox()
-          }}
-        >
-          <Ionicons
-            name="phone-portrait-outline"
-            size={24}
-            color={
-              themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText
-            }
-          />
-
-          <Text
-            style={{
-              fontSize: 18,
-              color:
-                themeColor === 'dark'
-                  ? colors.DarkMainText
-                  : colors.LightMainText,
-              paddingLeft: 10,
-            }}
-          >
-            Open mail app
-          </Text>
-        </TouchableOpacity>
       </View>
     )
   }

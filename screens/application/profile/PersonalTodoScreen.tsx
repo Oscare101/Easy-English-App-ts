@@ -431,18 +431,51 @@ export default function PersonalTodoScreen({ navigation }: any) {
           keyboardShouldPersistTaps={'handled'}
         >
           <View style={[styles.ViewStart, { paddingVertical: 20 }]}>
-            <Text
+            <View
               style={{
-                fontSize: 24,
-                color:
-                  themeColor === 'dark'
-                    ? colors.DarkMainText
-                    : colors.LightMainText,
-                paddingBottom: 20,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
               }}
             >
-              ToDo
-            </Text>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => {
+                  navigation.goBack()
+                }}
+                style={{
+                  height: 50,
+                  width: 50,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Ionicons
+                  name="chevron-back"
+                  size={24}
+                  color={
+                    themeColor === 'dark'
+                      ? colors.DarkMainText
+                      : colors.LightMainText
+                  }
+                />
+              </TouchableOpacity>
+              <Text
+                style={{
+                  fontSize: 24,
+                  color:
+                    themeColor === 'dark'
+                      ? colors.DarkMainText
+                      : colors.LightMainText,
+                  paddingBottom: 20,
+                }}
+              >
+                ToDo
+              </Text>
+              <View style={{ width: 50 }} />
+            </View>
+
             {/* <View
               style={{
                 width: rules.componentWidthPercent,

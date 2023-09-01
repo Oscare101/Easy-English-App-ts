@@ -33,7 +33,9 @@ const text: Text = {
   BePoliteInChat:
     'be respectful in the chat, and never send personal information to other chat members',
   MailForPasswordReset:
-    'A letter will be sent to your mail with all the instructions for changing the password',
+    'You will receive an email with all the instructions for changing your password. So go to your mail app and follow the steps',
+  EmptyStatisticText:
+    "Come back when you've completed at least one test. Here will beyour statistic from practical tasks",
 }
 
 export default text

@@ -17,7 +17,7 @@ import {
   remove,
 } from 'firebase/database'
 import { ref as refStorage, deleteObject } from 'firebase/storage'
-
+var md5 = require('md5')
 // VERSION
 
 export async function GetApplicationInfo() {
@@ -33,9 +33,13 @@ export async function GetApplicationInfo() {
 
 export async function Registration(email: string, password: string) {
   try {
-    const response = await createUserWithEmailAndPassword(auth, email, password)
+    const response = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      md5(password)
+    )
     await AsyncStorage.setItem('email', email)
-    await AsyncStorage.setItem('password', password)
+    await AsyncStorage.setItem('password', md5(password))
     await SetNewUser(email)
     return { response: response }
   } catch (error: any) {
@@ -49,9 +53,13 @@ export async function Registration(email: string, password: string) {
 
 export async function LogIn(email: string, password: string) {
   try {
-    const response = await signInWithEmailAndPassword(auth, email, password)
+    const response = await signInWithEmailAndPassword(
+      auth,
+      email,
+      md5(password)
+    )
     await AsyncStorage.setItem('email', email)
-    await AsyncStorage.setItem('password', password)
+    await AsyncStorage.setItem('password', md5(password))
     return { response: response }
   } catch (error: any) {
     if (error.code.includes('wrong-password')) {

@@ -126,17 +126,40 @@ export default function ApplicationInfoScreen({ navigation }: any) {
         <View style={[styles.ViewStart, { paddingVertical: 20 }]}>
           <View
             style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
               borderColor:
                 themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
               borderBottomWidth: 1,
               borderStyle: 'dashed',
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 10,
-              marginBottom: 20,
+              paddingVertical: 10,
+              paddingBottom: 20,
             }}
           >
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => {
+                navigation.goBack()
+              }}
+              style={{
+                height: 50,
+                width: 50,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons
+                name="chevron-back"
+                size={24}
+                color={
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText
+                }
+              />
+            </TouchableOpacity>
             <Text
               style={{
                 fontSize: 24,
@@ -148,6 +171,7 @@ export default function ApplicationInfoScreen({ navigation }: any) {
             >
               Application info
             </Text>
+            <View style={{ width: 50 }} />
           </View>
 
           <FlatList

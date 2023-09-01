@@ -76,7 +76,9 @@ export default function CoursesScreen({ navigation }: any) {
     {
       icon: 'pie-chart-outline',
       title: 'statistics',
-      action: () => {},
+      action: () => {
+        navigation.navigate('StatisticScreen', { user: user })
+      },
     },
     {
       icon: 'documents-outline',

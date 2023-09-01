@@ -70,14 +70,23 @@ export default function InputText(props: any) {
           />
         ) : props.type === 'date' ? (
           <MaterialIcons name="date-range" size={24} color={GetColorBorder()} />
+        ) : props.type === 'region' ? (
+          <Ionicons name="earth-sharp" size={24} color={GetColorBorder()} />
+        ) : props.type === 'phone' ? (
+          <Ionicons
+            name="phone-portrait-outline"
+            size={24}
+            color={GetColorBorder()}
+          />
         ) : (
           <></>
         )}
       </View>
 
       <TextInput
+        keyboardType={props.numeric ? 'number-pad' : 'default'}
         autoCapitalize="none"
-        autoComplete="email"
+        autoComplete={props.type === 'email' ? 'email' : 'off'}
         value={props.value}
         secureTextEntry={hidePassword}
         onChangeText={(text) => props.setValue(text)}

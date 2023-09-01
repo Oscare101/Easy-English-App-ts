@@ -33,6 +33,8 @@ export default function PersonalInfoSettings({ navigation }: any) {
   const [birthDate, setBirthdate] = useState<any>('')
   const [gender, setGender] = useState<any>('')
   const [description, setDescription] = useState<string>('')
+  const [region, setRegion] = useState<any>('')
+  const [phone, setPhone] = useState<any>('')
 
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -130,18 +132,50 @@ export default function PersonalInfoSettings({ navigation }: any) {
         keyboardShouldPersistTaps={'handled'}
       >
         <View style={[styles.ViewStart, { paddingVertical: 20 }]}>
-          <Text
+          <View
             style={{
-              fontSize: 24,
-              paddingBottom: 20,
-              color:
-                themeColor === 'dark'
-                  ? colors.DarkMainText
-                  : colors.LightMainText,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
             }}
           >
-            ProfileSettings
-          </Text>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => {
+                navigation.goBack()
+              }}
+              style={{
+                height: 50,
+                width: 50,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons
+                name="chevron-back"
+                size={24}
+                color={
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText
+                }
+              />
+            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: 24,
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText,
+              }}
+            >
+              Personal info settings
+            </Text>
+            <View style={{ width: 50 }} />
+          </View>
+
           <InputText
             colorState={2}
             type="name"
@@ -155,6 +189,33 @@ export default function PersonalInfoSettings({ navigation }: any) {
             value={surname}
             setValue={(value: string) => setSurname(value)}
             placeholder="surname"
+          />
+          <InputText
+            colorState={2}
+            type="region"
+            value={region}
+            setValue={(value: string) => setRegion(value)}
+            placeholder="region (will be shown in pdf)"
+          />
+          <InputText
+            colorState={2}
+            type="phone"
+            numeric
+            value={phone}
+            setValue={(value: string) => {
+              if (value.length > 19) return false
+              const formattedPhoneNumber = value.replace(/[^0-9]/g, '')
+
+              if (
+                formattedPhoneNumber.length > 0 &&
+                formattedPhoneNumber[0] !== '+'
+              ) {
+                setPhone('+' + formattedPhoneNumber)
+              } else {
+                setPhone(formattedPhoneNumber)
+              }
+            }}
+            placeholder="phone (will be shown in pdf)"
           />
           <Text
             style={{
@@ -287,7 +348,17 @@ export default function PersonalInfoSettings({ navigation }: any) {
               <ActivityIndicator size={'large'} />
             </View>
           ) : (
-            <MainButton title="Save" disable={!name} action={UpdateUserFunc} />
+            <MainButton
+              title="Save"
+              disable={
+                !name ||
+                !(
+                  (phone.length < 20 && phone.length > 12) ||
+                  phone.length === 0
+                )
+              }
+              action={UpdateUserFunc}
+            />
           )}
         </View>
       </ScrollView>

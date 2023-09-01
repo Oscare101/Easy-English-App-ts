@@ -29,6 +29,7 @@ import ForceUpdateScreen from '../screens/login/ForceUpdateScreen'
 import PostsScreen from '../screens/application/post/PostsScreen'
 import ApplicationInfoScreen from '../screens/application/profile/ApplicationInfoScreen'
 import PersonalTodoScreen from '../screens/application/profile/PersonalTodoScreen'
+import StatisticScreen from '../screens/application/pdf/StatisticScreen'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -300,9 +301,9 @@ export default function MainNavigation() {
         options={{
           headerShown: false,
           animationEnabled: true,
-          gestureDirection: 'vertical',
+          gestureDirection: 'horizontal',
           gestureEnabled: true,
-          cardStyleInterpolator: CardStyleInterpolators.forModalPresentationIOS,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="ProfileSettings"
         component={ProfileSettings}
@@ -394,6 +395,17 @@ export default function MainNavigation() {
         }}
         name="PersonalTodoScreen"
         component={PersonalTodoScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          gestureDirection: 'horizontal',
+          gestureEnabled: true,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+        name="StatisticScreen"
+        component={StatisticScreen}
       />
     </Stack.Navigator>
   )

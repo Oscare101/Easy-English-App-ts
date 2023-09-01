@@ -38,8 +38,10 @@ export async function Registration(email: string, password: string) {
       email,
       md5(password)
     )
+    await AsyncStorage.setItem('authentication', 'auto')
+
     await AsyncStorage.setItem('email', email)
-    await AsyncStorage.setItem('password', md5(password))
+    await AsyncStorage.setItem('password', password)
     await SetNewUser(email)
     return { response: response }
   } catch (error: any) {
@@ -59,7 +61,7 @@ export async function LogIn(email: string, password: string) {
       md5(password)
     )
     await AsyncStorage.setItem('email', email)
-    await AsyncStorage.setItem('password', md5(password))
+    await AsyncStorage.setItem('password', password)
     return { response: response }
   } catch (error: any) {
     if (error.code.includes('wrong-password')) {

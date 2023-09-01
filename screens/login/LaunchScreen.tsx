@@ -76,6 +76,7 @@ export default function LaunchScreen({ navigation }: any) {
       }
     } else if (authentication === 'auto' && email && password) {
       const responseLogin = await LogIn(email, password)
+
       const responseUser: any = await GetUser(email)
       if (!responseLogin.error) {
         if (responseUser && responseUser.name) {

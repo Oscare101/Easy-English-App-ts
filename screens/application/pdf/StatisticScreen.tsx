@@ -23,19 +23,10 @@ export default function StatisticScreen({ navigation, route }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
   const [statistic, setStatistic] = useState<any[]>([])
   const [tests, setTests] = useState<any>({})
+  const [userTests, setUserTests] = useState<any>([])
+  const [user, serUser] = useState<any>(route.params.user)
 
   function GetUserStatistic() {
-    if (route.params.user.test) {
-      let questionsAmount = 0
-      let rightAnswers = 0
-      Object.values(route.params.user.test).forEach((i: any) => {
-        questionsAmount += i.answers.length
-        rightAnswers += i.points
-      })
-      setStatistic([rightAnswers, questionsAmount - rightAnswers])
-    } else {
-      setStatistic([])
-    }
     if (auth.currentUser && auth.currentUser.email) {
       const data = ref(
         getDatabase(),
@@ -43,9 +34,11 @@ export default function StatisticScreen({ navigation, route }: any) {
       )
       onValue(data, (snapshot) => {
         if (snapshot.val().test) {
+          setUserTests(Object.values(snapshot.val().test))
+          serUser(snapshot.val())
           let questionsAmount = 0
           let rightAnswers = 0
-          Object.values(route.params.user.test).forEach((i: any) => {
+          Object.values(snapshot.val().test).forEach((i: any) => {
             questionsAmount += i.answers.length
             rightAnswers += i.points
           })
@@ -85,7 +78,7 @@ export default function StatisticScreen({ navigation, route }: any) {
         onPress={() => {
           navigation.navigate('TestPage', {
             test: tests[item.id],
-            user: route.params.user,
+            user: user,
           })
         }}
       >
@@ -323,7 +316,7 @@ export default function StatisticScreen({ navigation, route }: any) {
                   />
                 )}
                 scrollEnabled={false}
-                data={Object.values(route.params.user.test)}
+                data={userTests}
                 renderItem={RenderUserTestItem}
               />
             </>

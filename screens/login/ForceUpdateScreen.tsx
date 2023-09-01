@@ -78,7 +78,7 @@ export default function ForceUpdateScreen({ navigation }: any) {
                 paddingLeft: 8,
               }}
             >
-              contact me
+              download update
             </Text>
           </TouchableOpacity>
           <Text

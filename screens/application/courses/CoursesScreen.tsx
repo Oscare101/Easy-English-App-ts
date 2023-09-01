@@ -161,9 +161,9 @@ export default function CoursesScreen({ navigation }: any) {
           borderRadius: 8,
           margin: width * 0.02,
         }}
-        onPress={() =>
+        onPress={() => {
           navigation.navigate('TestPage', { test: item, user: user })
-        }
+        }}
       >
         <Text
           style={{

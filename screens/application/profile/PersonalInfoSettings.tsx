@@ -68,8 +68,10 @@ export default function PersonalInfoSettings({ navigation }: any) {
       const data = {
         name: name,
         surname: surname,
-        gender: gender,
+        gender: gender || '',
         description: description,
+        region: region,
+        phone: phone,
       }
       await UpdateUser(auth.currentUser?.email, data)
       navigation.goBack()

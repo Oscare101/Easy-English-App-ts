@@ -10,17 +10,21 @@
 
 ### TODO 1.1.0
 
-- hash data
+- ✅ hash/restore password
 - ✅ tests
-- 🔶 pdf
-- chart
+- ✅ pdf
+- ✅ chart/statistic
 - ✅ profile image
 - ✅ global posts
 - ✅ edit posts
 - ✅ force update
+- ✅ delete photo after deleting account
+- ✅ personal TODO list
+- ✅ reset password
 
 ### TODO 1.2.0
 
+- onboarding
 - friends
 - subscribers
 - privat chats, inchat actions
@@ -35,7 +39,6 @@
 ### TODO 1.3.0
 
 - oauth
-- restore password
 
 ---
 

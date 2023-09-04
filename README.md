@@ -42,27 +42,10 @@
 
 ---
 
-### FIX
+### screenshots
 
-navigation fix
-
-course.courseID -> course.id
-test.testID -> test.id
-test[<id>].test -> test[<id>].question
-question.id.question -> question.id.title
-
----
-
-### styles for text parse
-
-#T# - text
-#C# - comment
-#E# - example
-#B# - bold text
-#I# - italic text
-#R# - red text
-#Y# - yellow text
-#G# - green text
-#N# - new paragraph
-#P# - paragraph blok
-#X# - example block
+![Profile](./assets/profile.jpg 'Profile')
+![Posts](./assets/postModal.jpg 'User post actions')
+![Chat](./assets/chat.jpg 'Global chat')
+![Settings](./assets/settings.jpg 'Profile settings')
+![Settings](./assets/settingsModal.jpg 'Profile settings more actions')

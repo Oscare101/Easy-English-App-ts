@@ -40,6 +40,7 @@ export default function App() {
           justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: 40,
+          borderRadius: 4,
         }}
       >
         <Text

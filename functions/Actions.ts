@@ -148,6 +148,16 @@ export async function DeletePost(id: string) {
   }
 }
 
+export async function UpdatePostLikes(postID: string, data: any) {
+  try {
+    await update(ref(getDatabase(), 'post/' + postID), {
+      likes: data,
+    })
+  } catch (error) {
+    console.log('CreatePost', error)
+  }
+}
+
 // MESSAGES
 
 export async function CreateMessage(chatID: string, data: any) {

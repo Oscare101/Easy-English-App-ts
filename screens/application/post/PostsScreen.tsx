@@ -20,11 +20,13 @@ import {
   BottomSheetModal,
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet'
-import { DeletePost } from '../../../functions/Actions'
+import { UpdatePostLikes, DeletePost } from '../../../functions/Actions'
 import text from '../../../constants/text'
 import SwipeToDelete from '../../../components/SwipeToDelete'
 import EditButton from '../../../components/EditButton'
 import * as Clipboard from 'expo-clipboard'
+import { Ionicons } from '@expo/vector-icons'
+import Toast from 'react-native-toast-message'
 
 export default function PostsScreen({ navigation }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
@@ -73,6 +75,40 @@ export default function PostsScreen({ navigation }: any) {
     GetUserPostsFunc()
     GetUsersFunc()
   }, [])
+
+  async function LikePostFunc(post: any) {
+    if (auth.currentUser && auth.currentUser.email) {
+      if (post.authorEmail === auth.currentUser.email) {
+        Toast.show({
+          type: 'ToastMessage',
+          props: {
+            title: `You cannot like your own post`,
+          },
+          position: 'bottom',
+        })
+      } else {
+        let data: any = {}
+        if (post.likes) {
+          data = post.likes
+          if (data[auth.currentUser.email.replace('.', ',')]) {
+            delete data[auth.currentUser.email.replace('.', ',')]
+          } else {
+            data[auth.currentUser.email.replace('.', ',')] = {
+              email: auth.currentUser.email,
+              date: new Date().getTime(),
+            }
+          }
+        } else {
+          data[auth.currentUser.email.replace('.', ',')] = {
+            email: auth.currentUser.email,
+            date: new Date().getTime(),
+          }
+        }
+
+        const response = await UpdatePostLikes(post.id, data)
+      }
+    }
+  }
 
   function renderUserPost({ item }: any) {
     return (
@@ -194,6 +230,71 @@ export default function PostsScreen({ navigation }: any) {
           </Text>
         ) : (
           <></>
+        )}
+        {auth.currentUser &&
+        auth.currentUser.email &&
+        item.authorEmail === auth.currentUser.email ? (
+          <Text
+            style={{
+              fontSize: 14,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
+              textAlign: 'right',
+            }}
+          >
+            {item.likes ? Object.values(item.likes).length : 0} likes
+          </Text>
+        ) : (
+          <TouchableOpacity
+            style={{
+              alignSelf: 'flex-end',
+              padding: 5,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+            }}
+            activeOpacity={0.8}
+            onPress={() => LikePostFunc(item)}
+          >
+            <Text
+              style={{
+                fontSize: 14,
+                color:
+                  item.likes &&
+                  auth.currentUser &&
+                  auth.currentUser.email &&
+                  item.likes[auth.currentUser.email.replace('.', ',')]
+                    ? themeColor === 'dark'
+                      ? colors.DarkMainText
+                      : colors.LightMainText
+                    : themeColor === 'dark'
+                    ? colors.DarkCommentText
+                    : colors.LightCommentText,
+                textAlign: 'right',
+                paddingRight: 10,
+              }}
+            >
+              {item.likes ? Object.values(item.likes).length : 0}
+            </Text>
+            <Ionicons
+              name="heart"
+              size={24}
+              color={
+                item.likes &&
+                auth.currentUser &&
+                auth.currentUser.email &&
+                item.likes[auth.currentUser.email.replace('.', ',')]
+                  ? themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText
+                  : themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText
+              }
+            />
+          </TouchableOpacity>
         )}
       </View>
     )

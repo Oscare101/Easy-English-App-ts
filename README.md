@@ -26,14 +26,14 @@
 
 - onboarding
 - friends
-- subscribers
+- ✅ followers
 - privat chats, inchat actions
 - user status (user, mentor, admin)
 - online status
-- copy text
+- ✅ copy text
 - report
-- deleted user case
-- likes
+- ✅ deleted user case
+- ✅ likes
 - promote
 
 ### TODO 1.3.0

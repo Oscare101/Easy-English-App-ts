@@ -1,4 +1,5 @@
 import {
+  Alert,
   Dimensions,
   FlatList,
   Image,
@@ -9,7 +10,7 @@ import {
   View,
 } from 'react-native'
 import { styles } from '../../../constants/styles'
-import { DeletePost, LogOut } from '../../../functions/Actions'
+import { UpdateFollowers, UpdatePostLikes } from '../../../functions/Actions'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { auth, db, storage } from '../../../firebase'
 import { ref as refStorage, getDownloadURL } from 'firebase/storage'
@@ -19,7 +20,6 @@ import { User } from '../../../constants/interfaces'
 import { MaterialIcons } from '@expo/vector-icons'
 import colors from '../../../constants/colors'
 import GradientText from '../../../components/GradientText'
-import SecondaryButton from '../../../components/SecondaryButton'
 import rules from '../../../constants/rules'
 import {
   BottomSheetModal,
@@ -28,77 +28,86 @@ import {
 import text from '../../../constants/text'
 import { RootState } from '../../../redux'
 import { useSelector } from 'react-redux'
-import SwipeToDelete from '../../../components/SwipeToDelete'
 import EditButton from '../../../components/EditButton'
 import ImageView from 'react-native-image-viewing'
-import Toast from 'react-native-toast-message'
+import { Ionicons } from '@expo/vector-icons'
 
 const width = Dimensions.get('screen').width
 
-export default function ProfileScreen({ navigation }: any) {
+export default function UserScreen({ navigation, route }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
 
   const [user, setUser] = useState<User>({} as User)
   const [usersPosts, setUsersPost] = useState<any>([])
-  const [post, setPost] = useState<any>({})
+  const [postInfo, setPostInfo] = useState<any>({})
   const [image, setImage] = useState<any>('')
   const [imageVisible, setImageVisible] = useState<boolean>(false)
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
-  const snapPoints = useMemo(() => [360], [])
+  const snapPoints = useMemo(() => [300], [])
   const handleSheetChanges = useCallback((index: number) => {
     if (index === -1) {
-      setPost({})
+      setPostInfo({})
     }
   }, [])
 
   function GetUserFunc() {
-    if (auth.currentUser && auth.currentUser.email) {
-      const data = ref(
-        getDatabase(),
-        `user/` + auth.currentUser.email.replace('.', ',')
-      )
-      onValue(data, (snapshot) => {
-        setUser(snapshot.val() as User)
-      })
-    }
+    const data = ref(
+      getDatabase(),
+      `user/` + route.params.user.replace('.', ',')
+    )
+    onValue(data, (snapshot) => {
+      setUser(snapshot.val() as User)
+    })
   }
 
   async function GetUserPhoto() {
-    if (auth.currentUser && auth.currentUser.email) {
-      const img = refStorage(storage, `user/${auth.currentUser?.email}`)
-      await getDownloadURL(img)
-        .then((i) => {
-          setImage(i)
-        })
-        .catch((e) => {
-          if (e.code.includes('storage/object-not-found')) {
-            setImage('')
-          }
-        })
-    }
+    const img = refStorage(storage, `user/${route.params.user}`)
+    await getDownloadURL(img)
+      .then((i) => {
+        setImage(i)
+      })
+      .catch((e) => {
+        if (e.code.includes('storage/object-not-found')) {
+          setImage('')
+        }
+      })
   }
 
   function GetUserPostsFunc(email: string) {
-    if (auth.currentUser && auth.currentUser.email) {
-      const data = ref(getDatabase(), `post`)
-      onValue(data, (snapshot) => {
-        if (snapshot.val()) {
-          setUsersPost(
-            Object.values(snapshot.val())
-              .filter((post: any) => post.authorEmail === email)
-              .reverse()
-          )
-        }
-      })
-    }
+    const data = ref(getDatabase(), `post`)
+    onValue(data, (snapshot) => {
+      if (snapshot.val()) {
+        setUsersPost(
+          Object.values(snapshot.val())
+            .filter((post: any) => post.authorEmail === email)
+            .reverse()
+        )
+      }
+    })
   }
 
-  async function DeletePostFunc() {
-    DeletePost(post.id)
-    setUsersPost(usersPosts.filter((i: any) => i.id !== post.id))
-    setPost({})
-    bottomSheetModalRef.current?.dismiss()
+  async function SubscribeFunc() {
+    if (auth.currentUser && auth.currentUser.email) {
+      let data: any = {}
+      if (user.followers) {
+        data = user.followers
+        if (data[auth.currentUser.email.replace('.', ',')]) {
+          delete data[auth.currentUser.email.replace('.', ',')]
+        } else {
+          data[auth.currentUser.email.replace('.', ',')] = {
+            email: auth.currentUser.email,
+            date: new Date().getTime(),
+          }
+        }
+      } else {
+        data[auth.currentUser.email.replace('.', ',')] = {
+          email: auth.currentUser.email,
+          date: new Date().getTime(),
+        }
+      }
+      const response = await UpdateFollowers(user.email.replace('.', ','), data)
+    }
   }
 
   useEffect(() => {
@@ -114,6 +123,30 @@ export default function ProfileScreen({ navigation }: any) {
   useEffect(() => {
     GetUserPhoto()
   }, [user && user.photo])
+
+  async function LikePostFunc(post: any) {
+    if (auth.currentUser && auth.currentUser.email) {
+      let data: any = {}
+      if (post.likes) {
+        data = post.likes
+        if (data[auth.currentUser.email.replace('.', ',')]) {
+          delete data[auth.currentUser.email.replace('.', ',')]
+        } else {
+          data[auth.currentUser.email.replace('.', ',')] = {
+            email: auth.currentUser.email,
+            date: new Date().getTime(),
+          }
+        }
+      } else {
+        data[auth.currentUser.email.replace('.', ',')] = {
+          email: auth.currentUser.email,
+          date: new Date().getTime(),
+        }
+      }
+
+      const response = await UpdatePostLikes(post.id, data)
+    }
+  }
 
   function renderUserPost({ item }: any) {
     return (
@@ -180,7 +213,7 @@ export default function ProfileScreen({ navigation }: any) {
               paddingVertical: 7,
             }}
             onPress={() => {
-              setPost(item)
+              setPostInfo(item)
               bottomSheetModalRef.current?.present()
             }}
           >
@@ -228,6 +261,54 @@ export default function ProfileScreen({ navigation }: any) {
         ) : (
           <></>
         )}
+        <TouchableOpacity
+          style={{
+            alignSelf: 'flex-end',
+            padding: 5,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+          }}
+          activeOpacity={0.8}
+          onPress={() => LikePostFunc(item)}
+        >
+          <Text
+            style={{
+              fontSize: 14,
+              color:
+                item.likes &&
+                auth.currentUser &&
+                auth.currentUser.email &&
+                item.likes[auth.currentUser.email.replace('.', ',')]
+                  ? themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText
+                  : themeColor === 'dark'
+                  ? colors.DarkCommentText
+                  : colors.LightCommentText,
+              textAlign: 'right',
+              paddingRight: 10,
+            }}
+          >
+            {item.likes ? Object.values(item.likes).length : 0}
+          </Text>
+          <Ionicons
+            name="heart"
+            size={24}
+            color={
+              item.likes &&
+              auth.currentUser &&
+              auth.currentUser.email &&
+              item.likes[auth.currentUser.email.replace('.', ',')]
+                ? themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText
+                : themeColor === 'dark'
+                ? colors.DarkCommentText
+                : colors.LightCommentText
+            }
+          />
+        </TouchableOpacity>
       </View>
     )
   }
@@ -259,14 +340,8 @@ export default function ProfileScreen({ navigation }: any) {
           }}
         >
           <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => {
-              if (image) {
-                setImageVisible(true)
-              } else {
-                navigation.navigate('ProfileSettings', { setImage: true })
-              }
-            }}
+            activeOpacity={0}
+            disabled
             style={{
               width: width * 0.2,
               height: width * 0.2,
@@ -364,42 +439,6 @@ export default function ProfileScreen({ navigation }: any) {
               {user && user.mentor ? 'mentor' : 'student'}
             </GradientText>
           </View>
-          <View
-            style={{
-              width: 30,
-              height: '100%',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-            }}
-          >
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={{
-                paddingHorizontal: 15,
-                paddingVertical: 10,
-              }}
-              onPress={() => {
-                navigation.navigate('ProfileSettings')
-              }}
-            >
-              {[0, 1, 2].map((_: any, index: number) => (
-                <View
-                  key={index}
-                  style={{
-                    width: 5,
-                    height: 5,
-                    backgroundColor:
-                      themeColor === 'dark'
-                        ? colors.DarkCommentText
-                        : colors.LightCommentText,
-                    borderRadius: 5,
-                    margin: 2,
-                  }}
-                />
-              ))}
-            </TouchableOpacity>
-          </View>
         </View>
         {user && user.description ? (
           <>
@@ -431,13 +470,46 @@ export default function ProfileScreen({ navigation }: any) {
           <></>
         )}
       </View>
-      <SecondaryButton
-        title="Create new post"
-        action={() => {
-          navigation.navigate('NewPostScreen', { user: user })
+      <TouchableOpacity
+        style={{
+          width: rules.componentWidthPercent,
+          height: 60,
+          opacity: 1,
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor:
+            themeColor === 'dark' ? colors.DarkBGBlue : colors.LightBGBlue,
+          borderRadius: 6,
+          marginTop: 8,
         }}
-        style={{ marginTop: 8 }}
-      />
+        activeOpacity={0.8}
+        onPress={SubscribeFunc}
+      >
+        <Text
+          style={{
+            fontSize: 18,
+            color:
+              auth.currentUser &&
+              auth.currentUser?.email &&
+              user.followers &&
+              user.followers[auth.currentUser?.email?.replace('.', ',')]
+                ? themeColor === 'dark'
+                  ? colors.DarkDangerText
+                  : colors.LightDangerText
+                : themeColor === 'dark'
+                ? colors.DarkTextBlue
+                : colors.LightTextBlue,
+          }}
+        >
+          {auth.currentUser &&
+          auth.currentUser?.email &&
+          user.followers &&
+          user.followers[auth.currentUser?.email?.replace('.', ',')]
+            ? 'Unfollow'
+            : 'Follow'}
+        </Text>
+      </TouchableOpacity>
     </>
   )
 
@@ -483,142 +555,144 @@ export default function ProfileScreen({ navigation }: any) {
           data={[0, 1]}
           renderItem={renderProfileScreenItem}
         />
-      </View>
-      {/* BottomSheet */}
-      <BottomSheetModal
-        backgroundStyle={{
-          backgroundColor:
-            themeColor === 'dark'
-              ? colors.DarkBGComponent
-              : colors.LightBGComponent,
-        }}
-        ref={bottomSheetModalRef}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        backdropComponent={({ style }) => (
-          <TouchableWithoutFeedback
-            onPress={() => bottomSheetModalRef.current?.dismiss()}
-          >
-            <View
-              style={[
-                style,
-                {
-                  backgroundColor:
-                    themeColor === 'dark'
-                      ? colors.DarkShadow
-                      : colors.LightShadow,
-                },
-              ]}
-            >
-              <StatusBar
-                backgroundColor={
-                  themeColor === 'dark' ? colors.DarkBG : colors.LightShadow
-                }
-              />
-            </View>
-          </TouchableWithoutFeedback>
-        )}
-      >
-        <View
-          style={{
+        {/* BottomSheet */}
+        <BottomSheetModal
+          backgroundStyle={{
             backgroundColor:
-              themeColor === 'dark' ? colors.DarkBGModal : colors.LightBGModal,
-            flex: 1,
+              themeColor === 'dark'
+                ? colors.DarkBGComponent
+                : colors.LightBGComponent,
           }}
+          ref={bottomSheetModalRef}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+          backdropComponent={({ style }) => (
+            <TouchableWithoutFeedback
+              onPress={() => bottomSheetModalRef.current?.dismiss()}
+            >
+              <View
+                style={[
+                  style,
+                  {
+                    backgroundColor:
+                      themeColor === 'dark'
+                        ? colors.DarkShadow
+                        : colors.LightShadow,
+                  },
+                ]}
+              >
+                <StatusBar
+                  backgroundColor={
+                    themeColor === 'dark' ? colors.DarkBG : colors.LightShadow
+                  }
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          )}
         >
           <View
             style={{
-              borderColor:
-                themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
-              borderBottomWidth: 1,
               backgroundColor:
                 themeColor === 'dark'
-                  ? colors.DarkBGComponent
-                  : colors.LightBGComponent,
-              width: '100%',
+                  ? colors.DarkBGModal
+                  : colors.LightBGModal,
+              flex: 1,
             }}
           >
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
+            <View
               style={{
-                fontSize: 20,
-                textAlign: 'center',
-                paddingVertical: 10,
+                borderColor:
+                  themeColor === 'dark'
+                    ? colors.DarkBorder
+                    : colors.LightBorder,
+                borderBottomWidth: 1,
+                backgroundColor:
+                  themeColor === 'dark'
+                    ? colors.DarkBGComponent
+                    : colors.LightBGComponent,
+                width: '100%',
+              }}
+            >
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={{
+                  fontSize: 20,
+                  textAlign: 'center',
+                  paddingVertical: 10,
+                  width: rules.componentWidthPercent,
+                  alignSelf: 'center',
+                  color:
+                    themeColor === 'dark'
+                      ? colors.DarkMainText
+                      : colors.LightMainText,
+                }}
+              >
+                {postInfo && postInfo.text
+                  ? postInfo.text.replace(/\n/g, ' ')
+                  : ''}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
                 width: rules.componentWidthPercent,
                 alignSelf: 'center',
-                color:
-                  themeColor === 'dark'
-                    ? colors.DarkMainText
-                    : colors.LightMainText,
               }}
             >
-              {post && post.text ? post.text.replace(/\n/g, ' ') : ''}
-            </Text>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: rules.componentWidthPercent,
-              alignSelf: 'center',
-            }}
-          >
-            <EditButton
-              amountInARow={2}
-              title="Copy"
-              icon="copy"
-              action={() => {
-                Clipboard.setStringAsync(post.text)
-                bottomSheetModalRef.current?.dismiss()
-              }}
-            />
-            <EditButton
-              amountInARow={2}
-              title="Edit"
-              icon="edit"
-              action={() => {
-                navigation.navigate('NewPostScreen', { post: post })
-                bottomSheetModalRef.current?.dismiss()
-              }}
-            />
-          </View>
+              <EditButton
+                amountInARow={2}
+                title="Copy"
+                icon="copy"
+                action={() => {
+                  Clipboard.setStringAsync(postInfo.text)
+                  bottomSheetModalRef.current?.dismiss()
+                }}
+              />
 
-          <View
-            style={{
-              width: rules.componentWidthPercent,
-              alignSelf: 'center',
-              marginTop: 16,
-              borderRadius: 8,
-              backgroundColor:
-                themeColor === 'dark'
-                  ? colors.DarkBGComponent
-                  : colors.LightBGComponent,
-              padding: 8,
-            }}
-          >
-            <Text
+              <EditButton
+                amountInARow={2}
+                title="Report"
+                icon="alert-octagon"
+                action={() => {
+                  Alert.alert('will be implemented in the next global version')
+                  // navigation.navigate('NewPostScreen', { post: postInfo })
+                  // bottomSheetModalRef.current?.dismiss()
+                }}
+              />
+            </View>
+            <View
               style={{
-                fontSize: 16,
-                textAlign: 'center',
-                paddingVertical: 10,
-                color:
+                width: rules.componentWidthPercent,
+                alignSelf: 'center',
+                marginTop: 16,
+                borderRadius: 8,
+                backgroundColor:
                   themeColor === 'dark'
-                    ? colors.DarkCommentText
-                    : colors.LightCommentText,
+                    ? colors.DarkBGComponent
+                    : colors.LightBGComponent,
+                padding: 8,
               }}
             >
-              {text.DeletingPost}
-            </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  textAlign: 'center',
+                  paddingVertical: 10,
+                  color:
+                    themeColor === 'dark'
+                      ? colors.DarkCommentText
+                      : colors.LightCommentText,
+                }}
+              >
+                {text.OtherUserPost}
+              </Text>
+            </View>
           </View>
-          <SwipeToDelete
-            title="Swipe to delete"
-            action={DeletePostFunc}
-            icon="trash-outline"
-          />
-        </View>
-      </BottomSheetModal>
+        </BottomSheetModal>
+      </View>
     </BottomSheetModalProvider>
   )
 }

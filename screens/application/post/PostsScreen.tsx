@@ -27,12 +27,15 @@ import EditButton from '../../../components/EditButton'
 import * as Clipboard from 'expo-clipboard'
 import { Ionicons } from '@expo/vector-icons'
 import Toast from 'react-native-toast-message'
+import GradientText from '../../../components/GradientText'
 
 export default function PostsScreen({ navigation }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
   const [postInfo, setPostInfo] = useState<any>({})
   const [posts, setPosts] = useState<any>([])
   const [users, setUsers] = useState<any>({})
+  const [page, setPage] = useState<string>('global')
+
   const bottomSheetModalRef = useRef<BottomSheetModal>(null)
   const snapPoints = useMemo(() => [360], [])
   const snapPointsForOtherUsers = useMemo(() => [300], [])
@@ -70,6 +73,23 @@ export default function PostsScreen({ navigation }: any) {
     setPostInfo({})
     bottomSheetModalRef.current?.dismiss()
   }
+
+  const postsData: any = [
+    {
+      title: 'global',
+      action: () => {
+        setPage('global')
+      },
+      colors: [colors.Main, colors.Purple],
+    },
+    {
+      title: 'friends',
+      action: () => {
+        setPage('friends')
+      },
+      colors: [colors.Green, colors.Main],
+    },
+  ]
 
   useEffect(() => {
     GetUserPostsFunc()
@@ -311,6 +331,55 @@ export default function PostsScreen({ navigation }: any) {
           },
         ]}
       >
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-around',
+            width: '100%',
+            borderBottomWidth: 1,
+            borderColor:
+              themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder,
+          }}
+        >
+          {postsData.map((item: any, index: number) => (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => item.action()}
+              style={{
+                width: '40%',
+                padding: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              key={index}
+            >
+              {page === item.title ? (
+                <GradientText
+                  onPress={() => {}}
+                  color1={item.colors[0]}
+                  color2={item.colors[1]}
+                  style={{ fontSize: 20, fontWeight: '700', letterSpacing: 1 }}
+                >
+                  {item.title}
+                </GradientText>
+              ) : (
+                <Text
+                  style={{
+                    fontSize: 20,
+                    letterSpacing: 1,
+                    color:
+                      themeColor === 'dark'
+                        ? colors.DarkCommentText
+                        : colors.LightCommentText,
+                  }}
+                >
+                  {item.title}
+                </Text>
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
         {posts.length ? (
           <FlatList
             style={{ width: '100%', paddingBottom: 20 }}
@@ -422,43 +491,47 @@ export default function PostsScreen({ navigation }: any) {
                   bottomSheetModalRef.current?.dismiss()
                 }}
               />
-              {postInfo.authorEmail === auth.currentUser?.email ? (
-                <EditButton
-                  amountInARow={2}
-                  title="Edit"
-                  icon="edit"
-                  action={() => {
-                    navigation.navigate('NewPostScreen', { post: postInfo })
-                    bottomSheetModalRef.current?.dismiss()
-                  }}
-                />
+              {users &&
+              postInfo &&
+              postInfo.authorEmail &&
+              users[postInfo.authorEmail.replace('.', ',')] ? (
+                postInfo.authorEmail === auth.currentUser?.email ? (
+                  <EditButton
+                    amountInARow={2}
+                    title="Edit"
+                    icon="edit"
+                    action={() => {
+                      navigation.navigate('NewPostScreen', { post: postInfo })
+                      bottomSheetModalRef.current?.dismiss()
+                    }}
+                  />
+                ) : (
+                  <>
+                    <EditButton
+                      amountInARow={3}
+                      title="Profile"
+                      icon="user"
+                      action={() => {
+                        navigation.navigate('UserScreen', {
+                          user: postInfo.authorEmail,
+                        })
+                        bottomSheetModalRef.current?.dismiss()
+                      }}
+                    />
+                    <EditButton
+                      amountInARow={3}
+                      title="Report"
+                      icon="alert-octagon"
+                      action={() => {
+                        Alert.alert(
+                          'will be implemented in the next global version'
+                        )
+                      }}
+                    />
+                  </>
+                )
               ) : (
-                <>
-                  <EditButton
-                    amountInARow={3}
-                    title="Profile"
-                    icon="user"
-                    action={() => {
-                      Alert.alert(
-                        'will be implemented in the next global version'
-                      )
-                      // navigation.navigate('NewPostScreen', { post: postInfo })
-                      // bottomSheetModalRef.current?.dismiss()
-                    }}
-                  />
-                  <EditButton
-                    amountInARow={3}
-                    title="Report"
-                    icon="alert-octagon"
-                    action={() => {
-                      Alert.alert(
-                        'will be implemented in the next global version'
-                      )
-                      // navigation.navigate('NewPostScreen', { post: postInfo })
-                      // bottomSheetModalRef.current?.dismiss()
-                    }}
-                  />
-                </>
+                <></>
               )}
             </View>
             <View
@@ -485,9 +558,14 @@ export default function PostsScreen({ navigation }: any) {
                       : colors.LightCommentText,
                 }}
               >
-                {postInfo.authorEmail === auth.currentUser?.email
-                  ? text.DeletingPost
-                  : text.OtherUserPost}
+                {users &&
+                postInfo &&
+                postInfo.authorEmail &&
+                users[postInfo.authorEmail.replace('.', ',')]
+                  ? postInfo.authorEmail === auth.currentUser?.email
+                    ? text.DeletingPost
+                    : text.OtherUserPost
+                  : text.DeletedUserPost}
               </Text>
             </View>
             {postInfo.authorEmail === auth.currentUser?.email ? (

@@ -130,6 +130,16 @@ export async function DeleteUser(email: string) {
   }
 }
 
+export async function UpdateFollowers(userID: string, data: any) {
+  try {
+    await update(ref(getDatabase(), 'user/' + userID), {
+      followers: data,
+    })
+  } catch (error) {
+    console.log('UpdateFollowers', error)
+  }
+}
+
 // POSTS
 
 export async function CreatePost(data: any) {
@@ -154,7 +164,7 @@ export async function UpdatePostLikes(postID: string, data: any) {
       likes: data,
     })
   } catch (error) {
-    console.log('CreatePost', error)
+    console.log('UpdatePostLikes', error)
   }
 }
 

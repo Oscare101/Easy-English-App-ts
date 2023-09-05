@@ -16,7 +16,7 @@ export interface User {
   email: string
   birthDate: string
   level: number
-  followers: any[]
+  followers: any
   mentor: boolean
   admin: boolean
   lastOnline?: string

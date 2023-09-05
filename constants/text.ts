@@ -36,6 +36,8 @@ const text: Text = {
     'You will receive an email with all the instructions for changing your password. So go to your mail app and follow the steps',
   EmptyStatisticText:
     "Come back when you've completed at least one test. Here will beyour statistic from practical tasks",
+  DeletedUserPost:
+    "This is a post by a deleted user, you can't do anything with it except copy",
 }
 
 export default text

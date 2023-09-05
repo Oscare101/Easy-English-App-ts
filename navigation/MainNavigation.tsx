@@ -18,7 +18,6 @@ import ProfileSettings from '../screens/application/profile/ProfileSettings'
 import CoursePage from '../screens/application/courses/CoursePage'
 import PersonalInfoSettings from '../screens/application/profile/PersonalInfoSettings'
 import NewPostScreen from '../screens/application/profile/NewPostScreen'
-import FriendsScreen from '../screens/application/friends/FriendsScreen'
 import ChatsScreen from '../screens/application/chat/ChatsScreen'
 import GlobalChatScreen from '../screens/application/chat/GlobalChatScreen'
 import { useSelector } from 'react-redux'
@@ -30,6 +29,7 @@ import PostsScreen from '../screens/application/post/PostsScreen'
 import ApplicationInfoScreen from '../screens/application/profile/ApplicationInfoScreen'
 import PersonalTodoScreen from '../screens/application/profile/PersonalTodoScreen'
 import StatisticScreen from '../screens/application/pdf/StatisticScreen'
+import UserScreen from '../screens/application/friends/UserScreen'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -406,6 +406,17 @@ export default function MainNavigation() {
         }}
         name="StatisticScreen"
         component={StatisticScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          gestureDirection: 'horizontal',
+          gestureEnabled: true,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+        name="UserScreen"
+        component={UserScreen}
       />
     </Stack.Navigator>
   )

@@ -10,7 +10,12 @@ import {
   View,
 } from 'react-native'
 import { styles } from '../../../constants/styles'
-import { UpdateFollowers, UpdatePostLikes } from '../../../functions/Actions'
+import {
+  FollowUser,
+  UnFollowUser,
+  UpdateFollowers,
+  UpdatePostLikes,
+} from '../../../functions/Actions'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { auth, db, storage } from '../../../firebase'
 import { ref as refStorage, getDownloadURL } from 'firebase/storage'
@@ -38,6 +43,7 @@ export default function UserScreen({ navigation, route }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
 
   const [user, setUser] = useState<User>({} as User)
+  const [followers, setFollowers] = useState<any>({})
   const [usersPosts, setUsersPost] = useState<any>([])
   const [postInfo, setPostInfo] = useState<any>({})
   const [image, setImage] = useState<any>('')
@@ -58,6 +64,13 @@ export default function UserScreen({ navigation, route }: any) {
     )
     onValue(data, (snapshot) => {
       setUser(snapshot.val() as User)
+    })
+  }
+
+  function GetFollowersFunc() {
+    const data = ref(getDatabase(), `followers/`)
+    onValue(data, (snapshot) => {
+      setFollowers(snapshot.val())
     })
   }
 
@@ -87,31 +100,52 @@ export default function UserScreen({ navigation, route }: any) {
     })
   }
 
-  async function SubscribeFunc() {
+  async function FollowFunc() {
     if (auth.currentUser && auth.currentUser.email) {
-      let data: any = {}
-      if (user.followers) {
-        data = user.followers
-        if (data[auth.currentUser.email.replace('.', ',')]) {
-          delete data[auth.currentUser.email.replace('.', ',')]
-        } else {
-          data[auth.currentUser.email.replace('.', ',')] = {
-            email: auth.currentUser.email,
-            date: new Date().getTime(),
-          }
+      let data: any = { email: user.email, date: new Date().getTime() }
+      const response = await FollowUser(
+        auth.currentUser.email.replace('.', ','),
+        data
+      )
+    }
+  }
+
+  async function UnFollowFunc() {
+    if (auth.currentUser && auth.currentUser.email) {
+      const response = await UnFollowUser(
+        auth.currentUser.email.replace('.', ','),
+        user.email.replace('.', ',')
+      )
+    }
+  }
+
+  function FollowersAmount() {
+    let amount: number = 0
+    Object.values(followers).map((i: any) => {
+      Object.values(i).map((k: any) => {
+        if (k.email === user.email) {
+          amount++
         }
-      } else {
-        data[auth.currentUser.email.replace('.', ',')] = {
-          email: auth.currentUser.email,
-          date: new Date().getTime(),
-        }
-      }
-      const response = await UpdateFollowers(user.email.replace('.', ','), data)
+      })
+    })
+    return amount
+  }
+
+  function IsFollowing() {
+    if (auth.currentUser && auth.currentUser.email) {
+      return (
+        followers &&
+        followers[auth.currentUser?.email.replace('.', ',')] &&
+        followers[auth.currentUser?.email.replace('.', ',')][
+          user.email.replace('.', ',')
+        ]
+      )
     }
   }
 
   useEffect(() => {
     GetUserFunc()
+    GetFollowersFunc()
   }, [])
 
   useEffect(() => {
@@ -424,9 +458,7 @@ export default function UserScreen({ navigation, route }: any) {
                       : colors.LightMainText,
                 }}
               >
-                {user && user.followers
-                  ? Object.values(user.followers).length
-                  : 0}
+                {followers ? FollowersAmount() : 0}
               </Text>{' '}
               followers
             </Text>
@@ -484,30 +516,21 @@ export default function UserScreen({ navigation, route }: any) {
           marginTop: 8,
         }}
         activeOpacity={0.8}
-        onPress={SubscribeFunc}
+        onPress={IsFollowing() ? UnFollowFunc : FollowFunc}
       >
         <Text
           style={{
             fontSize: 18,
-            color:
-              auth.currentUser &&
-              auth.currentUser?.email &&
-              user.followers &&
-              user.followers[auth.currentUser?.email?.replace('.', ',')]
-                ? themeColor === 'dark'
-                  ? colors.DarkDangerText
-                  : colors.LightDangerText
-                : themeColor === 'dark'
-                ? colors.DarkTextBlue
-                : colors.LightTextBlue,
+            color: IsFollowing()
+              ? themeColor === 'dark'
+                ? colors.DarkDangerText
+                : colors.LightDangerText
+              : themeColor === 'dark'
+              ? colors.DarkTextBlue
+              : colors.LightTextBlue,
           }}
         >
-          {auth.currentUser &&
-          auth.currentUser?.email &&
-          user.followers &&
-          user.followers[auth.currentUser?.email?.replace('.', ',')]
-            ? 'Unfollow'
-            : 'Follow'}
+          {IsFollowing() ? 'Unfollow' : 'Follow'}
         </Text>
       </TouchableOpacity>
     </>

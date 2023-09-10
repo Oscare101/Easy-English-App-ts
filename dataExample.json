@@ -145,5 +145,17 @@
       "COMMMENT": "----- TODO GROUP CHATS -----"
     }
   },
-  "courses": {}
+  "courses": {},
+  "followers": {
+    "1@gmail,com": {
+      "123@gmail,com": {
+        "date": "timestamp",
+        "email": "123@gmail.com"
+      },
+      "qwerty@gmail,com": {
+        "date": "timestamp",
+        "email": "qwerty@gmail.com"
+      }
+    }
+  }
 }

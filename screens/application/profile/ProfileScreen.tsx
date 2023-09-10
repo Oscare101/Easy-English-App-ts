@@ -39,6 +39,7 @@ export default function ProfileScreen({ navigation }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
 
   const [user, setUser] = useState<User>({} as User)
+  const [followers, setFollowers] = useState<any>({})
   const [usersPosts, setUsersPost] = useState<any>([])
   const [post, setPost] = useState<any>({})
   const [image, setImage] = useState<any>('')
@@ -79,6 +80,13 @@ export default function ProfileScreen({ navigation }: any) {
     }
   }
 
+  function GetFollowersFunc() {
+    const data = ref(getDatabase(), `followers/`)
+    onValue(data, (snapshot) => {
+      setFollowers(snapshot.val())
+    })
+  }
+
   function GetUserPostsFunc(email: string) {
     if (auth.currentUser && auth.currentUser.email) {
       const data = ref(getDatabase(), `post`)
@@ -103,6 +111,7 @@ export default function ProfileScreen({ navigation }: any) {
 
   useEffect(() => {
     GetUserFunc()
+    GetFollowersFunc()
   }, [])
 
   useEffect(() => {
@@ -114,6 +123,20 @@ export default function ProfileScreen({ navigation }: any) {
   useEffect(() => {
     GetUserPhoto()
   }, [user && user.photo])
+
+  function FollowersAmount() {
+    if (auth.currentUser && auth.currentUser.email) {
+      let amount: number = 0
+      Object.values(followers).map((i: any) => {
+        Object.values(i).map((k: any) => {
+          if (k.email === auth.currentUser?.email) {
+            amount++
+          }
+        })
+      })
+      return amount
+    }
+  }
 
   function renderUserPost({ item }: any) {
     return (
@@ -228,6 +251,25 @@ export default function ProfileScreen({ navigation }: any) {
         ) : (
           <></>
         )}
+        <Text
+          style={{
+            fontSize: 14,
+            color:
+              item.likes &&
+              auth.currentUser &&
+              auth.currentUser.email &&
+              item.likes[auth.currentUser.email.replace('.', ',')]
+                ? themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText
+                : themeColor === 'dark'
+                ? colors.DarkCommentText
+                : colors.LightCommentText,
+            textAlign: 'right',
+          }}
+        >
+          {item.likes ? Object.values(item.likes).length : 0} likes
+        </Text>
       </View>
     )
   }
@@ -349,9 +391,7 @@ export default function ProfileScreen({ navigation }: any) {
                       : colors.LightMainText,
                 }}
               >
-                {user && user.followers
-                  ? Object.values(user.followers).length
-                  : 0}
+                {followers ? FollowersAmount() : 0}
               </Text>{' '}
               followers
             </Text>
@@ -566,7 +606,7 @@ export default function ProfileScreen({ navigation }: any) {
             }}
           >
             <EditButton
-              amountInARow={2}
+              amountInARow={3}
               title="Copy"
               icon="copy"
               action={() => {
@@ -575,11 +615,24 @@ export default function ProfileScreen({ navigation }: any) {
               }}
             />
             <EditButton
-              amountInARow={2}
+              amountInARow={3}
               title="Edit"
               icon="edit"
               action={() => {
                 navigation.navigate('NewPostScreen', { post: post })
+                bottomSheetModalRef.current?.dismiss()
+              }}
+            />
+            <EditButton
+              amountInARow={3}
+              title={
+                post.likes
+                  ? Object.values(post.likes).length + ' likes'
+                  : 0 + ' likes'
+              }
+              icon="heart"
+              action={() => {
+                navigation.navigate('PostLikesScreen', { post: post })
                 bottomSheetModalRef.current?.dismiss()
               }}
             />

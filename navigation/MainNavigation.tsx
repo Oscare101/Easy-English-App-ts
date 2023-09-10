@@ -30,6 +30,7 @@ import ApplicationInfoScreen from '../screens/application/profile/ApplicationInf
 import PersonalTodoScreen from '../screens/application/profile/PersonalTodoScreen'
 import StatisticScreen from '../screens/application/pdf/StatisticScreen'
 import UserScreen from '../screens/application/friends/UserScreen'
+import PostLikesScreen from '../screens/application/profile/PostLikesScreen'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -417,6 +418,17 @@ export default function MainNavigation() {
         }}
         name="UserScreen"
         component={UserScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          gestureDirection: 'horizontal',
+          gestureEnabled: true,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+        name="PostLikesScreen"
+        component={PostLikesScreen}
       />
     </Stack.Navigator>
   )

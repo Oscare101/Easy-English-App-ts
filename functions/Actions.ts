@@ -140,6 +140,26 @@ export async function UpdateFollowers(userID: string, data: any) {
   }
 }
 
+export async function FollowUser(userID: string, data: any) {
+  try {
+    await update(
+      ref(getDatabase(), `followers/${userID}/${data.email.replace('.', ',')}`),
+
+      data
+    )
+  } catch (error) {
+    console.log('FollowUser', error)
+  }
+}
+
+export async function UnFollowUser(userID: string, unfollowUserID: any) {
+  try {
+    await remove(ref(getDatabase(), `followers/${userID}/${unfollowUserID}`))
+  } catch (error) {
+    console.log('UnFollowUser', error)
+  }
+}
+
 // POSTS
 
 export async function CreatePost(data: any) {

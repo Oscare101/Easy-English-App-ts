@@ -10,9 +10,10 @@ import { getDatabase, onValue, ref } from 'firebase/database'
 import rules from '../../../constants/rules'
 import Toast from 'react-native-toast-message'
 
-export default function PostLikesScreen({ navigation, route }: any) {
+export default function FollowersScreen({ navigation, route }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
   const [users, setUsers] = useState<any>({})
+  const [followers, setFollowers] = useState<any>({})
 
   function GetUsersFunc() {
     if (auth.currentUser && auth.currentUser.email) {
@@ -25,8 +26,23 @@ export default function PostLikesScreen({ navigation, route }: any) {
     }
   }
 
+  function GetUserFollowers() {
+    if (auth.currentUser && auth.currentUser.email) {
+      let followersArr: any = []
+      Object.values(route.params.followers).map((i: any, index: number) => {
+        Object.values(i).map((k: any) => {
+          if (k.email === auth.currentUser?.email) {
+            followersArr.push(Object.keys(route.params.followers)[index])
+          }
+        })
+      })
+      setFollowers(followersArr)
+    }
+  }
+
   useEffect(() => {
     GetUsersFunc()
+    GetUserFollowers()
   }, [])
 
   function RenderItem({ item }: any) {
@@ -49,9 +65,9 @@ export default function PostLikesScreen({ navigation, route }: any) {
         }}
         activeOpacity={0.8}
         onPress={() => {
-          if (users[item.email.replace('.', ',')]) {
+          if (users[item.replace('.', ',')]) {
             navigation.navigate('UserScreen', {
-              user: item.email,
+              user: users[item.replace('.', ',')].email,
             })
           } else {
             Toast.show({
@@ -69,19 +85,19 @@ export default function PostLikesScreen({ navigation, route }: any) {
             style={{
               fontSize: 24,
 
-              color: users[item.email.replace('.', ',')]
+              color: users[item.replace('.', ',')]
                 ? themeColor === 'dark'
                   ? colors.DarkMainText
                   : colors.LightMainText
                 : themeColor === 'dark'
                 ? colors.DarkDangerText
                 : colors.LightDangerText,
-              opacity: users[item.email.replace('.', ',')] ? 1 : 0.5,
+              opacity: users[item.replace('.', ',')] ? 1 : 0.5,
             }}
           >
             {users
-              ? users[item.email.replace('.', ',')]
-                ? users[item.email.replace('.', ',')].name
+              ? users[item.replace('.', ',')]
+                ? users[item.replace('.', ',')].name
                 : 'deleted user'
               : ''}
           </Text>
@@ -94,7 +110,13 @@ export default function PostLikesScreen({ navigation, route }: any) {
                   : colors.LightCommentText,
             }}
           >
-            {new Date(item.date).toLocaleString()}
+            {auth.currentUser && auth.currentUser?.email
+              ? new Date(
+                  route.params.followers[item.replace('.', ',')][
+                    auth.currentUser?.email?.replace('.', ',')
+                  ].date
+                ).toLocaleString()
+              : ''}
           </Text>
         </View>
         <Ionicons
@@ -155,14 +177,14 @@ export default function PostLikesScreen({ navigation, route }: any) {
                 : colors.LightMainText,
           }}
         >
-          Post likes
+          Followers
         </Text>
         <View style={{ width: 50 }} />
       </View>
-      {route.params.post.likes ? (
+      {followers ? (
         <FlatList
           style={{ width: '100%' }}
-          data={Object.values(route.params.post.likes)}
+          data={followers}
           renderItem={RenderItem}
         />
       ) : (
@@ -176,7 +198,7 @@ export default function PostLikesScreen({ navigation, route }: any) {
             paddingTop: '20%',
           }}
         >
-          No likes yet
+          No followers yet
         </Text>
       )}
     </View>

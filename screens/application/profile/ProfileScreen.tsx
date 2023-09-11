@@ -371,30 +371,40 @@ export default function ProfileScreen({ navigation }: any) {
             >
               {user ? user.name : ''}
             </Text>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={{
-                fontSize: 14,
-                color:
-                  themeColor === 'dark'
-                    ? colors.DarkCommentText
-                    : colors.LightCommentText,
-              }}
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() =>
+                navigation.navigate('FollowersScreen', {
+                  followers: followers,
+                })
+              }
             >
               <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
                 style={{
-                  fontSize: 18,
+                  fontSize: 14,
                   color:
                     themeColor === 'dark'
-                      ? colors.DarkMainText
-                      : colors.LightMainText,
+                      ? colors.DarkCommentText
+                      : colors.LightCommentText,
                 }}
               >
-                {followers ? FollowersAmount() : 0}
-              </Text>{' '}
-              followers
-            </Text>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color:
+                      themeColor === 'dark'
+                        ? colors.DarkMainText
+                        : colors.LightMainText,
+                  }}
+                >
+                  {followers ? FollowersAmount() : 0}
+                </Text>{' '}
+                followers
+              </Text>
+            </TouchableOpacity>
+
             <GradientText
               onPress={() => {}}
               color1={user && user.mentor ? colors.Error : colors.Main}

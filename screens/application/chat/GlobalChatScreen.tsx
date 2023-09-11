@@ -172,16 +172,48 @@ export default function GlobalChatScreen({ navigation, route }: any) {
         barStyle={themeColor === 'dark' ? 'light-content' : 'dark-content'}
         backgroundColor={themeColor === 'dark' ? colors.DarkBG : colors.LightBG}
       />
-      <Text
+      <View
         style={{
-          fontSize: 20,
-          paddingVertical: 10,
-          color:
-            themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          width: '100%',
         }}
       >
-        Chat
-      </Text>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            navigation.goBack()
+          }}
+          style={{
+            height: 50,
+            width: 50,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Ionicons
+            name="chevron-back"
+            size={24}
+            color={
+              themeColor === 'dark' ? colors.DarkMainText : colors.LightMainText
+            }
+          />
+        </TouchableOpacity>
+        <Text
+          style={{
+            fontSize: 20,
+            color:
+              themeColor === 'dark'
+                ? colors.DarkMainText
+                : colors.LightMainText,
+          }}
+        >
+          Chat
+        </Text>
+        <View style={{ width: 50 }} />
+      </View>
+
       <View
         style={{
           flex: 1,

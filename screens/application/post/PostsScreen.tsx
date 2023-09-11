@@ -385,6 +385,7 @@ export default function PostsScreen({ navigation }: any) {
             style={{ width: '100%', paddingBottom: 20 }}
             data={posts}
             renderItem={renderUserPost}
+            ListFooterComponent={() => <View style={{ height: 10 }} />}
           />
         ) : (
           <></>
@@ -481,9 +482,7 @@ export default function PostsScreen({ navigation }: any) {
               }}
             >
               <EditButton
-                amountInARow={
-                  postInfo.authorEmail === auth.currentUser?.email ? 2 : 3
-                }
+                amountInARow={3}
                 title="Copy"
                 icon="copy"
                 action={() => {
@@ -496,15 +495,32 @@ export default function PostsScreen({ navigation }: any) {
               postInfo.authorEmail &&
               users[postInfo.authorEmail.replace('.', ',')] ? (
                 postInfo.authorEmail === auth.currentUser?.email ? (
-                  <EditButton
-                    amountInARow={2}
-                    title="Edit"
-                    icon="edit"
-                    action={() => {
-                      navigation.navigate('NewPostScreen', { post: postInfo })
-                      bottomSheetModalRef.current?.dismiss()
-                    }}
-                  />
+                  <>
+                    <EditButton
+                      amountInARow={3}
+                      title="Edit"
+                      icon="edit"
+                      action={() => {
+                        navigation.navigate('NewPostScreen', { post: postInfo })
+                        bottomSheetModalRef.current?.dismiss()
+                      }}
+                    />
+                    <EditButton
+                      amountInARow={3}
+                      title={
+                        postInfo.likes
+                          ? Object.values(postInfo.likes).length + ' likes'
+                          : 0 + ' likes'
+                      }
+                      icon="heart"
+                      action={() => {
+                        navigation.navigate('PostLikesScreen', {
+                          post: postInfo,
+                        })
+                        bottomSheetModalRef.current?.dismiss()
+                      }}
+                    />
+                  </>
                 ) : (
                   <>
                     <EditButton

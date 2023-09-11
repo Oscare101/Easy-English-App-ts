@@ -13,7 +13,6 @@ import { styles } from '../../../constants/styles'
 import {
   FollowUser,
   UnFollowUser,
-  UpdateFollowers,
   UpdatePostLikes,
 } from '../../../functions/Actions'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -572,6 +571,49 @@ export default function UserScreen({ navigation, route }: any) {
           },
         ]}
       >
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            width: rules.componentWidthPercent,
+            alignSelf: 'center',
+          }}
+        >
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => {
+              navigation.goBack()
+            }}
+            style={{
+              height: 50,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Ionicons
+              name="chevron-back"
+              size={24}
+              color={
+                themeColor === 'dark'
+                  ? colors.DarkMainText
+                  : colors.LightMainText
+              }
+            />
+            <Text
+              style={{
+                fontSize: 20,
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkMainText
+                    : colors.LightMainText,
+              }}
+            >
+              back
+            </Text>
+          </TouchableOpacity>
+        </View>
         <FlatList
           showsVerticalScrollIndicator={false}
           style={{ flex: 1, width: '100%' }}

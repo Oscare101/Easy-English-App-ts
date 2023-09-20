@@ -9,6 +9,7 @@ import { auth } from '../../../firebase'
 import { getDatabase, onValue, ref } from 'firebase/database'
 import rules from '../../../constants/rules'
 import Toast from 'react-native-toast-message'
+import UserStatus from '../../../components/UserStatus'
 
 export default function FollowersScreen({ navigation, route }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
@@ -42,7 +43,17 @@ export default function FollowersScreen({ navigation, route }: any) {
 
   useEffect(() => {
     GetUsersFunc()
-    GetUserFollowers()
+    if (auth.currentUser && auth.currentUser.email) {
+      if (route.params.title === 'followers') {
+        GetUserFollowers()
+      } else {
+        setFollowers(
+          Object.keys(
+            route.params.followers[auth.currentUser?.email?.replace('.', ',')]
+          )
+        )
+      }
+    }
   }, [])
 
   function RenderItem({ item }: any) {
@@ -101,23 +112,45 @@ export default function FollowersScreen({ navigation, route }: any) {
                 : 'deleted user'
               : ''}
           </Text>
-          <Text
+
+          <View
             style={{
-              fontSize: 16,
-              color:
-                themeColor === 'dark'
-                  ? colors.DarkCommentText
-                  : colors.LightCommentText,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
             }}
           >
-            {auth.currentUser && auth.currentUser?.email
-              ? new Date(
-                  route.params.followers[item.replace('.', ',')][
-                    auth.currentUser?.email?.replace('.', ',')
-                  ].date
-                ).toLocaleString()
-              : ''}
-          </Text>
+            {users ? (
+              users[item.replace('.', ',')] ? (
+                <UserStatus
+                  mentor={users[item.replace('.', ',')].mentor}
+                  admin={users[item.replace('.', ',')].admin}
+                />
+              ) : (
+                <></>
+              )
+            ) : (
+              <></>
+            )}
+            <Text
+              style={{
+                fontSize: 16,
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkCommentText
+                    : colors.LightCommentText,
+                paddingLeft: 10,
+              }}
+            >
+              {auth.currentUser && auth.currentUser?.email
+                ? new Date(
+                    route.params.followers[item.replace('.', ',')][
+                      auth.currentUser?.email?.replace('.', ',')
+                    ].date
+                  ).toLocaleString()
+                : ''}
+            </Text>
+          </View>
         </View>
         <Ionicons
           name="chevron-forward"
@@ -177,7 +210,9 @@ export default function FollowersScreen({ navigation, route }: any) {
                 : colors.LightMainText,
           }}
         >
-          Followers
+          {route.params.title === 'followers'
+            ? 'Your followers'
+            : 'Your followings'}
         </Text>
         <View style={{ width: 50 }} />
       </View>

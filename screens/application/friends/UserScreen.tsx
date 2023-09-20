@@ -35,6 +35,7 @@ import { useSelector } from 'react-redux'
 import EditButton from '../../../components/EditButton'
 import ImageView from 'react-native-image-viewing'
 import { Ionicons } from '@expo/vector-icons'
+import UserStatus from '../../../components/UserStatus'
 
 const width = Dimensions.get('screen').width
 
@@ -461,14 +462,10 @@ export default function UserScreen({ navigation, route }: any) {
               </Text>{' '}
               followers
             </Text>
-            <GradientText
-              onPress={() => {}}
-              color1={user && user.mentor ? colors.Error : colors.Main}
-              color2={user && user.mentor ? colors.Purple : colors.Green}
-              style={[styles.text18]}
-            >
-              {user && user.mentor ? 'mentor' : 'student'}
-            </GradientText>
+            <UserStatus
+              mentor={user && user.mentor}
+              admin={user && user.admin}
+            />
           </View>
         </View>
         {user && user.description ? (

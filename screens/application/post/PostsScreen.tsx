@@ -170,12 +170,12 @@ export default function PostsScreen({ navigation }: any) {
                 fontSize: 18,
                 color: users[item.authorEmail.replace('.', ',')]
                   ? themeColor === 'dark'
-                    ? colors.DarkCommentText
-                    : colors.LightCommentText
+                    ? colors.DarkMainText
+                    : colors.LightMainText
                   : themeColor === 'dark'
                   ? colors.DarkDangerText
                   : colors.LightDangerText,
-                opacity: users[item.authorEmail.replace('.', ',')] ? 1 : 0.5,
+                opacity: users[item.authorEmail.replace('.', ',')] ? 0.7 : 0.5,
               }}
             >
               {users
@@ -255,6 +255,11 @@ export default function PostsScreen({ navigation }: any) {
         auth.currentUser.email &&
         item.authorEmail === auth.currentUser.email ? (
           <Text
+            onPress={() => {
+              navigation.navigate('PostLikesScreen', {
+                post: item,
+              })
+            }}
             style={{
               fontSize: 14,
               color:

@@ -130,15 +130,7 @@ export async function DeleteUser(email: string) {
   }
 }
 
-export async function UpdateFollowers(userID: string, data: any) {
-  try {
-    await update(ref(getDatabase(), 'user/' + userID), {
-      followers: data,
-    })
-  } catch (error) {
-    console.log('UpdateFollowers', error)
-  }
-}
+// FOLLOWERS
 
 export async function FollowUser(userID: string, data: any) {
   try {

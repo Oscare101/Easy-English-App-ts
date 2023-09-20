@@ -32,6 +32,7 @@ import SwipeToDelete from '../../../components/SwipeToDelete'
 import EditButton from '../../../components/EditButton'
 import ImageView from 'react-native-image-viewing'
 import Toast from 'react-native-toast-message'
+import UserStatus from '../../../components/UserStatus'
 
 const width = Dimensions.get('screen').width
 
@@ -107,6 +108,13 @@ export default function ProfileScreen({ navigation }: any) {
     setUsersPost(usersPosts.filter((i: any) => i.id !== post.id))
     setPost({})
     bottomSheetModalRef.current?.dismiss()
+    Toast.show({
+      type: 'ToastMessage',
+      props: {
+        title: `The post was deleted 🗑`,
+      },
+      position: 'bottom',
+    })
   }
 
   useEffect(() => {
@@ -252,6 +260,11 @@ export default function ProfileScreen({ navigation }: any) {
           <></>
         )}
         <Text
+          onPress={() => {
+            navigation.navigate('PostLikesScreen', {
+              post: item,
+            })
+          }}
           style={{
             fontSize: 14,
             color:
@@ -371,48 +384,88 @@ export default function ProfileScreen({ navigation }: any) {
             >
               {user ? user.name : ''}
             </Text>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() =>
-                navigation.navigate('FollowersScreen', {
-                  followers: followers,
-                })
-              }
-            >
-              <Text
-                numberOfLines={1}
-                ellipsizeMode="tail"
-                style={{
-                  fontSize: 14,
-                  color:
-                    themeColor === 'dark'
-                      ? colors.DarkCommentText
-                      : colors.LightCommentText,
-                }}
+            <View style={{ flexDirection: 'row', paddingVertical: 4 }}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() =>
+                  navigation.navigate('FollowersScreen', {
+                    followers: followers,
+                    title: 'followers',
+                  })
+                }
               >
                 <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
                   style={{
-                    fontSize: 18,
+                    fontSize: 14,
                     color:
                       themeColor === 'dark'
-                        ? colors.DarkMainText
-                        : colors.LightMainText,
+                        ? colors.DarkCommentText
+                        : colors.LightCommentText,
                   }}
                 >
-                  {followers ? FollowersAmount() : 0}
-                </Text>{' '}
-                followers
-              </Text>
-            </TouchableOpacity>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color:
+                        themeColor === 'dark'
+                          ? colors.DarkMainText
+                          : colors.LightMainText,
+                    }}
+                  >
+                    {followers ? FollowersAmount() : 0}
+                  </Text>{' '}
+                  followers
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() =>
+                  navigation.navigate('FollowersScreen', {
+                    followers: followers,
+                    title: 'followings',
+                  })
+                }
+              >
+                <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                  style={{
+                    fontSize: 14,
+                    color:
+                      themeColor === 'dark'
+                        ? colors.DarkCommentText
+                        : colors.LightCommentText,
+                    paddingLeft: 10,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color:
+                        themeColor === 'dark'
+                          ? colors.DarkMainText
+                          : colors.LightMainText,
+                    }}
+                  >
+                    {Object.values(followers).length > 0 &&
+                    auth.currentUser &&
+                    auth.currentUser?.email
+                      ? Object.values(
+                          followers[auth.currentUser?.email?.replace('.', ',')]
+                        ).length
+                      : 0}
+                  </Text>{' '}
+                  followings
+                </Text>
+              </TouchableOpacity>
+            </View>
 
-            <GradientText
-              onPress={() => {}}
-              color1={user && user.mentor ? colors.Error : colors.Main}
-              color2={user && user.mentor ? colors.Purple : colors.Green}
-              style={[styles.text18]}
-            >
-              {user && user.mentor ? 'mentor' : 'student'}
-            </GradientText>
+            <UserStatus
+              mentor={user && user.mentor}
+              admin={user && user.admin}
+            />
           </View>
           <View
             style={{

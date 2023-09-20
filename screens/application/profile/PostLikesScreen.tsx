@@ -9,6 +9,7 @@ import { auth } from '../../../firebase'
 import { getDatabase, onValue, ref } from 'firebase/database'
 import rules from '../../../constants/rules'
 import Toast from 'react-native-toast-message'
+import UserStatus from '../../../components/UserStatus'
 
 export default function PostLikesScreen({ navigation, route }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
@@ -85,17 +86,38 @@ export default function PostLikesScreen({ navigation, route }: any) {
                 : 'deleted user'
               : ''}
           </Text>
-          <Text
+          <View
             style={{
-              fontSize: 16,
-              color:
-                themeColor === 'dark'
-                  ? colors.DarkCommentText
-                  : colors.LightCommentText,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
             }}
           >
-            {new Date(item.date).toLocaleString()}
-          </Text>
+            {users ? (
+              users[item.email.replace('.', ',')] ? (
+                <UserStatus
+                  mentor={users[item.email.replace('.', ',')].mentor}
+                  admin={users[item.email.replace('.', ',')].admin}
+                />
+              ) : (
+                <></>
+              )
+            ) : (
+              <></>
+            )}
+            <Text
+              style={{
+                fontSize: 16,
+                color:
+                  themeColor === 'dark'
+                    ? colors.DarkCommentText
+                    : colors.LightCommentText,
+                paddingLeft: 10,
+              }}
+            >
+              {new Date(item.date).toLocaleString()}
+            </Text>
+          </View>
         </View>
         <Ionicons
           name="chevron-forward"

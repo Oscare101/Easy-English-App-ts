@@ -25,10 +25,10 @@
 ### TODO 1.2.0
 
 - onboarding
-- friends
+- ✅ friends
 - ✅ followers
 - privat chats, inchat actions
-- user status (user, mentor, admin)
+- ✅ user status (user, mentor, admin)
 - online status
 - ✅ copy text
 - report

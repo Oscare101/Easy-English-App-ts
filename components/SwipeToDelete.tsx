@@ -61,7 +61,7 @@ export default function SwipeToDelete(props: any) {
         overshootLeft={true}
         overshootRight={true}
         overshootFriction={1}
-        onSwipeableOpen={() => Vibration.vibrate(1, false)}
+        onSwipeableOpen={() => Vibration.vibrate([1, 1, 100, 1], false)}
       >
         <Animated.View
           style={[

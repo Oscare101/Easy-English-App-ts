@@ -451,7 +451,8 @@ export default function ProfileScreen({ navigation }: any) {
                   >
                     {Object.values(followers).length > 0 &&
                     auth.currentUser &&
-                    auth.currentUser?.email
+                    auth.currentUser?.email &&
+                    followers[auth.currentUser?.email?.replace('.', ',')]
                       ? Object.values(
                           followers[auth.currentUser?.email?.replace('.', ',')]
                         ).length

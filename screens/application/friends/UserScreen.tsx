@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  Vibration,
   View,
 } from 'react-native'
 import { styles } from '../../../constants/styles'
@@ -103,6 +104,8 @@ export default function UserScreen({ navigation, route }: any) {
   async function FollowFunc() {
     if (auth.currentUser && auth.currentUser.email) {
       let data: any = { email: user.email, date: new Date().getTime() }
+      Vibration.vibrate(1, false)
+
       const response = await FollowUser(
         auth.currentUser.email.replace('.', ','),
         data
@@ -112,6 +115,8 @@ export default function UserScreen({ navigation, route }: any) {
 
   async function UnFollowFunc() {
     if (auth.currentUser && auth.currentUser.email) {
+      Vibration.vibrate(1, false)
+
       const response = await UnFollowUser(
         auth.currentUser.email.replace('.', ','),
         user.email.replace('.', ',')

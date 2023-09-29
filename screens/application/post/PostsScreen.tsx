@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
+  Vibration,
   View,
 } from 'react-native'
 import { styles } from '../../../constants/styles'
@@ -124,6 +125,7 @@ export default function PostsScreen({ navigation }: any) {
             date: new Date().getTime(),
           }
         }
+        Vibration.vibrate(1, false)
 
         const response = await UpdatePostLikes(post.id, data)
       }

@@ -1,4 +1,4 @@
-import { Animated, Text, TouchableOpacity, View } from 'react-native'
+import { Animated, Text, TouchableOpacity, View, Vibration } from 'react-native'
 import colors from '../constants/colors'
 import rules from '../constants/rules'
 import { Ionicons } from '@expo/vector-icons'
@@ -61,6 +61,7 @@ export default function SwipeToDelete(props: any) {
         overshootLeft={true}
         overshootRight={true}
         overshootFriction={1}
+        onSwipeableOpen={() => Vibration.vibrate(1, false)}
       >
         <Animated.View
           style={[

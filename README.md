@@ -27,7 +27,7 @@
 - onboarding
 - ✅ friends
 - ✅ followers
-- privat chats, inchat actions
+- 🔶 privat chats, inchat actions
 - ✅ user status (user, mentor, admin)
 - online status
 - ✅ copy text

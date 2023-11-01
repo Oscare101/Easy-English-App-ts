@@ -2,6 +2,8 @@ import {
   ActivityIndicator,
   Dimensions,
   FlatList,
+  Image,
+  Keyboard,
   ScrollView,
   StatusBar,
   Text,
@@ -14,7 +16,6 @@ import MainButton from '../../../components/MainButton'
 import InputText from '../../../components/InputText'
 import { useEffect, useMemo, useState } from 'react'
 import { User } from '../../../constants/interfaces'
-import { auth } from '../../../firebase'
 import { get, getDatabase, onValue, ref } from 'firebase/database'
 import { CreateMessage } from '../../../functions/Actions'
 import { Ionicons } from '@expo/vector-icons'
@@ -22,26 +23,34 @@ import colors from '../../../constants/colors'
 import rules from '../../../constants/rules'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../../redux'
+import { MaterialIcons } from '@expo/vector-icons'
+import { ref as refStorage, getDownloadURL } from 'firebase/storage'
+import { auth, db, storage } from '../../../firebase'
 
 const width = Dimensions.get('screen').width
 
-export default function GlobalChatScreen({ navigation, route }: any) {
+export default function PersonalChatScreen({ navigation, route }: any) {
   const { themeColor } = useSelector((state: RootState) => state.themeColor)
 
   const [messages, setMessages] = useState<any>([])
   const [users, setUsers] = useState<any>({})
   const [newMessage, setNewMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
+  const [image, setImage] = useState<any>('')
 
   async function CreateMessageFunc() {
     setLoading(true)
-    if (auth.currentUser && auth.currentUser.email && route.params.user) {
+    if (
+      auth.currentUser &&
+      auth.currentUser.email &&
+      users[auth.currentUser.email.replace('.', ',')]
+    ) {
       const data = {
         text: newMessage,
         date: new Date().getTime(),
-        author: route.params.user.name,
-        authorEmail: route.params.user.email,
-        id: new Date().getTime() + route.params.user.email.replace('.', ','),
+        author: users[auth.currentUser.email.replace('.', ',')].name,
+        authorEmail: auth.currentUser.email,
+        id: new Date().getTime() + auth.currentUser.email.replace('.', ','),
       }
       setNewMessage('')
 
@@ -62,19 +71,31 @@ export default function GlobalChatScreen({ navigation, route }: any) {
   }
 
   async function GetUsers() {
-    if (auth.currentUser && auth.currentUser.email) {
-      const data = ref(getDatabase(), `user/`)
-      onValue(data, (snapshot) => {
-        if (snapshot.val()) {
-          setUsers(snapshot.val())
-          GetMessages()
+    const data = ref(getDatabase(), `user/`)
+    onValue(data, (snapshot) => {
+      if (snapshot.val()) {
+        setUsers(snapshot.val())
+        GetMessages()
+      }
+    })
+  }
+
+  async function GetFriendImage() {
+    const img = refStorage(storage, `user/${route.params.user.email}`)
+    await getDownloadURL(img)
+      .then((i) => {
+        setImage(i)
+      })
+      .catch((e) => {
+        if (e.code.includes('storage/object-not-found')) {
+          setImage('')
         }
       })
-    }
   }
 
   useEffect(() => {
     GetUsers()
+    GetFriendImage()
   }, [])
 
   const RenderChatItem = ({ item, email }: any) => {
@@ -179,6 +200,7 @@ export default function GlobalChatScreen({ navigation, route }: any) {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => {
+            Keyboard.dismiss()
             navigation.goBack()
           }}
           style={{
@@ -205,9 +227,53 @@ export default function GlobalChatScreen({ navigation, route }: any) {
                 : colors.LightMainText,
           }}
         >
-          Chat
+          {route.params.user.name}
         </Text>
-        <View style={{ width: 50 }} />
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            navigation.navigate('UserScreen', {
+              user: route.params.user.email,
+            })
+          }}
+          style={{
+            width: 40,
+            height: 40,
+            margin: 5,
+            borderRadius: 50,
+            overflow: 'hidden',
+          }}
+        >
+          {image ? (
+            <Image
+              style={{ width: '100%', height: '100%' }}
+              source={{
+                uri: image,
+              }}
+            />
+          ) : (
+            <View
+              style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor:
+                  themeColor === 'dark'
+                    ? colors.DarkCommentText
+                    : colors.LightCommentText,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <MaterialIcons
+                name="insert-photo"
+                size={width * 0.15}
+                color={
+                  themeColor === 'dark' ? colors.DarkBorder : colors.LightBorder
+                }
+              />
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
 
       <View
@@ -224,7 +290,7 @@ export default function GlobalChatScreen({ navigation, route }: any) {
           justifyContent: 'center',
         }}
       >
-        {users && messages ? (
+        {messages ? (
           <FlatList
             showsVerticalScrollIndicator={false}
             style={{ width: '100%' }}

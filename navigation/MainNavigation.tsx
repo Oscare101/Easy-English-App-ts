@@ -32,6 +32,7 @@ import StatisticScreen from '../screens/application/pdf/StatisticScreen'
 import UserScreen from '../screens/application/friends/UserScreen'
 import PostLikesScreen from '../screens/application/profile/PostLikesScreen'
 import FollowersScreen from '../screens/application/friends/FollowersScreen'
+import PersonalChatScreen from '../screens/application/chat/PersonalChatScreen'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -364,6 +365,17 @@ export default function MainNavigation() {
         }}
         name="GlobalChatScreen"
         component={GlobalChatScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+          animationEnabled: true,
+          gestureDirection: 'horizontal',
+          gestureEnabled: true,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+        }}
+        name="PersonalChatScreen"
+        component={PersonalChatScreen}
       />
       <Stack.Screen
         options={{

@@ -37,6 +37,7 @@ import EditButton from '../../../components/EditButton'
 import ImageView from 'react-native-image-viewing'
 import { Ionicons } from '@expo/vector-icons'
 import UserStatus from '../../../components/UserStatus'
+import Toast from 'react-native-toast-message'
 
 const width = Dimensions.get('screen').width
 
@@ -145,6 +146,26 @@ export default function UserScreen({ navigation, route }: any) {
           user.email.replace('.', ',')
         ]
       )
+    }
+  }
+
+  function StartPersonalChat() {
+    if (auth.currentUser && auth.currentUser.email) {
+      const data = ref(getDatabase(), `chat`)
+      onValue(data, (snapshot) => {
+        if (snapshot.val() && auth.currentUser && auth.currentUser.email) {
+          let id: string = [
+            auth.currentUser.email.replace('.', ','),
+            user.email.replace('.', ','),
+          ]
+            .sort()
+            .join('@')
+          navigation.navigate('PersonalChatScreen', {
+            chatID: id,
+            user: user,
+          })
+        }
+      })
     }
   }
 
@@ -379,13 +400,25 @@ export default function UserScreen({ navigation, route }: any) {
           }}
         >
           <TouchableOpacity
-            activeOpacity={0}
-            disabled
+            activeOpacity={0.8}
             style={{
               width: width * 0.2,
               height: width * 0.2,
               borderRadius: 8,
               overflow: 'hidden',
+            }}
+            onPress={() => {
+              if (image) {
+                setImageVisible(true)
+              } else {
+                Toast.show({
+                  type: 'ToastMessage',
+                  props: {
+                    title: "User doesn't have a profile picture",
+                  },
+                  position: 'bottom',
+                })
+              }
             }}
           >
             {image ? (
@@ -503,37 +536,78 @@ export default function UserScreen({ navigation, route }: any) {
           <></>
         )}
       </View>
-      <TouchableOpacity
+      <View
         style={{
+          flexDirection: 'row',
           width: rules.componentWidthPercent,
-          height: 60,
-          opacity: 1,
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor:
-            themeColor === 'dark' ? colors.DarkBGBlue : colors.LightBGBlue,
-          borderRadius: 6,
           marginTop: 8,
         }}
-        activeOpacity={0.8}
-        onPress={IsFollowing() ? UnFollowFunc : FollowFunc}
       >
-        <Text
+        <TouchableOpacity
           style={{
-            fontSize: 18,
-            color: IsFollowing()
-              ? themeColor === 'dark'
-                ? colors.DarkDangerText
-                : colors.LightDangerText
-              : themeColor === 'dark'
-              ? colors.DarkTextBlue
-              : colors.LightTextBlue,
+            height: 60,
+            opacity: 1,
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor:
+              themeColor === 'dark' ? colors.DarkBGBlue : colors.LightBGBlue,
+            borderRadius: 6,
           }}
+          activeOpacity={0.8}
+          onPress={IsFollowing() ? UnFollowFunc : FollowFunc}
         >
-          {IsFollowing() ? 'Unfollow' : 'Follow'}
-        </Text>
-      </TouchableOpacity>
+          <Text
+            style={{
+              fontSize: 18,
+              color: IsFollowing()
+                ? themeColor === 'dark'
+                  ? colors.DarkDangerText
+                  : colors.LightDangerText
+                : themeColor === 'dark'
+                ? colors.DarkTextBlue
+                : colors.LightTextBlue,
+            }}
+          >
+            {IsFollowing() ? 'Unfollow' : 'Follow'}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            height: 60,
+            opacity: 1,
+            marginLeft: 8,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor:
+              themeColor === 'dark' ? colors.DarkBGBlue : colors.LightBGBlue,
+            borderRadius: 6,
+            flexDirection: 'column',
+            width: '20%',
+          }}
+          activeOpacity={0.8}
+          onPress={StartPersonalChat}
+        >
+          <Ionicons
+            name="ios-chatbox-ellipses-outline"
+            size={24}
+            color={
+              themeColor === 'dark' ? colors.DarkTextBlue : colors.LightTextBlue
+            }
+          />
+          <Text
+            style={{
+              fontSize: 14,
+              color:
+                themeColor === 'dark'
+                  ? colors.DarkTextBlue
+                  : colors.LightTextBlue,
+            }}
+          >
+            Chat
+          </Text>
+        </TouchableOpacity>
+      </View>
     </>
   )
 

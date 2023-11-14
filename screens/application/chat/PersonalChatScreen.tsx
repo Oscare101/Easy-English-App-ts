@@ -37,7 +37,7 @@ export default function PersonalChatScreen({ navigation, route }: any) {
   const [newMessage, setNewMessage] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [image, setImage] = useState<any>('')
-
+  // const [modalLocation, setModalLocation] = useState<any>()
   async function CreateMessageFunc() {
     setLoading(true)
     if (
@@ -189,6 +189,7 @@ export default function PersonalChatScreen({ navigation, route }: any) {
         barStyle={themeColor === 'dark' ? 'light-content' : 'dark-content'}
         backgroundColor={themeColor === 'dark' ? colors.DarkBG : colors.LightBG}
       />
+      {/* HEADER */}
       <View
         style={{
           flexDirection: 'row',
@@ -275,8 +276,19 @@ export default function PersonalChatScreen({ navigation, route }: any) {
           )}
         </TouchableOpacity>
       </View>
-
+      {/* CHAT VIEW */}
       <View
+        // onStartShouldSetResponder={() => true}
+        // onResponderMove={(event: any) => {
+        //   setModalLocation({
+        //     X: event.nativeEvent.locationX,
+        //     Y: event.nativeEvent.locationY,
+        //   })
+        //   console.log({
+        //     X: event.nativeEvent.locationX,
+        //     Y: event.nativeEvent.locationY,
+        //   })
+        // }}
         style={{
           flex: 1,
           width: '100%',
@@ -288,8 +300,23 @@ export default function PersonalChatScreen({ navigation, route }: any) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          position: 'relative',
         }}
       >
+        {/* {modalLocation ? (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: modalLocation.Y,
+              left: modalLocation.X,
+              height: 50,
+              width: 50,
+              backgroundColor: 'red',
+            }}
+          ></View>
+        ) : (
+          <></>
+        )} */}
         {messages ? (
           <FlatList
             showsVerticalScrollIndicator={false}
@@ -308,6 +335,7 @@ export default function PersonalChatScreen({ navigation, route }: any) {
           <></>
         )}
       </View>
+      {/* TEXT INPUT */}
       <View
         style={{
           flexDirection: 'row',

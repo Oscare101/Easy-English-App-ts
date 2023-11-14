@@ -39,6 +39,8 @@ const text: Text = {
   DeletedUserPost:
     "This is a post by a deleted user, you can't do anything with it except copy",
   PersonalChatsTitle: 'Here are your personal chats with other users',
+  BirthDateInput:
+    'This information will be displayed on the certificate, none of the users will see it',
 }
 
 export default text

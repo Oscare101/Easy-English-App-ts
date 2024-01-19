@@ -28,7 +28,11 @@ export default function FollowersScreen({ navigation, route }: any) {
   }
 
   function GetUserFollowers() {
-    if (auth.currentUser && auth.currentUser.email) {
+    if (
+      auth.currentUser &&
+      auth.currentUser.email &&
+      Object.values(route.params.followers).length
+    ) {
       let followersArr: any = []
       Object.values(route.params.followers).map((i: any, index: number) => {
         Object.values(i).map((k: any) => {
@@ -47,11 +51,17 @@ export default function FollowersScreen({ navigation, route }: any) {
       if (route.params.title === 'followers') {
         GetUserFollowers()
       } else {
-        setFollowers(
-          Object.keys(
-            route.params.followers[auth.currentUser?.email?.replace('.', ',')]
+        if (
+          route.params.followers &&
+          Object.values(route.params.followers).length &&
+          route.params.followers[auth.currentUser?.email?.replace('.', ',')]
+        ) {
+          setFollowers(
+            Object.keys(
+              route.params.followers[auth.currentUser?.email?.replace('.', ',')]
+            )
           )
-        )
+        }
       }
     }
   }, [])
@@ -132,7 +142,7 @@ export default function FollowersScreen({ navigation, route }: any) {
             ) : (
               <></>
             )}
-            <Text
+            {/* <Text
               style={{
                 fontSize: 16,
                 color:
@@ -142,14 +152,19 @@ export default function FollowersScreen({ navigation, route }: any) {
                 paddingLeft: 10,
               }}
             >
-              {auth.currentUser && auth.currentUser?.email
+              {auth.currentUser &&
+              auth.currentUser?.email &&
+              Object.values(route.params.followers).length &&
+              route.params.followers[item.replace('.', ',')][
+                auth.currentUser?.email?.replace('.', ',')
+              ].date
                 ? new Date(
                     route.params.followers[item.replace('.', ',')][
                       auth.currentUser?.email?.replace('.', ',')
                     ].date
                   ).toLocaleString()
                 : ''}
-            </Text>
+            </Text> */}
           </View>
         </View>
         <Ionicons

@@ -98,13 +98,13 @@ export default function NewUserScreen({ navigation }: any) {
               value={surname}
               setValue={(value: string) => setSurname(value)}
             />
-            <InputText
+            {/* <InputText
               colorState={1}
               placeholder="birthdate"
               type="date"
               value={birthDate}
               setValue={(value: string) => setBirthdate(value)}
-            />
+            /> */}
 
             {error ? (
               <Text
